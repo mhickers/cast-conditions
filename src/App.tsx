@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import About from './About';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -51,6 +52,7 @@ export default function App() {
     try { return JSON.parse(localStorage.getItem('castSpots') || '[]'); } catch { return []; }
   });
   const [spotName, setSpotName] = useState('');
+  const [showAbout, setShowAbout] = useState(false);
 
   const moon = getMoonPhase();
   const { score, tips, label: scoreLabel } = calcFishingScore(conditions);
@@ -158,14 +160,16 @@ export default function App() {
 
   return (
     <div className="app">
+      {showAbout && <About onClose={() => setShowAbout(false)} />}
       <header className="header">
         <div className="header-inner">
           <div className="logo">
             <span className="logo-icon">⚓</span>
-            <span className="logo-text">Cast Conditions</span>
+            <span className="logo-text">Fish Conditions</span>
           </div>
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
+            <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
             <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel)} title="Refresh">↻</button>
           </div>
         </div>
