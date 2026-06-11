@@ -74,3 +74,34 @@ export function scoreColor(score: number): { bg: string; text: string } {
   if (score >= 3.5) return { bg: '#FAEEDA', text: '#854F0B' };
   return { bg: '#FAECE7', text: '#993C1D' };
 }
+
+// Approximate solunar feeding periods. Majors center on lunar transit
+// (moon overhead / underfoot), minors on moonrise / moonset.
+export interface SolunarPeriods {
+  majors: Array<[string, string]>;
+  minors: Array<[string, string]>;
+}
+
+export function getSolunarPeriods(forDate: Date): SolunarPeriods {
+  const { phase } = getMoonPhase(forDate);
+  const transit = (12 + phase * 0.84) % 24; // moon lags the sun ~50 min/day
+  const underfoot = (transit + 12.42) % 24;
+  const rise = (transit - 6.21 + 24) % 24;
+  const set = (transit + 6.21) % 24;
+  const fmtT = (h: number) => {
+    const norm = ((h % 24) + 24) % 24;
+    const hh = Math.floor(norm);
+    const mm = Math.round((norm - hh) * 60);
+    return new Date(2000, 0, 1, hh, mm).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  };
+  return {
+    majors: [
+      [fmtT(transit - 1), fmtT(transit + 1)],
+      [fmtT(underfoot - 1), fmtT(underfoot + 1)],
+    ],
+    minors: [
+      [fmtT(rise - 0.5), fmtT(rise + 0.5)],
+      [fmtT(set - 0.5), fmtT(set + 0.5)],
+    ],
+  };
+}

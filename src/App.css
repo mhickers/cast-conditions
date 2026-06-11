@@ -163,3 +163,23 @@ body { font-family: 'Source Sans 3', system-ui, sans-serif; background: var(--sa
 /* Time selector & station note */
 .time-input { flex: 0 0 auto; width: 110px; }
 .station-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+
+/* Search feedback & suggestions */
+.search-error { margin-top: 8px; font-size: 13px; color: #993C1D; background: #FAECE7; padding: 8px 12px; border-radius: 8px; }
+
+/* Best time timeline */
+.best-window-tag { margin-left: 10px; font-size: 11px; font-weight: 600; color: #0F6E56; background: #E1F5EE; padding: 2px 10px; border-radius: 20px; text-transform: none; letter-spacing: 0; }
+.timeline-row { display: flex; gap: 2px; height: 34px; border-radius: 8px; overflow: hidden; }
+.timeline-seg { flex: 1; cursor: pointer; transition: opacity 0.15s, transform 0.1s; opacity: 0.85; }
+.timeline-seg:hover { opacity: 1; transform: scaleY(1.08); }
+.timeline-active { opacity: 1; outline: 2px solid var(--navy); outline-offset: -2px; }
+.timeline-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+/* Solunar */
+.solunar-block { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+.solunar-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px; }
+.solunar-row { font-size: 13px; color: var(--text); margin-bottom: 3px; }
+
+/* Alerts */
+.alert-desc { font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
+.alert-success { font-size: 14px; color: #0F6E56; font-weight: 500; }

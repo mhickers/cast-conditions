@@ -1,10 +1,26 @@
-// Vercel serverless function — proxies AI summary requests to Anthropic
-// Keeps the API key server-side instead of exposing it in the browser.
+// AI summary proxy with per-IP rate limiting and plain-text output.
+
+const hits = new Map(); // ip -> { count, reset }
+const LIMIT = 20; // requests per hour per IP
+const WINDOW = 60 * 60 * 1000;
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // Basic rate limit — protects your API credits from abuse
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
+  const now = Date.now();
+  const entry = hits.get(ip);
+  if (!entry || now > entry.reset) {
+    hits.set(ip, { count: 1, reset: now + WINDOW });
+  } else if (entry.count >= LIMIT) {
+    return res.status(429).json({ error: 'Too many requests — try again later' });
+  } else {
+    entry.count++;
+  }
+  if (hits.size > 5000) hits.clear(); // prevent unbounded memory growth
 
   const apiKey = process.env.ANTHROPIC_API_KEY || process.env.REACT_APP_ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -27,7 +43,7 @@ module.exports = async (req, res) => {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 300,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: 'user', content: prompt + '\n\nRespond in plain text only — no markdown formatting, no asterisks, no bullet points.' }],
       }),
     });
 
@@ -39,7 +55,8 @@ module.exports = async (req, res) => {
     const text = (data.content || [])
       .filter((b) => b.type === 'text')
       .map((b) => b.text)
-      .join('\n');
+      .join('\n')
+      .replace(/\*/g, '');
 
     return res.status(200).json({ text });
   } catch (e) {

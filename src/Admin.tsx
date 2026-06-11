@@ -1,48 +1,63 @@
 import React, { useState } from 'react';
-import { supabase, CatchPost } from './supabase';
+import { CatchPost } from './supabase';
 import './Admin.css';
 
-const ADMIN_PASSWORD = process.env.REACT_APP_ADMIN_PASSWORD || 'fishconditions2024';
+async function adminCall(password: string, action: string, extra: Record<string, any> = {}) {
+  const res = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password, action, ...extra }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.error || 'Request failed');
+  return data;
+}
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState('');
-  const [pwError, setPwError] = useState(false);
+  const [pwError, setPwError] = useState('');
   const [pending, setPending] = useState<CatchPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [actionMsg, setActionMsg] = useState('');
 
-  const login = () => {
-    if (pw === ADMIN_PASSWORD) { setAuthed(true); loadPending(); }
-    else { setPwError(true); }
-  };
-
-  const loadPending = async () => {
+  const loadPending = async (password: string) => {
     setLoading(true);
-    const { data } = await supabase
-      .from('catches')
-      .select('*')
-      .eq('approved', false)
-      .order('created_at', { ascending: true });
-    if (data) setPending(data);
+    try {
+      const data = await adminCall(password, 'pending');
+      setPending(data.pending ?? []);
+    } catch { setActionMsg('Failed to load'); }
     setLoading(false);
   };
 
+  const login = async () => {
+    setPwError('');
+    try {
+      await adminCall(pw, 'login');
+      setAuthed(true);
+      sessionStorage.setItem('adminAuthed', '1');
+      loadPending(pw);
+    } catch (e: any) {
+      setPwError(e.message === 'Incorrect password' ? 'Incorrect password.' : 'Login failed — try again.');
+    }
+  };
+
   const approve = async (id: string) => {
-    await supabase.from('catches').update({ approved: true }).eq('id', id);
-    setPending(p => p.filter(x => x.id !== id));
-    setActionMsg('✓ Approved');
-    setTimeout(() => setActionMsg(''), 2000);
+    try {
+      await adminCall(pw, 'approve', { id });
+      setPending(p => p.filter(x => x.id !== id));
+      setActionMsg('✓ Approved');
+      setTimeout(() => setActionMsg(''), 2000);
+    } catch { setActionMsg('Failed'); }
   };
 
   const reject = async (id: string, photoUrl: string) => {
-    // Delete photo from storage
-    const filename = photoUrl.split('/').pop();
-    if (filename) await supabase.storage.from('catch-photos').remove([filename]);
-    await supabase.from('catches').delete().eq('id', id);
-    setPending(p => p.filter(x => x.id !== id));
-    setActionMsg('✕ Rejected');
-    setTimeout(() => setActionMsg(''), 2000);
+    try {
+      await adminCall(pw, 'reject', { id, photo_url: photoUrl });
+      setPending(p => p.filter(x => x.id !== id));
+      setActionMsg('✕ Rejected');
+      setTimeout(() => setActionMsg(''), 2000);
+    } catch { setActionMsg('Failed'); }
   };
 
   const formatDate = (d: string) =>
@@ -59,10 +74,10 @@ export default function Admin() {
             type="password"
             placeholder="Admin password"
             value={pw}
-            onChange={e => { setPw(e.target.value); setPwError(false); }}
+            onChange={e => { setPw(e.target.value); setPwError(''); }}
             onKeyDown={e => e.key === 'Enter' && login()}
           />
-          {pwError && <div className="admin-error">Incorrect password.</div>}
+          {pwError && <div className="admin-error">{pwError}</div>}
           <button className="btn" onClick={login} style={{ marginTop: 12, width: '100%' }}>Log in</button>
         </div>
       </div>
@@ -74,7 +89,7 @@ export default function Admin() {
       <div className="admin-header">
         <h2 className="admin-title">🎣 Catch moderation</h2>
         {actionMsg && <span className="admin-action-msg">{actionMsg}</span>}
-        <button className="btn btn-secondary" onClick={loadPending} style={{ marginLeft: 'auto' }}>↻ Refresh</button>
+        <button className="btn btn-secondary" onClick={() => loadPending(pw)} style={{ marginLeft: 'auto' }}>↻ Refresh</button>
       </div>
 
       {loading && <p className="muted">Loading pending submissions...</p>}

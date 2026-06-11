@@ -1,4 +1,4 @@
-import type { Conditions, TidePrediction, HourlyForecast } from '../types';
+import type { Conditions, HourlyForecast, TideData } from '../types';
 import { degToCompass } from './fishing';
 
 // Map Open-Meteo weather codes to a simple condition + icon
@@ -95,6 +95,8 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
       time: h?.time ?? [],
       wind_speed_10m: h?.wind_speed_10m ?? [],
       wind_direction_10m: h?.wind_direction_10m ?? [],
+      temperature_2m: h?.temperature_2m ?? null,
+      surface_pressure: h?.surface_pressure ?? null,
       wave_height: mh?.wave_height ?? null,
       weather_code: h?.weather_code ?? null,
       precipitation_probability: h?.precipitation_probability ?? null,
@@ -111,19 +113,22 @@ export async function fetchWaterTemp(stationId: string): Promise<number | null> 
   return null;
 }
 
-export async function fetchTides(dateStr: string, stationId: string): Promise<TidePrediction[]> {
+export async function fetchTides(dateStr: string, stationId: string): Promise<TideData> {
   try {
-    // Fetch a 3-day window (day before → day after) so current-tide
-    // interpolation always has bracketing events, even late at night.
+    // 3-day window (day before -> day after) so interpolation always brackets.
     const center = new Date(dateStr + 'T12:00:00');
     const before = new Date(center); before.setDate(before.getDate() - 1);
     const after = new Date(center); after.setDate(after.getDate() + 1);
     const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`);
-    const d = await res.json();
-    return d.predictions ?? [];
+    const base = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`;
+    const [eventsRes, curveRes] = await Promise.all([
+      fetch(base + '&interval=hilo'),
+      fetch(base + '&interval=30'), // smooth 30-minute curve for the chart
+    ]);
+    const [eventsD, curveD] = await Promise.all([eventsRes.json(), curveRes.json()]);
+    return { events: eventsD.predictions ?? [], curve: curveD.predictions ?? [] };
   } catch {}
-  return [];
+  return { events: [], curve: [] };
 }
 
 export async function fetchAISummary(conditions: Partial<Conditions>, moonName: string, moonIllum: number, score: number, location: string, dateStr: string): Promise<string> {
@@ -144,7 +149,7 @@ Conditions:
 - Tide direction: ${conditions.tideDirection ?? 'unknown'}
 - Overall fishing score: ${score}/10
 
-Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide.`;
+Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide. Respond in plain text only — no markdown, no asterisks, no bullet points.`;
 
   // Calls our own serverless function (/api/summary) which holds the API key
   // server-side — more reliable and keeps the key out of the browser.
@@ -161,7 +166,7 @@ Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide.`;
         lastError = data?.error || `HTTP ${res.status}`;
         throw new Error(lastError);
       }
-      if (data.text) return data.text;
+      if (data.text) return data.text.replace(/\*/g, '');
       lastError = 'Empty response';
     } catch (e: any) {
       if (!lastError) lastError = e?.message || 'Network error';

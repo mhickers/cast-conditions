@@ -66,3 +66,28 @@ export async function resolveLocation(query: string): Promise<GeoResult | null> 
 
   return null;
 }
+
+// Reverse-geocode coordinates to a friendly place label
+export async function reverseGeocode(lat: number, lon: number): Promise<string> {
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+    const d = await res.json();
+    if (d.city || d.locality) return `${d.city || d.locality}${d.principalSubdivisionCode ? ', ' + d.principalSubdivisionCode.replace('US-', '') : ''}`;
+  } catch {}
+  return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+}
+
+// Autocomplete suggestions for the search box
+export async function suggestLocations(query: string): Promise<GeoResult[]> {
+  if (query.trim().length < 2 || COORD_REGEX.test(query) || ZIP_REGEX.test(query)) return [];
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query.trim())}&count=5&language=en&format=json`);
+    const d = await res.json();
+    return (d.results ?? []).map((r: any) => ({
+      lat: r.latitude,
+      lon: r.longitude,
+      label: [r.name, r.admin1, r.country_code].filter(Boolean).join(', '),
+    }));
+  } catch {}
+  return [];
+}

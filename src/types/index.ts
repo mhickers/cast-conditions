@@ -56,7 +56,19 @@ export interface HourlyForecast {
   time: string[];
   wind_speed_10m: number[];
   wind_direction_10m: number[];
+  temperature_2m: number[] | null;
+  surface_pressure: number[] | null;
   wave_height: number[] | null;
   weather_code: number[] | null;
   precipitation_probability: number[] | null;
+}
+
+export interface TideCurvePoint {
+  t: string;
+  v: string;
+}
+
+export interface TideData {
+  events: TidePrediction[];
+  curve: TideCurvePoint[];
 }

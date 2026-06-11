@@ -28,9 +28,18 @@ export async function findNearestStation(
 ): Promise<NearestStation | null> {
   try {
     if (!cache[type]) {
-      const res = await fetch(`https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=${type}`);
-      const d = await res.json();
-      cache[type] = (d.stations ?? []).map((s: any) => ({ id: s.id, name: s.name, lat: s.lat, lng: s.lng }));
+      // Try localStorage first (cached up to 7 days) so repeat visits skip the big download
+      const lsKey = `noaa-stations-${type}`;
+      try {
+        const stored = JSON.parse(localStorage.getItem(lsKey) || 'null');
+        if (stored && Date.now() - stored.ts < 7 * 86400000) cache[type] = stored.stations;
+      } catch {}
+      if (!cache[type]) {
+        const res = await fetch(`https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=${type}`);
+        const d = await res.json();
+        cache[type] = (d.stations ?? []).map((s: any) => ({ id: s.id, name: s.name, lat: s.lat, lng: s.lng }));
+        try { localStorage.setItem(lsKey, JSON.stringify({ ts: Date.now(), stations: cache[type] })); } catch {}
+      }
     }
     let best: NearestStation | null = null;
     let bestD = Infinity;
