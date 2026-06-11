@@ -183,3 +183,7 @@ body { font-family: 'Source Sans 3', system-ui, sans-serif; background: var(--sa
 /* Alerts */
 .alert-desc { font-size: 14px; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
 .alert-success { font-size: 14px; color: #0F6E56; font-weight: 500; }
+
+/* Species lures & bait advisor */
+.species-lures { font-size: 12px; color: var(--ocean); line-height: 1.45; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
+.bait-advice { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-line; }

@@ -175,3 +175,17 @@ Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide. Re
   }
   return `AI summary unavailable (${lastError}) — the conditions data above is still live and accurate.`;
 }
+
+// Generic AI advice call (used by the bait & lure advisor)
+export async function fetchAIAdvice(prompt: string): Promise<string | null> {
+  try {
+    const res = await fetch('/api/summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.text) return data.text.replace(/\*/g, '');
+  } catch {}
+  return null;
+}

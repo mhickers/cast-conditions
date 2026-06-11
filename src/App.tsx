@@ -5,6 +5,7 @@ import CatchSubmit from './CatchSubmit';
 import Admin from './Admin';
 import Feedback from './Feedback';
 import AlertSignup from './AlertSignup';
+import BaitAdvisor from './BaitAdvisor';
 import { getSpeciesForLocation, buildScoreNarrative } from './species';
 import { Line } from 'react-chartjs-2';
 import {
@@ -605,11 +606,20 @@ export default function App() {
                     <div className="bite-bar" style={{ width: `${sp.biteScore}%`, background: color }} />
                   </div>
                   <p className="species-tip">{sp.tip}</p>
+                  <p className="species-lures">🪝 {sp.lures}</p>
                 </div>
               );
             })}
           </div>
         </section>
+
+        <BaitAdvisor
+          locationLabel={locationLabel}
+          dateStr={selectedDate}
+          topSpecies={[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 3).map(s => s.name)}
+          waterTempF={conditions.waterTempF ?? null}
+          isInland={isInland}
+        />
 
         <section className="section">
           <h3 className="section-label">Saved spots</h3>
