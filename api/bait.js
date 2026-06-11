@@ -28,16 +28,21 @@ module.exports = async (req, res) => {
 
   const prompt = `You are an expert local fishing guide for the area around ${location}. Today is ${dateLabel}.${conditionsSummary ? ` Current conditions: ${conditionsSummary}.` : ''}
 
-Target species: ${species}.
+Requested species: ${species}.
 
-First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species} ${location.split(',')[0]} report".
+First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species.split(',')[0]} ${location.split(',')[0]}".
 
-Then combine what the recent reports actually say with proven seasonal patterns for this area and time of year. Give:
-1. What's working right now according to recent reports (mention where the intel came from, e.g. "local shop reports say...")
-2. Specific bait, lure${isInland ? ', and fly' : ''} recommendations with sizes and colors${isInland ? '. If this is trout water, name this month\u2019s likely hatches and matching patterns with hook sizes' : ''}
-3. One tactical tip for current conditions
+Then answer in this EXACT compact format — one line per requested species, nothing else before or after:
 
-Keep it under 200 words. Plain text only — no markdown, no asterisks, no bullet symbols. Write like the counter guy at the local tackle shop.`;
+SpeciesName: what's biting and the specific baits/lures to use, with sizes and colors.
+
+Example of the style: "Rainbow trout: PMDs and caddis coming off — try a size 16 Elk Hair Caddis or size 18 Pheasant Tail; spin anglers doing well on gold spinners."
+
+STRICT RULES:
+- Cover ONLY the requested species (${species}). Never mention other species, their regulations, or slot limits.
+- Max 40 words per species line.
+- Plain text only — no markdown, no asterisks, no bullets, no headers, no intro or closing sentence.
+- If recent reports mention the requested species, work that intel into the line; if not, rely on seasonal patterns for this exact area and month.`;
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {

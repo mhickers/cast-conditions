@@ -155,64 +155,82 @@ export default function App() {
     setTideLoading(true);
     setSearchError('');
     setAiSummary('Analyzing conditions with AI...');
-    try {
-      const hour = time === 'now' ? null : time;
-      const stationsP = Promise.all([
-        findNearestStation(la, lo, 'tidepredictions'),
-        findNearestStation(la, lo, 'watertemp', 150),
-      ]);
+    const hour = time === 'now' ? null : time;
+    const refTime = time === 'now' && dateStr === localToday()
+      ? Date.now()
+      : new Date(`${dateStr}T${String(time === 'now' ? 12 : time).padStart(2, '0')}:00:00`).getTime();
 
-      // 1. Weather first — fastest call, gets the page on screen
+    // Stations -> tides -> water temp: runs independently of weather, so a
+    // weather outage can't block the inland/coastal check or species list.
+    const stationsChain = (async () => {
+      try {
+        const [tideSt, tempSt] = await Promise.all([
+          findNearestStation(la, lo, 'tidepredictions'),
+          findNearestStation(la, lo, 'watertemp', 150),
+        ]);
+        if (seq !== loadSeq.current) return null;
+        setTideStation(tideSt);
+        setStationChecked(true);
+        const [waterTemp, tideData] = await Promise.all([
+          tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
+          tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
+        ]);
+        if (seq !== loadSeq.current) return null;
+        setTides(tideData);
+        setTideLoading(false);
+        const tide = tideAt(tideData.curve, refTime);
+        setConditions(c => ({ ...c, waterTempF: waterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
+        return { waterTemp, tideData };
+      } catch {
+        if (seq === loadSeq.current) { setStationChecked(true); setTideLoading(false); }
+        return null;
+      }
+    })();
+
+    try {
       const weather = await fetchWeather(la, lo, dateStr, hour);
       if (seq !== loadSeq.current) return;
-      let conds: Partial<Conditions> = { ...weather.conditions, sourcesUsed: 1, verified: false };
-      setConditions(conds);
+      setConditions(c => ({ ...c, ...weather.conditions, sourcesUsed: 1, verified: false }));
       setHourly(weather.hourly);
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setLoading(false);
 
-      // 2. Stations, tides, water temp stream in next
-      const [tideSt, tempSt] = await stationsP;
-      if (seq !== loadSeq.current) return;
-      setTideStation(tideSt);
-      setStationChecked(true);
-      const [waterTemp, tideData] = await Promise.all([
-        tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
-        tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
-      ]);
+      const extra = await stationsChain;
       if (seq !== loadSeq.current) return;
 
-      const refTime = time === 'now' && dateStr === localToday()
-        ? Date.now()
-        : new Date(`${dateStr}T${String(time === 'now' ? 12 : time).padStart(2, '0')}:00:00`).getTime();
-      const tide = tideAt(tideData.curve, refTime);
-      conds = { ...conds, waterTempF: waterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null };
-      setConditions(conds);
-      setTides(tideData);
-      setTideLoading(false);
-
-      // 3. AI summary in the background — never blocks the page
+      // AI summary in the background — never blocks the page
       const dayMoon = getMoonPhase(new Date(dateStr + 'T12:00:00'));
-      const { score: sc } = calcFishingScore(conds);
-      fetchAISummary(conds, dayMoon.name, dayMoon.illum, sc, lbl, dateStr).then(s => {
+      const snapshot: Partial<Conditions> = {
+        ...weather.conditions,
+        waterTempF: extra?.waterTemp ?? null,
+        tideDirection: extra ? (tideAt(extra.tideData.curve, refTime)?.dir ?? null) : null,
+      };
+      const { score: sc } = calcFishingScore(snapshot);
+      fetchAISummary(snapshot, dayMoon.name, dayMoon.illum, sc, lbl, dateStr).then(s => {
         if (seq === loadSeq.current) setAiSummary(s);
-      });
+      }).catch(() => {});
 
-      // 4. NWS cross-check in the background — updates the badge when done
+      // NWS cross-check in the background — updates the badge when done
       if (dateStr === localToday() && time === 'now') {
-        crossCheckWeather(la, lo, conds.windMph ?? 0, conds.airTempF ?? 0).then(check => {
+        crossCheckWeather(la, lo, weather.conditions.windMph ?? 0, weather.conditions.airTempF ?? 0).then(check => {
           if (seq === loadSeq.current && viewIsNow.current) {
             setConditions(c => ({ ...c, windMph: check.windMph, airTempF: check.airTempF, sourcesUsed: check.sourcesUsed, verified: check.verified }));
           }
-        });
+        }).catch(() => {});
       }
     } catch (err: any) {
       if (seq === loadSeq.current) {
         setLoading(false);
-        setTideLoading(false);
         const reason = err?.message ? ` (${err.message})` : '';
         setSearchError(`Couldn\u2019t load weather data${reason} — try Refresh in a moment. If this keeps happening, an ad blocker or extension may be blocking api.open-meteo.com.`);
         setAiSummary('Unable to load conditions.');
+        // Self-heal: an outdated offline worker can interfere with data
+        // requests — unregister it so the next reload starts clean.
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations()
+            .then(regs => regs.forEach(r => r.unregister()))
+            .catch(() => {});
+        }
       }
     }
   }, []);
@@ -646,7 +664,8 @@ export default function App() {
 
         <section className="section">
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
-          <div className="species-grid">
+          {!stationChecked && <p className="muted" style={{ padding: '4px 0' }}>Loading species for this location...</p>}
+          <div className="species-grid" style={!stationChecked ? { display: 'none' } : undefined}>
             {species.map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
               return (
