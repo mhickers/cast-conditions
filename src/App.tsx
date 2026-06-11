@@ -291,7 +291,7 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">Atmosphere</h3>
+          <h3 className="section-label">Atmosphere{!isToday && ` — midday forecast, ${new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}`}</h3>
           <div className="stat-grid-5">
             <StatCard icon={conditions.conditionIcon ?? '🌤️'} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
             <StatCard icon="💨" value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
@@ -302,17 +302,17 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">Water conditions</h3>
+          <h3 className="section-label">Water conditions{!isToday && ` — midday forecast, ${new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}`}</h3>
           <div className="stat-grid-4">
-            <StatCard icon="🌊" value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label="Water temp" />
+            <StatCard icon="🌊" value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isToday ? 'Water temp' : 'Water temp (latest reading)'} />
             <StatCard icon="〰️" value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
             <StatCard icon="⏱️" value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
-            <StatCard icon="↕️" value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label="Tide now" />
+            <StatCard icon="↕️" value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isToday ? 'Tide now' : 'Tide at midday'} />
           </div>
         </section>
 
         <section className="section">
-          <h3 className="section-label">{isToday ? '24-hour forecast' : 'Hourly forecast'}</h3>
+          <h3 className="section-label">{isToday ? '24-hour forecast' : `Hourly forecast — ${new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}`}</h3>
           <div className="forecast-scroll">
             {forecastSlots.map((s, i) => (
               <div key={i} className="fc-card">
