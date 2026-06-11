@@ -36,9 +36,30 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'Tuna (bluefin)',  icon: '🔵', regions: ['northeast','midatlantic'],                        tempMin: 55, tempMax: 72, tip: 'Offshore canyon fishing. Chunking butterfish or trolling skirted lures.' },
   { name: 'Pollock',         icon: '❄️', regions: ['northeast','alaska'],                             tempMin: 38, tempMax: 58, tip: 'Deep water species. Diamond jigs worked fast near the bottom.' },
   { name: 'Cod',             icon: '🐠', regions: ['northeast'],                                      tempMin: 38, tempMax: 58, tip: 'Deep, cold water near rocky structure. Clam, squid, or jigs on bottom.' },
+  { name: 'Largemouth bass', icon: '🐸', regions: ['inland_north','inland_south','inland_west'], tempMin: 58, tempMax: 85, tip: 'Target cover — docks, weed edges, laydowns. Slow down in cold water, topwater at dawn in summer.' },
+  { name: 'Smallmouth bass', icon: '🟤', regions: ['inland_north','inland_west'],                  tempMin: 55, tempMax: 75, tip: 'Rocky points and current breaks. Tubes, ned rigs, and crankbaits near gravel and boulders.' },
+  { name: 'Walleye',          icon: '👁️', regions: ['inland_north'],                               tempMin: 45, tempMax: 70, tip: 'Low-light feeders. Jig and minnow near bottom at dawn, dusk, or on overcast days.' },
+  { name: 'Northern pike',    icon: '🐊', regions: ['inland_north'],                               tempMin: 40, tempMax: 65, tip: 'Ambush predators in weedy bays. Large spoons, spinnerbaits, and steel leaders a must.' },
+  { name: 'Muskie',           icon: '🦖', regions: ['inland_north'],                               tempMin: 50, tempMax: 72, tip: 'The fish of 10,000 casts. Big bucktails and glide baits over weed edges; figure-8 at the boat.' },
+  { name: 'Rainbow trout',    icon: '🌈', regions: ['inland_west','inland_north'],                 tempMin: 42, tempMax: 65, tip: 'Cold, oxygenated water. Drift nymphs in riffles or troll small spoons in stocked lakes.' },
+  { name: 'Brown trout',      icon: '🟫', regions: ['inland_west','inland_north'],                 tempMin: 44, tempMax: 68, tip: 'Wary and selective. Streamers at dawn and dusk; match the hatch on pressured water.' },
+  { name: 'Lake trout',       icon: '🏔️', regions: ['inland_north'],                              tempMin: 38, tempMax: 55, tip: 'Deep, cold water in summer — jig near bottom. Shallower in spring and fall turnover.' },
+  { name: 'Channel catfish',  icon: '🐱', regions: ['inland_south','inland_north'],                tempMin: 65, tempMax: 90, tip: 'Night feeders on scent. Cut bait or chicken liver on bottom near holes and channel bends.' },
+  { name: 'Crappie',          icon: '⚪', regions: ['inland_north','inland_south','inland_west'],  tempMin: 55, tempMax: 75, tip: 'School around brush piles and bridge pilings. Small jigs under a float; spring is prime.' },
+  { name: 'Bluegill',         icon: '🔵', regions: ['inland_north','inland_south','inland_west'],  tempMin: 60, tempMax: 85, tip: 'Spawning beds in late spring. Crickets, worms, or tiny jigs near shoreline cover.' },
+  { name: 'Yellow perch',     icon: '🟡', regions: ['inland_north'],                               tempMin: 45, tempMax: 70, tip: 'Schooling fish — find one, find fifty. Small minnows or jigs near weed beds and drop-offs.' },
+  { name: 'Hybrid striper',   icon: '⚡', regions: ['inland_south'],                               tempMin: 55, tempMax: 78, tip: 'Chase shad schools in open reservoir water. Watch for surface busts at dawn.' },
+  { name: 'White bass',       icon: '⬜', regions: ['inland_south','inland_north'],                tempMin: 55, tempMax: 80, tip: 'Spring river runs are legendary. Small white jigs and spinners in current.' },
 ];
 
-// Map lat/lon to a fishing region
+// Map lat/lon to an inland (freshwater) fishing region
+export function getInlandRegion(lat: number, lon: number): string {
+  if (lon < -105) return 'inland_west';
+  if (lat >= 40) return 'inland_north';
+  return 'inland_south';
+}
+
+// Map lat/lon to a coastal fishing region
 export function getRegion(lat: number, lon: number): string {
   // Alaska
   if (lat > 54) return 'alaska';
@@ -68,9 +89,10 @@ export function getSpeciesForLocation(
   waveFt: number,
   pressureMb: number,
   tideDirection: 'rising' | 'falling' | null,
-  moonPhase: number
+  moonPhase: number,
+  isInland: boolean = false
 ): Array<{ name: string; icon: string; biteScore: number; biteLabel: 'Hot bite' | 'Active' | 'Slow'; tip: string }> {
-  const region = getRegion(lat, lon);
+  const region = isInland ? getInlandRegion(lat, lon) : getRegion(lat, lon);
   const wt = waterTempF ?? 68;
   const isFullMoon = Math.abs(moonPhase - 14.77) < 4;
   const rising = tideDirection === 'rising';
@@ -88,16 +110,18 @@ export function getSpeciesForLocation(
     if (windMph < 8) score += 10;
     else if (windMph > 20) score -= 15;
 
-    // Waves
-    if (waveFt < 2) score += 8;
-    else if (waveFt > 4) score -= 12;
+    // Waves & tide only matter on the coast
+    if (!isInland) {
+      if (waveFt < 2) score += 8;
+      else if (waveFt > 4) score -= 12;
+      if (rising) score += 8;
+    } else {
+      score += 8; // neutral baseline so inland scores aren't penalized
+    }
 
     // Pressure
     if (pressureMb > 1015) score += 8;
     else if (pressureMb < 1005) score -= 8;
-
-    // Tide
-    if (rising) score += 8;
 
     // Moon
     if (isFullMoon) score += 10;
@@ -118,9 +142,10 @@ export function buildScoreNarrative(
   windMph: number,
   waveFt: number,
   pressureMb: number,
-  moonPhase: number
+  moonPhase: number,
+  isInland: boolean = false
 ): string[] {
-  const region = getRegion(lat, lon);
+  const region = isInland ? getInlandRegion(lat, lon) : getRegion(lat, lon);
   const regional = ALL_SPECIES.filter(s => s.regions.includes(region));
   const wt = waterTempF;
 
@@ -140,15 +165,17 @@ export function buildScoreNarrative(
   else if (windMph > 18) negatives.push('high winds are making conditions difficult');
   else if (windMph > 12) negatives.push('a stiff breeze may complicate casting');
 
-  // Seas
-  if (waveFt < 1.5) positives.push('calm seas');
-  else if (waveFt > 4) negatives.push('rough seas could keep small boats at the dock');
+  // Seas (coastal only)
+  if (!isInland) {
+    if (waveFt < 1.5) positives.push('calm seas');
+    else if (waveFt > 4) negatives.push('rough seas could keep small boats at the dock');
+  }
 
   // Moon
   const nearFull = Math.abs(moonPhase - 14.77) < 3;
   const nearNew = moonPhase < 2.5 || moonPhase > 27;
   if (nearFull) positives.push('the full moon should boost nighttime feeding activity');
-  else if (nearNew) positives.push('the new moon favors strong tidal movement and dawn bites');
+  else if (nearNew) positives.push(isInland ? 'the new moon favors strong dawn and dusk bites' : 'the new moon favors strong tidal movement and dawn bites');
 
   // Pressure
   if (pressureMb > 1020) negatives.push('barometric pressure is running high, which can slow the bite');

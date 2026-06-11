@@ -41,11 +41,11 @@ export default function About({ onClose }: Props) {
 
         <div className="about-section">
           <h3>Coverage</h3>
-          <p>Weather and wave data works for any coastal location worldwide. Tide and water temperature data currently uses NOAA station 8534720 (Atlantic City, NJ) — best for the South Jersey coast. Expanded tide coverage coming soon.</p>
+          <p>Weather data works for any location. On the coast, tides and water temperature come from the nearest NOAA station automatically. Inland, the app switches to freshwater species — bass, walleye, trout, catfish, and more — and hides tide data that doesn't apply.</p>
         </div>
 
         <div className="about-footer">
-          Built for anglers, by anglers. More species and inland fishing support coming soon.
+          Built for anglers, by anglers — saltwater and freshwater alike.
         </div>
       </div>
     </div>

@@ -76,6 +76,7 @@ export default function App() {
   const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
+  const isInland = stationChecked && !tideStation;
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel } = calcFishingScore(conditions);
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
@@ -86,7 +87,8 @@ export default function App() {
     conditions.waveFt ?? 2,
     conditions.pressureMb ?? 1013,
     conditions.tideDirection ?? null,
-    moon.phase
+    moon.phase,
+    isInland
   );
   const scoreNarrative = buildScoreNarrative(
     lat, lon,
@@ -94,7 +96,8 @@ export default function App() {
     conditions.windMph ?? 10,
     conditions.waveFt ?? 2,
     conditions.pressureMb ?? 1013,
-    moon.phase
+    moon.phase,
+    isInland
   );
 
   const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string, time: 'now' | number) => {
@@ -431,7 +434,7 @@ export default function App() {
         </div>
 
         <section className="section">
-          <h3 className="section-label">Species bite forecast — {locationLabel}</h3>
+          <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
           <div className="species-grid">
             {species.map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
