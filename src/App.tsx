@@ -348,7 +348,7 @@ export default function App() {
   // ---- Hourly forecast cards ----
   const forecastSlots = (() => {
     if (!hourly) return [];
-    const slots: { time: Date; wind: number; dir: number; wave: number | null; icon: string; precip: number | null }[] = [];
+    const slots: { time: Date; wind: number; dir: string; temp: number | null; wave: number | null; icon: string; precip: number | null }[] = [];
     const startIdx = isToday
       ? hourly.time.findIndex(t => new Date(t) >= new Date())
       : 5;
@@ -358,7 +358,8 @@ export default function App() {
       slots.push({
         time: new Date(hourly.time[i]),
         wind: Math.round(hourly.wind_speed_10m[i]),
-        dir: Math.round(hourly.wind_direction_10m[i]),
+        dir: degToCompass(hourly.wind_direction_10m[i] ?? 0),
+        temp: hourly.temperature_2m ? Math.round(hourly.temperature_2m[i]) : null,
         wave: hourly.wave_height ? hourly.wave_height[i] : null,
         icon: wc.icon,
         precip: hourly.precipitation_probability?.[i] ?? null,
@@ -513,9 +514,9 @@ export default function App() {
                 <div className="fc-time">{s.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 <div className="fc-icon">{s.icon}</div>
                 {s.precip != null && s.precip > 0 && <div className="fc-precip">💧 {s.precip}%</div>}
-                <div className="fc-val">{s.wind} mph</div>
-                <div className="fc-sub">{s.dir}°</div>
-                {s.wave != null && <div className="fc-sub">{s.wave.toFixed(1)} ft</div>}
+                {s.temp != null && <div className="fc-val">{s.temp}°F</div>}
+                <div className="fc-sub">💨 {s.wind} mph {s.dir}</div>
+                {s.wave != null && <div className="fc-sub">〰️ {s.wave.toFixed(1)} ft</div>}
               </div>
             ))}
             {forecastSlots.length === 0 && <span className="muted">Loading forecast...</span>}
