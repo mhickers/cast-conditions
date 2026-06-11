@@ -9,6 +9,13 @@ export interface Conditions {
   wavePeriod: number;
   tideNow: number | null;
   tideDirection: 'rising' | 'falling' | null;
+  conditionLabel: string;
+  conditionIcon: string;
+  precipChance: number | null;
+  sunrise: string | null;
+  sunset: string | null;
+  sourcesUsed: number;
+  verified: boolean;
 }
 
 export interface TidePrediction {
@@ -50,4 +57,6 @@ export interface HourlyForecast {
   wind_speed_10m: number[];
   wind_direction_10m: number[];
   wave_height: number[] | null;
+  weather_code: number[] | null;
+  precipitation_probability: number[] | null;
 }

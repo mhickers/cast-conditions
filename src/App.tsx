@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import About from './About';
+import CatchFeed from './CatchFeed';
+import CatchSubmit from './CatchSubmit';
+import Admin from './Admin';
+import Feedback from './Feedback';
+import { getSpeciesForLocation } from './species';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, Tooltip, Filler,
 } from 'chart.js';
 import type { Conditions, TidePrediction, HourlyForecast, SavedSpot } from './types';
-import { getMoonPhase, calcFishingScore, calcSpecies, scoreColor } from './utils/fishing';
-import { geocodeLocation, fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary } from './utils/api';
+import { getMoonPhase, calcFishingScore, scoreColor } from './utils/fishing';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, weatherCodeToCondition } from './utils/api';
+import { resolveLocation } from './utils/geocode';
+import { crossCheckWeather } from './utils/crosscheck';
 import './App.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
@@ -53,28 +60,58 @@ export default function App() {
   });
   const [spotName, setSpotName] = useState('');
   const [showAbout, setShowAbout] = useState(false);
+  const [showSubmit, setShowSubmit] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  const isAdmin = window.location.pathname === '/admin';
 
-  const moon = getMoonPhase();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const maxDateStr = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().slice(0, 10); })();
+  const isToday = selectedDate === todayStr;
+
+  const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const { score, tips, label: scoreLabel } = calcFishingScore(conditions);
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
-  const species = calcSpecies(conditions);
+  const species = getSpeciesForLocation(
+    lat, lon,
+    conditions.waterTempF ?? null,
+    conditions.windMph ?? 10,
+    conditions.waveFt ?? 2,
+    conditions.pressureMb ?? 1013,
+    conditions.tideDirection ?? null,
+    moon.phase
+  );
 
-  const loadData = useCallback(async (lo: number, la: number, lbl: string) => {
+  const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string) => {
     setLoading(true);
     setAiSummary('Analyzing conditions with AI...');
     try {
       const [weather, waterTemp, tidePreds] = await Promise.all([
-        fetchWeather(la, lo),
+        fetchWeather(la, lo, dateStr),
         fetchWaterTemp(),
-        fetchTides(),
+        fetchTides(dateStr),
       ]);
       const conds: Partial<Conditions> = { ...weather.conditions, waterTempF: waterTemp };
-      const now = Date.now();
+
+      // Cross-check against NWS for today's live data (US only)
+      if (dateStr === new Date().toISOString().slice(0, 10)) {
+        const check = await crossCheckWeather(la, lo, conds.windMph ?? 0, conds.airTempF ?? 0);
+        conds.windMph = check.windMph;
+        conds.airTempF = check.airTempF;
+        conds.sourcesUsed = check.sourcesUsed;
+        conds.verified = check.verified;
+      } else {
+        conds.sourcesUsed = 1;
+        conds.verified = false;
+      }
+      // Interpolate tide level — for today use current time, for future use midday
+      const refTime = dateStr === new Date().toISOString().slice(0, 10)
+        ? Date.now()
+        : new Date(dateStr + 'T12:00:00').getTime();
       for (let i = 0; i < tidePreds.length - 1; i++) {
         const t1 = new Date(tidePreds[i].t).getTime();
         const t2 = new Date(tidePreds[i + 1].t).getTime();
-        if (now >= t1 && now <= t2) {
-          const frac = (now - t1) / (t2 - t1);
+        if (refTime >= t1 && refTime <= t2) {
+          const frac = (refTime - t1) / (t2 - t1);
           conds.tideNow = parseFloat(tidePreds[i].v) + frac * (parseFloat(tidePreds[i + 1].v) - parseFloat(tidePreds[i].v));
           conds.tideDirection = parseFloat(tidePreds[i + 1].v) > parseFloat(tidePreds[i].v) ? 'rising' : 'falling';
           break;
@@ -84,23 +121,29 @@ export default function App() {
       setTides(tidePreds);
       setHourly(weather.hourly);
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      const dayMoon = getMoonPhase(new Date(dateStr + 'T12:00:00'));
       const { score: sc } = calcFishingScore(conds);
-      const summary = await fetchAISummary(conds, moon.name, moon.illum, sc, lbl);
+      const summary = await fetchAISummary(conds, dayMoon.name, dayMoon.illum, sc, lbl, dateStr);
       setAiSummary(summary);
     } catch {
       setAiSummary('Unable to load conditions. Check your connection and try again.');
     }
     setLoading(false);
-  }, [moon.name, moon.illum]);
+  }, []);
 
-  useEffect(() => { loadData(lon, lat, locationLabel); }, []); // eslint-disable-line
+  useEffect(() => { loadData(lon, lat, locationLabel, selectedDate); }, []); // eslint-disable-line
+
+  const handleDateChange = (newDate: string) => {
+    setSelectedDate(newDate);
+    loadData(lon, lat, locationLabel, newDate);
+  };
 
   const handleSearch = async () => {
-    const geo = await geocodeLocation(searchInput);
+    const geo = await resolveLocation(searchInput);
     if (geo) {
       setLat(geo.lat); setLon(geo.lon); setLocationLabel(geo.label);
       setSearchInput(geo.label);
-      loadData(geo.lon, geo.lat, geo.label);
+      loadData(geo.lon, geo.lat, geo.label, selectedDate);
     }
   };
 
@@ -125,7 +168,7 @@ export default function App() {
 
   const loadSpot = (s: SavedSpot) => {
     setLat(s.lat); setLon(s.lon); setLocationLabel(s.label); setSearchInput(s.label);
-    loadData(s.lon, s.lat, s.label);
+    loadData(s.lon, s.lat, s.label, selectedDate);
   };
 
   const tideChartData = {
@@ -149,18 +192,31 @@ export default function App() {
 
   const forecastSlots = (() => {
     if (!hourly) return [];
-    const now = new Date();
-    const slots: { time: Date; wind: number; dir: number; wave: number | null }[] = [];
-    for (let i = 0; i < hourly.time.length && slots.length < 12; i++) {
-      const t = new Date(hourly.time[i]);
-      if (t >= now) slots.push({ time: t, wind: Math.round(hourly.wind_speed_10m[i]), dir: Math.round(hourly.wind_direction_10m[i]), wave: hourly.wave_height ? hourly.wave_height[i] : null });
+    const slots: { time: Date; wind: number; dir: number; wave: number | null; icon: string; precip: number | null }[] = [];
+    const startIdx = isToday
+      ? hourly.time.findIndex(t => new Date(t) >= new Date())
+      : 5; // future date: start at 5 AM
+    const step = isToday ? 1 : 2; // future: every 2 hours to cover the full day
+    for (let i = Math.max(0, startIdx); i < hourly.time.length && slots.length < 12; i += step) {
+      const wc = weatherCodeToCondition(hourly.weather_code?.[i] ?? 0);
+      slots.push({
+        time: new Date(hourly.time[i]),
+        wind: Math.round(hourly.wind_speed_10m[i]),
+        dir: Math.round(hourly.wind_direction_10m[i]),
+        wave: hourly.wave_height ? hourly.wave_height[i] : null,
+        icon: wc.icon,
+        precip: hourly.precipitation_probability?.[i] ?? null,
+      });
     }
     return slots;
   })();
 
+  if (isAdmin) return <Admin />;
+
   return (
     <div className="app">
       {showAbout && <About onClose={() => setShowAbout(false)} />}
+      {showSubmit && <CatchSubmit onClose={() => setShowSubmit(false)} />}
       <header className="header">
         <div className="header-inner">
           <div className="logo">
@@ -170,7 +226,7 @@ export default function App() {
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
-            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel)} title="Refresh">↻</button>
+            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate)} title="Refresh">↻</button>
           </div>
         </div>
       </header>
@@ -178,9 +234,25 @@ export default function App() {
       <main className="main">
         <section className="section">
           <div className="search-row">
-            <input className="search-input" value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} placeholder="Enter city or coastal spot..." aria-label="Location search" />
+            <input className="search-input" value={searchInput} onChange={e => setSearchInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()} placeholder="City, zip code, or GPS coordinates (e.g. 39.33, -74.50)" aria-label="Location search" />
             <button className="btn" onClick={handleSearch}>Search</button>
             <button className="btn btn-secondary" onClick={saveSpot}>♡ Save spot</button>
+          </div>
+          <div className="date-row">
+            <label className="date-label">Forecast date:</label>
+            <input
+              className="search-input date-input"
+              type="date"
+              value={selectedDate}
+              min={todayStr}
+              max={maxDateStr}
+              onChange={e => handleDateChange(e.target.value)}
+              aria-label="Forecast date"
+            />
+            {!isToday && (
+              <button className="btn btn-secondary btn-sm" onClick={() => handleDateChange(todayStr)}>← Back to today</button>
+            )}
+            {!isToday && <span className="date-note">Showing forecast for {new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>}
           </div>
         </section>
 
@@ -192,7 +264,10 @@ export default function App() {
             </div>
             <div className="score-info">
               <h2 className="score-label">{loading ? 'Loading conditions...' : scoreLabel}</h2>
-              <p className="score-tips">{loading ? `Fetching live data for ${locationLabel}` : tips.length ? `Factors: ${tips.join(', ')}.` : 'Based on current conditions.'}</p>
+              <p className="score-tips">
+                {loading ? `Fetching live data for ${locationLabel}` : tips.length ? `Factors: ${tips.join(', ')}.` : 'Based on current conditions.'}
+                {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature cross-checked against the National Weather Service">✓ Multi-source verified</span>}
+              </p>
             </div>
           </div>
         </section>
@@ -206,7 +281,8 @@ export default function App() {
 
         <section className="section">
           <h3 className="section-label">Atmosphere</h3>
-          <div className="stat-grid-4">
+          <div className="stat-grid-5">
+            <StatCard icon={conditions.conditionIcon ?? '🌤️'} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
             <StatCard icon="💨" value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
             <StatCard icon="🧭" value={conditions.windDir ?? '--'} unit="" label="Wind direction" />
             <StatCard icon="🌡️" value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
@@ -225,12 +301,13 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">24-hour forecast</h3>
+          <h3 className="section-label">{isToday ? '24-hour forecast' : 'Hourly forecast'}</h3>
           <div className="forecast-scroll">
             {forecastSlots.map((s, i) => (
               <div key={i} className="fc-card">
                 <div className="fc-time">{s.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                <div className="fc-icon">💨</div>
+                <div className="fc-icon">{s.icon}</div>
+                {s.precip != null && s.precip > 0 && <div className="fc-precip">💧 {s.precip}%</div>}
                 <div className="fc-val">{s.wind} mph</div>
                 <div className="fc-sub">{s.dir}°</div>
                 {s.wave != null && <div className="fc-sub">{s.wave.toFixed(1)} ft</div>}
@@ -241,7 +318,7 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">Tide chart — today</h3>
+          <h3 className="section-label">Tide chart — {isToday ? 'today' : new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</h3>
           <div className="chart-wrap">
             {tides.length > 0
               ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart for today" />
@@ -251,7 +328,7 @@ export default function App() {
 
         <div className="two-col">
           <section className="section">
-            <h3 className="section-label">Today's tide events</h3>
+            <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
             <div className="card">
               {tides.length > 0 ? tides.slice(0, 4).map((p, i) => {
                 const isH = p.type === 'H';
@@ -267,20 +344,38 @@ export default function App() {
             </div>
           </section>
           <section className="section">
-            <h3 className="section-label">Moon phase</h3>
-            <div className="card moon-card">
-              <MoonSVG phase={moon.phase} />
-              <div>
-                <div className="moon-name">{moon.name}</div>
-                <div className="moon-desc">{moon.desc}</div>
-                <div className="moon-illum">{moon.illum}% illuminated</div>
+            <h3 className="section-label">Sun & moon</h3>
+            <div className="card">
+              <div className="sun-row">
+                <div className="sun-item">
+                  <span className="sun-icon">🌅</span>
+                  <div>
+                    <div className="sun-time">{conditions.sunrise ? new Date(conditions.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
+                    <div className="sun-label">Sunrise</div>
+                  </div>
+                </div>
+                <div className="sun-item">
+                  <span className="sun-icon">🌇</span>
+                  <div>
+                    <div className="sun-time">{conditions.sunset ? new Date(conditions.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
+                    <div className="sun-label">Sunset</div>
+                  </div>
+                </div>
+              </div>
+              <div className="moon-card" style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 12 }}>
+                <MoonSVG phase={moon.phase} />
+                <div>
+                  <div className="moon-name">{moon.name}</div>
+                  <div className="moon-desc">{moon.desc}</div>
+                  <div className="moon-illum">{moon.illum}% illuminated</div>
+                </div>
               </div>
             </div>
           </section>
         </div>
 
         <section className="section">
-          <h3 className="section-label">Species bite forecast</h3>
+          <h3 className="section-label">Species bite forecast — {locationLabel}</h3>
           <div className="species-grid">
             {species.map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
@@ -320,9 +415,13 @@ export default function App() {
           </div>
         </section>
 
+        <Feedback />
+
+        <CatchFeed onSubmitClick={() => setShowSubmit(true)} />
+
         <footer className="footer">
           <span>Data: Open-Meteo · NOAA CO-OPS · Claude AI</span>
-          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel)}>↻ Refresh</button>
+          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel, selectedDate)}>↻ Refresh</button>
         </footer>
       </main>
     </div>
