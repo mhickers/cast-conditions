@@ -1,4 +1,4 @@
-# Cast Conditions 🎣
+# Fish Conditions 🎣
 
 A real-time fishing conditions dashboard powered by live weather, tide, and AI data.
 
@@ -48,4 +48,3 @@ npm run build
 - **Push notifications** — add a service worker that checks conditions on a schedule
 - **User accounts** — add Supabase or Firebase for cloud-synced saved spots
 - **More species** — extend the `calcSpecies` function in `src/utils/fishing.ts`
-# cast-conditions
