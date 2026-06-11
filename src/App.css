@@ -227,3 +227,7 @@ body { overflow-x: hidden; }
 /* Bait advisor footer */
 .bait-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .bait-source-note { font-size: 11px; color: var(--text-muted); }
+
+/* Tide station picker */
+.station-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+.station-select { flex: 0 1 320px; height: 32px; font-size: 12px; padding: 0 8px; }

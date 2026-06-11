@@ -23,7 +23,7 @@ import {
 import CatchLog from './CatchLog';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { crossCheckWeather } from './utils/crosscheck';
-import { findNearestStation, NearestStation } from './utils/stations';
+import { findNearestStation, findNearbyStations, NearestStation } from './utils/stations';
 import './App.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
@@ -118,6 +118,8 @@ export default function App() {
     /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate !== localToday() ? 12 : 'now'
   );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
+  const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
+  const [spotMsg, setSpotMsg] = useState('');
   const [stationChecked, setStationChecked] = useState(false);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewIsNow = useRef(true);
@@ -133,6 +135,21 @@ export default function App() {
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
   const isInland = stationChecked && !tideStation;
+  const isSaved = spots.some(s => s.label === locationLabel);
+
+  const getStationOverride = (lbl: string): NearestStation | null => {
+    try {
+      const map = JSON.parse(localStorage.getItem('tideStationOverrides') || '{}');
+      return map[lbl] ?? null;
+    } catch { return null; }
+  };
+  const saveStationOverride = (lbl: string, st: NearestStation) => {
+    try {
+      const map = JSON.parse(localStorage.getItem('tideStationOverrides') || '{}');
+      map[lbl] = st;
+      localStorage.setItem('tideStationOverrides', JSON.stringify(map));
+    } catch {}
+  };
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel } = calcFishingScore(conditions);
@@ -164,11 +181,15 @@ export default function App() {
     // weather outage can't block the inland/coastal check or species list.
     const stationsChain = (async () => {
       try {
-        const [tideSt, tempSt] = await Promise.all([
-          findNearestStation(la, lo, 'tidepredictions'),
+        const [nearby, tempSt] = await Promise.all([
+          findNearbyStations(la, lo, 'tidepredictions', 8, 60),
           findNearestStation(la, lo, 'watertemp', 150),
         ]);
         if (seq !== loadSeq.current) return null;
+        // Respect a station the user manually chose for this location
+        const override = getStationOverride(lbl);
+        const tideSt = (override && nearby.find(s => s.id === override.id)) || nearby[0] || null;
+        setNearbyStations(nearby);
         setTideStation(tideSt);
         setStationChecked(true);
         const [waterTemp, tideData] = await Promise.all([
@@ -268,6 +289,20 @@ export default function App() {
     }));
   };
 
+  const changeStation = async (id: string) => {
+    const st = nearbyStations.find(s => s.id === id);
+    if (!st) return;
+    setTideStation(st);
+    saveStationOverride(locationLabel, st);
+    setTideLoading(true);
+    const tideData = await fetchTides(selectedDate, st.id);
+    setTides(tideData);
+    setTideLoading(false);
+    const refTime = isNow ? Date.now() : new Date(`${selectedDate}T${String(selectedTime === 'now' ? 12 : selectedTime).padStart(2, '0')}:00:00`).getTime();
+    const tide = tideAt(tideData.curve, refTime);
+    setConditions(c => ({ ...c, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
+  };
+
   const handleTimeChange = (val: string) => {
     if (val === 'now') {
       setSelectedTime('now');
@@ -342,9 +377,12 @@ export default function App() {
 
   // ---- Saved spots ----
   const saveSpot = () => {
+    if (isSaved) { setSpotMsg('Already in your saved spots'); setTimeout(() => setSpotMsg(''), 2000); return; }
     const newSpots = [...spots, { id: Date.now().toString(), label: locationLabel, lat, lon }];
     setSpots(newSpots);
     localStorage.setItem('castSpots', JSON.stringify(newSpots));
+    setSpotMsg('Spot saved ✓');
+    setTimeout(() => setSpotMsg(''), 2000);
   };
   const addNamedSpot = () => {
     if (!spotName.trim()) return;
@@ -471,10 +509,11 @@ export default function App() {
             </datalist>
             <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location"><MapPin size={15} /></button>
             <button className="btn" onClick={handleSearch}>Search</button>
-            <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} style={{ verticalAlign: '-2px' }} /> Save spot</button>
+            <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
             <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
           </div>
           {shareMsg && <div className="share-msg">{shareMsg}</div>}
+          {spotMsg && <div className="share-msg">{spotMsg}</div>}
           {searchError && <div className="search-error">{searchError}</div>}
           <div className="date-row">
             <label className="date-label">Date:</label>
@@ -603,7 +642,21 @@ export default function App() {
                       : tideLoading ? 'Loading tide data...' : 'Tide data unavailable'}
                   </div>}
             </div>
-            {tideStation && <p className="station-note">Tide data from NOAA station: {tideStation.name} ({tideStation.distanceMi} mi away)</p>}
+            {tideStation && (
+              <div className="station-row">
+                <span className="station-note">Tide data from NOAA station:</span>
+                <select
+                  className="search-input station-select"
+                  value={tideStation.id}
+                  onChange={e => changeStation(e.target.value)}
+                  aria-label="Choose tide station"
+                >
+                  {nearbyStations.map(s => (
+                    <option key={s.id} value={s.id}>{s.name} ({s.distanceMi} mi)</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </section>
         )}
 
