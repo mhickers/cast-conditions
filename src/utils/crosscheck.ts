@@ -48,25 +48,39 @@ export async function crossCheckWeather(
     const obs = await obsRes.json();
     const p = obs.properties;
 
-    const nwsTempC = p?.temperature?.value;
-    const nwsWindKmh = p?.windSpeed?.value;
+    // NWS reports include a unitCode — convert based on what the station
+    // actually uses (most report Celsius, but some report Fahrenheit).
+    const tempVal = p?.temperature?.value;
+    const tempUnit = p?.temperature?.unitCode || '';
+    const windVal = p?.windSpeed?.value;
+    const windUnit = p?.windSpeed?.unitCode || '';
 
     let windMph = openMeteoWindMph;
     let airTempF = openMeteoTempF;
     let sources = 1;
     let agree = true;
 
-    if (nwsTempC != null) {
-      const nwsTempF = nwsTempC * 9 / 5 + 32;
-      sources = 2;
-      if (Math.abs(nwsTempF - openMeteoTempF) > 6) agree = false;
-      airTempF = Math.round((nwsTempF + openMeteoTempF) / 2);
+    if (tempVal != null) {
+      const nwsTempF = tempUnit.includes('degF') ? tempVal : tempVal * 9 / 5 + 32;
+      // Sanity guard: if the two sources differ wildly (bad unit, stale
+      // observation, distant station), trust the forecast model and skip averaging.
+      if (Math.abs(nwsTempF - openMeteoTempF) <= 15) {
+        sources = 2;
+        if (Math.abs(nwsTempF - openMeteoTempF) > 6) agree = false;
+        airTempF = Math.round((nwsTempF + openMeteoTempF) / 2);
+      } else {
+        agree = false;
+      }
     }
-    if (nwsWindKmh != null) {
-      const nwsWindMph = nwsWindKmh * 0.621371;
-      sources = 2;
-      if (Math.abs(nwsWindMph - openMeteoWindMph) > 7) agree = false;
-      windMph = (nwsWindMph + openMeteoWindMph) / 2;
+    if (windVal != null) {
+      const nwsWindMph = windUnit.includes('m_s') ? windVal * 2.23694 : windVal * 0.621371;
+      if (Math.abs(nwsWindMph - openMeteoWindMph) <= 15) {
+        sources = 2;
+        if (Math.abs(nwsWindMph - openMeteoWindMph) > 7) agree = false;
+        windMph = (nwsWindMph + openMeteoWindMph) / 2;
+      } else {
+        agree = false;
+      }
     }
 
     return { windMph, airTempF, sourcesUsed: sources, verified: sources >= 2 && agree };

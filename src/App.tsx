@@ -89,6 +89,7 @@ export default function App() {
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [stationChecked, setStationChecked] = useState(false);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const viewIsNow = useRef(true);
   const loadSeq = useRef(0);
   const isAdmin = window.location.pathname === '/admin';
 
@@ -118,6 +119,7 @@ export default function App() {
   // ---- Data loading: progressive (weather renders first, the rest streams in) ----
   const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string, time: 'now' | number) => {
     const seq = ++loadSeq.current;
+    viewIsNow.current = time === 'now';
     setLoading(true);
     setTideLoading(true);
     setSearchError('');
@@ -168,7 +170,7 @@ export default function App() {
       // 4. NWS cross-check in the background — updates the badge when done
       if (dateStr === new Date().toISOString().slice(0, 10) && time === 'now') {
         crossCheckWeather(la, lo, conds.windMph ?? 0, conds.airTempF ?? 0).then(check => {
-          if (seq === loadSeq.current) {
+          if (seq === loadSeq.current && viewIsNow.current) {
             setConditions(c => ({ ...c, windMph: check.windMph, airTempF: check.airTempF, sourcesUsed: check.sourcesUsed, verified: check.verified }));
           }
         });
@@ -191,6 +193,7 @@ export default function App() {
 
   // ---- Instant time changes: derive from hourly data already in memory ----
   const applyHour = (hh: number) => {
+    viewIsNow.current = false;
     if (!hourly || !hourly.time.length) return;
     const idx = Math.min(hh, hourly.time.length - 1);
     const wc = weatherCodeToCondition(hourly.weather_code?.[idx] ?? 0);
