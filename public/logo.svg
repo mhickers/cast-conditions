@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fish Conditions logo: leaping fish over waves -->
+  <circle cx="256" cy="256" r="248" fill="#0C2340"/>
+  <circle cx="256" cy="256" r="248" fill="none" stroke="#185FA5" stroke-width="12"/>
+  <!-- Moon glow behind the fish -->
+  <circle cx="142" cy="126" r="42" fill="#F5F0E8" opacity="0.92"/>
+  <!-- Leaping fish -->
+  <g transform="rotate(-18 256 230)">
+    <path d="M 110 240
+             C 160 162, 320 158, 378 222
+             L 452 168
+             C 446 200, 444 222, 450 240
+             C 444 258, 446 280, 452 312
+             L 378 258
+             C 320 322, 160 318, 110 240 Z"
+          fill="#E6F1FB"/>
+    <!-- Dorsal fin -->
+    <path d="M 212 190 L 250 130 L 288 186 Z" fill="#85B7EB"/>
+    <!-- Pectoral fin -->
+    <path d="M 224 252 C 244 274, 268 280, 286 274 C 270 290, 240 290, 224 252 Z" fill="#85B7EB"/>
+    <!-- Gill line -->
+    <path d="M 196 196 C 212 222, 212 258, 196 284" fill="none" stroke="#85B7EB" stroke-width="10" stroke-linecap="round"/>
+    <!-- Eye -->
+    <circle cx="158" cy="226" r="15" fill="#0C2340"/>
+  </g>
+  <!-- Waves -->
+  <path d="M 92 376 Q 130 350, 168 376 T 244 376 T 320 376 T 396 376 T 430 372"
+        fill="none" stroke="#378ADD" stroke-width="20" stroke-linecap="round"/>
+  <path d="M 132 424 Q 166 402, 200 424 T 268 424 T 336 424 T 388 420"
+        fill="none" stroke="#185FA5" stroke-width="16" stroke-linecap="round"/>
+</svg>

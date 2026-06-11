@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
               <h2>Today looks great at ${a.label}!</h2>
               <p>The fishing score is <strong>${score}/10</strong> — wind ${Math.round(wind)} mph${wave != null ? `, waves ${wave.toFixed(1)} ft` : ''}.</p>
               <p><a href="https://cast-conditions.vercel.app">Check the full conditions →</a></p>
-              <p style="font-size:12px;color:#888;">You get this alert when ${a.label} scores ${a.threshold ?? 7.5}+. </p>
+              <p style="font-size:12px;color:#888;">You get this alert when ${a.label} scores ${a.threshold ?? 7.5}+. <a href="https://cast-conditions.vercel.app/api/unsubscribe?id=${a.id}">Unsubscribe</a></p>
             `,
           }),
         });

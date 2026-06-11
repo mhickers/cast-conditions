@@ -10,7 +10,7 @@ export default function About({ onClose }: Props) {
     <div className="about-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="About Cast Conditions">
       <div className="about-modal" onClick={e => e.stopPropagation()}>
         <div className="about-header">
-          <span className="about-logo">⚓ Fish Conditions</span>
+          <span className="about-logo"><img src="/logo.svg" alt="" style={{ width: 26, height: 26, verticalAlign: '-6px', marginRight: 8 }} />Fish Conditions</span>
           <button className="about-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 

@@ -187,3 +187,7 @@ body { font-family: 'Source Sans 3', system-ui, sans-serif; background: var(--sa
 /* Species lures & bait advisor */
 .species-lures { font-size: 12px; color: var(--ocean); line-height: 1.45; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
 .bait-advice { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-line; }
+
+/* Logo & share */
+.logo-img { width: 34px; height: 34px; display: block; }
+.share-msg { margin-top: 8px; font-size: 13px; color: #0F6E56; background: #E1F5EE; padding: 8px 12px; border-radius: 8px; display: inline-block; }

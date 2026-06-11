@@ -65,10 +65,19 @@ const LAST_LOC_KEY = 'lastLocation';
 
 export default function App() {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(LAST_LOC_KEY) || 'null'); } catch { return null; } })();
-  const [lat, setLat] = useState(saved?.lat ?? 39.3298);
-  const [lon, setLon] = useState(saved?.lon ?? -74.5021);
-  const [locationLabel, setLocationLabel] = useState(saved?.label ?? 'Margate City, NJ');
-  const [searchInput, setSearchInput] = useState(saved?.label ?? 'Margate City, NJ');
+  // Shared links: ?lat=..&lon=..&label=..&date=.. override the remembered location
+  const urlP = new URLSearchParams(window.location.search);
+  const pLat = parseFloat(urlP.get('lat') || '');
+  const pLon = parseFloat(urlP.get('lon') || '');
+  const hasShared = !isNaN(pLat) && !isNaN(pLon) && Math.abs(pLat) <= 90 && Math.abs(pLon) <= 180;
+  const pLabel = hasShared ? (urlP.get('label') || `${pLat.toFixed(3)}, ${pLon.toFixed(3)}`) : null;
+  const pDate = urlP.get('date') || '';
+
+  const [lat, setLat] = useState(hasShared ? pLat : (saved?.lat ?? 39.3298));
+  const [lon, setLon] = useState(hasShared ? pLon : (saved?.lon ?? -74.5021));
+  const [locationLabel, setLocationLabel] = useState(pLabel ?? saved?.label ?? 'Margate City, NJ');
+  const [searchInput, setSearchInput] = useState(pLabel ?? saved?.label ?? 'Margate City, NJ');
+  const [shareMsg, setShareMsg] = useState('');
   const [suggestions, setSuggestions] = useState<GeoResult[]>([]);
   const [searchError, setSearchError] = useState('');
   const [conditions, setConditions] = useState<Partial<Conditions>>({});
@@ -84,8 +93,14 @@ export default function App() {
   const [spotName, setSpotName] = useState('');
   const [showAbout, setShowAbout] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
-  const [selectedTime, setSelectedTime] = useState<'now' | number>('now');
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const t = new Date().toISOString().slice(0, 10);
+    const max = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().slice(0, 10); })();
+    return /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate >= t && pDate <= max ? pDate : t;
+  });
+  const [selectedTime, setSelectedTime] = useState<'now' | number>(() =>
+    /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate !== new Date().toISOString().slice(0, 10) ? 12 : 'now'
+  );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [stationChecked, setStationChecked] = useState(false);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -261,6 +276,22 @@ export default function App() {
     else setSearchError(`Couldn't find "${searchInput}" — try a city name, zip code, or coordinates like 39.33, -74.50`);
   };
 
+  const shareConditions = async () => {
+    const params = new URLSearchParams({
+      lat: lat.toFixed(4), lon: lon.toFixed(4), label: locationLabel, date: selectedDate,
+    });
+    const url = `${window.location.origin}/?${params.toString()}`;
+    const text = `Fishing conditions for ${locationLabel}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Fish Conditions', text, url }); return; } catch {}
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareMsg('Link copied!');
+      setTimeout(() => setShareMsg(''), 2500);
+    } catch { setShareMsg(url); }
+  };
+
   const useMyLocation = () => {
     if (!navigator.geolocation) { setSearchError('Location access is not supported by this browser.'); return; }
     setSearchError('');
@@ -377,7 +408,7 @@ export default function App() {
       <header className="header">
         <div className="header-inner">
           <div className="logo">
-            <span className="logo-icon">⚓</span>
+            <img src="/logo.svg" alt="" className="logo-img" />
             <span className="logo-text">Fish Conditions</span>
           </div>
           <div className="header-right">
@@ -406,7 +437,9 @@ export default function App() {
             <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location">📍</button>
             <button className="btn" onClick={handleSearch}>Search</button>
             <button className="btn btn-secondary" onClick={saveSpot}>♡ Save spot</button>
+            <button className="btn btn-secondary" onClick={shareConditions}>↗ Share</button>
           </div>
+          {shareMsg && <div className="share-msg">{shareMsg}</div>}
           {searchError && <div className="search-error">{searchError}</div>}
           <div className="date-row">
             <label className="date-label">Date:</label>
