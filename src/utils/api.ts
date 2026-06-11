@@ -14,7 +14,9 @@ async function fetchJson(url: string, tries = 2): Promise<any | null> {
   for (let i = 0; i < tries; i++) {
     try {
       const res = await fetch(url);
-      if (res.ok) return await res.json();
+      // Parse the body even on errors — Open-Meteo returns { error, reason }
+      // which tells us exactly what went wrong instead of failing silently.
+      return await res.json();
     } catch {}
     await new Promise(r => setTimeout(r, 400));
   }
@@ -60,13 +62,25 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
   const useNow = today && hour === null;
   const dateParams = `&start_date=${dateStr}&end_date=${dateStr}`;
 
-  const [wJson, mJson] = await Promise.all([
-    fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation' : ''}&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation_probability&daily=sunrise,sunset&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=auto${dateParams}`),
+  const hourlyParams = 'hourly=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation_probability&daily=sunrise,sunset&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=auto';
+  const currentParams = today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation' : '';
+
+  let [wJson, mJson] = await Promise.all([
+    fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${currentParams}&${hourlyParams}${dateParams}`),
     fetchJson(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}${today ? '&current=wave_height,wave_period' : ''}&hourly=wave_height,wave_period&length_unit=imperial&timezone=auto${dateParams}`),
   ]);
+
+  // If the full request failed, retry once with a simpler request shape
+  if (!wJson || wJson.error || !wJson.hourly) {
+    wJson = await fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&${hourlyParams}${dateParams}`);
+  }
+
   // Weather is essential; waves are optional (marine API has outages and
   // some ad blockers block it — the dashboard still works without it)
-  if (!wJson || (!wJson.hourly && !wJson.current)) throw new Error('weather-unavailable');
+  if (!wJson || wJson.error || !wJson.hourly) {
+    throw new Error(wJson?.reason || 'no response — network blocked or service down');
+  }
+  if (mJson?.error) mJson = null;
   const h = wJson.hourly;
   const mh = mJson?.hourly;
 
@@ -92,7 +106,7 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
     };
   } else {
     // Specific hour (0-23) of the selected date; defaults to midday
-    const idx = Math.min(hour ?? 12, (h?.time?.length ?? 1) - 1);
+    const idx = Math.min(hour ?? (today ? new Date().getHours() : 12), (h?.time?.length ?? 1) - 1);
     const wc = weatherCodeToCondition(h?.weather_code?.[idx] ?? 0);
     const waveVal = mh?.wave_height?.[idx];
     const periodVal = mh?.wave_period?.[idx];

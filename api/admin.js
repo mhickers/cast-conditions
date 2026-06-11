@@ -60,6 +60,6 @@ module.exports = async (req, res) => {
 
     return res.status(400).json({ error: 'Unknown action' });
   } catch (e) {
-    return res.status(500).json({ error: 'Database operation failed' });
+    return res.status(500).json({ error: (e && e.message) || 'Database operation failed' });
   }
 };

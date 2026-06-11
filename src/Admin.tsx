@@ -26,7 +26,7 @@ export default function Admin() {
     try {
       const data = await adminCall(password, 'pending');
       setPending(data.pending ?? []);
-    } catch { setActionMsg('Failed to load'); }
+    } catch (e: any) { setActionMsg(`Failed to load: ${e?.message || 'unknown error'}`); }
     setLoading(false);
   };
 

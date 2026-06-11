@@ -1,14 +1,15 @@
-// Fish Conditions service worker — offline support.
-// Network-first with cache fallback: at a remote spot with no signal,
-// the app shows the last-loaded conditions instead of a blank screen.
-const CACHE = 'fish-conditions-v1';
+// Fish Conditions service worker v2 — offline app shell only.
+// v1 intercepted cross-origin API calls (weather/tides), which could break
+// data loading on some setups. v2 caches ONLY same-origin app files and
+// never touches API requests.
+const CACHE = 'fish-conditions-v2';
 
 self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.map(k => k !== CACHE ? caches.delete(k) : null)))
       .then(() => self.clients.claim())
   );
 });
@@ -17,7 +18,8 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  // Never cache our own serverless endpoints (AI, admin, alerts)
+  // Only handle our own origin; let all API/data requests pass straight through
+  if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
 
   e.respondWith(

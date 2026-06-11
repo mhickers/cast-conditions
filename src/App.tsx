@@ -206,11 +206,12 @@ export default function App() {
           }
         });
       }
-    } catch {
+    } catch (err: any) {
       if (seq === loadSeq.current) {
         setLoading(false);
         setTideLoading(false);
-        setSearchError('Couldn\u2019t reach the weather service — this is usually temporary, so try Refresh in a moment. (Ad blockers can also block api.open-meteo.com.)');
+        const reason = err?.message ? ` (${err.message})` : '';
+        setSearchError(`Couldn\u2019t load weather data${reason} — try Refresh in a moment. If this keeps happening, an ad blocker or extension may be blocking api.open-meteo.com.`);
         setAiSummary('Unable to load conditions.');
       }
     }
