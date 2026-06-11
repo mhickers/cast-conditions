@@ -1,8 +1,6 @@
 import type { Conditions, TidePrediction, HourlyForecast } from '../types';
 import { degToCompass } from './fishing';
 
-const NOAA_STATION = '8534720';
-
 // Map Open-Meteo weather codes to a simple condition + icon
 export function weatherCodeToCondition(code: number): { label: string; icon: string } {
   if (code === 0) return { label: 'Sunny', icon: '☀️' };
@@ -34,9 +32,11 @@ function isToday(dateStr: string): boolean {
   return dateStr === new Date().toISOString().slice(0, 10);
 }
 
-// Fetch weather for a specific date (today = live current data; future = forecast for that day)
-export async function fetchWeather(lat: number, lon: number, dateStr: string): Promise<{ conditions: Partial<Conditions>; hourly: HourlyForecast }> {
+// Fetch weather for a specific date and time.
+// hour === null means "now" (live current data, today only); a number 0-23 picks that hour.
+export async function fetchWeather(lat: number, lon: number, dateStr: string, hour: number | null): Promise<{ conditions: Partial<Conditions>; hourly: HourlyForecast }> {
   const today = isToday(dateStr);
+  const useNow = today && hour === null;
   const dateParams = `&start_date=${dateStr}&end_date=${dateStr}`;
 
   const [wRes, mRes] = await Promise.all([
@@ -49,7 +49,7 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string): P
 
   let conditions: Partial<Conditions>;
 
-  if (today && wJson.current) {
+  if (useNow && wJson.current) {
     const c = wJson.current;
     const mc = mJson.current;
     const wc = weatherCodeToCondition(c.weather_code ?? 0);
@@ -59,8 +59,8 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string): P
       windDeg: c.wind_direction_10m,
       airTempF: Math.round(c.temperature_2m),
       pressureMb: Math.round(c.surface_pressure),
-      waveFt: parseFloat((mc?.wave_height ?? 0).toFixed(1)),
-      wavePeriod: Math.round(mc?.wave_period ?? 0),
+      waveFt: mc?.wave_height != null ? parseFloat(mc.wave_height.toFixed(1)) : undefined,
+      wavePeriod: mc?.wave_period != null ? Math.round(mc.wave_period) : undefined,
       conditionLabel: wc.label,
       conditionIcon: wc.icon,
       precipChance: h?.precipitation_probability ? Math.max(...h.precipitation_probability.slice(new Date().getHours(), new Date().getHours() + 6)) : null,
@@ -68,20 +68,22 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string): P
       sunset: wJson.daily?.sunset?.[0] ?? null,
     };
   } else {
-    // Future date — use midday (12:00) values as representative, max precip chance for the day
-    const idx = Math.min(12, (h?.time?.length ?? 1) - 1);
+    // Specific hour (0-23) of the selected date; defaults to midday
+    const idx = Math.min(hour ?? 12, (h?.time?.length ?? 1) - 1);
     const wc = weatherCodeToCondition(h?.weather_code?.[idx] ?? 0);
+    const waveVal = mh?.wave_height?.[idx];
+    const periodVal = mh?.wave_period?.[idx];
     conditions = {
       windMph: h?.wind_speed_10m?.[idx] ?? 0,
       windDir: degToCompass(h?.wind_direction_10m?.[idx] ?? 0),
       windDeg: h?.wind_direction_10m?.[idx] ?? 0,
       airTempF: Math.round(h?.temperature_2m?.[idx] ?? 0),
       pressureMb: Math.round(h?.surface_pressure?.[idx] ?? 1013),
-      waveFt: parseFloat((mh?.wave_height?.[idx] ?? 0).toFixed(1)),
-      wavePeriod: Math.round(mh?.wave_period?.[idx] ?? 0),
+      waveFt: waveVal != null ? parseFloat(waveVal.toFixed(1)) : undefined,
+      wavePeriod: periodVal != null ? Math.round(periodVal) : undefined,
       conditionLabel: wc.label,
       conditionIcon: wc.icon,
-      precipChance: h?.precipitation_probability ? Math.max(...h.precipitation_probability) : null,
+      precipChance: h?.precipitation_probability ? Math.max(...h.precipitation_probability.slice(Math.max(0, idx - 1), idx + 4)) : null,
       sunrise: wJson.daily?.sunrise?.[0] ?? null,
       sunset: wJson.daily?.sunset?.[0] ?? null,
     };
@@ -100,16 +102,16 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string): P
   };
 }
 
-export async function fetchWaterTemp(): Promise<number | null> {
+export async function fetchWaterTemp(stationId: string): Promise<number | null> {
   try {
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${NOAA_STATION}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`);
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`);
     const d = await res.json();
     if (d.data?.[0]) return parseFloat(d.data[0].v);
   } catch {}
   return null;
 }
 
-export async function fetchTides(dateStr: string): Promise<TidePrediction[]> {
+export async function fetchTides(dateStr: string, stationId: string): Promise<TidePrediction[]> {
   try {
     // Fetch a 3-day window (day before → day after) so current-tide
     // interpolation always has bracketing events, even late at night.
@@ -117,7 +119,7 @@ export async function fetchTides(dateStr: string): Promise<TidePrediction[]> {
     const before = new Date(center); before.setDate(before.getDate() - 1);
     const after = new Date(center); after.setDate(after.getDate() + 1);
     const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${NOAA_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`);
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`);
     const d = await res.json();
     return d.predictions ?? [];
   } catch {}

@@ -15,6 +15,7 @@ import { getMoonPhase, calcFishingScore, scoreColor } from './utils/fishing';
 import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, weatherCodeToCondition } from './utils/api';
 import { resolveLocation } from './utils/geocode';
 import { crossCheckWeather } from './utils/crosscheck';
+import { findNearestStation, NearestStation } from './utils/stations';
 import './App.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
@@ -62,11 +63,18 @@ export default function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  const [selectedTime, setSelectedTime] = useState<'now' | number>('now');
+  const [tideStation, setTideStation] = useState<NearestStation | null>(null);
+  const [stationChecked, setStationChecked] = useState(false);
   const isAdmin = window.location.pathname === '/admin';
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const maxDateStr = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().slice(0, 10); })();
   const isToday = selectedDate === todayStr;
+  const isNow = isToday && selectedTime === 'now';
+  const fmtHour = (hh: number) => new Date(2000, 0, 1, hh).toLocaleTimeString([], { hour: 'numeric' });
+  const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel } = calcFishingScore(conditions);
@@ -89,19 +97,29 @@ export default function App() {
     moon.phase
   );
 
-  const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string) => {
+  const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string, time: 'now' | number) => {
     setLoading(true);
     setAiSummary('Analyzing conditions with AI...');
     try {
+      const hour = time === 'now' ? null : time;
+
+      // Find the nearest NOAA stations to this location (tides + water temp)
+      const [tideSt, tempSt] = await Promise.all([
+        findNearestStation(la, lo, 'tidepredictions'),
+        findNearestStation(la, lo, 'watertemp', 150),
+      ]);
+      setTideStation(tideSt);
+      setStationChecked(true);
+
       const [weather, waterTemp, tidePreds] = await Promise.all([
-        fetchWeather(la, lo, dateStr),
-        fetchWaterTemp(),
-        fetchTides(dateStr),
+        fetchWeather(la, lo, dateStr, hour),
+        tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
+        tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve([]),
       ]);
       const conds: Partial<Conditions> = { ...weather.conditions, waterTempF: waterTemp };
 
-      // Cross-check against NWS for today's live data (US only)
-      if (dateStr === new Date().toISOString().slice(0, 10)) {
+      // Cross-check against NWS only for live "now" data (US only)
+      if (dateStr === new Date().toISOString().slice(0, 10) && time === 'now') {
         const check = await crossCheckWeather(la, lo, conds.windMph ?? 0, conds.airTempF ?? 0);
         conds.windMph = check.windMph;
         conds.airTempF = check.airTempF;
@@ -111,10 +129,11 @@ export default function App() {
         conds.sourcesUsed = 1;
         conds.verified = false;
       }
-      // Interpolate tide level — for today use current time, for future use midday
-      const refTime = dateStr === new Date().toISOString().slice(0, 10)
+
+      // Interpolate tide level at the chosen reference time
+      const refTime = time === 'now' && dateStr === new Date().toISOString().slice(0, 10)
         ? Date.now()
-        : new Date(dateStr + 'T12:00:00').getTime();
+        : new Date(`${dateStr}T${String(time === 'now' ? 12 : time).padStart(2, '0')}:00:00`).getTime();
       for (let i = 0; i < tidePreds.length - 1; i++) {
         const t1 = new Date(tidePreds[i].t).getTime();
         const t2 = new Date(tidePreds[i + 1].t).getTime();
@@ -139,11 +158,20 @@ export default function App() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { loadData(lon, lat, locationLabel, selectedDate); }, []); // eslint-disable-line
+  useEffect(() => { loadData(lon, lat, locationLabel, selectedDate, selectedTime); }, []); // eslint-disable-line
 
   const handleDateChange = (newDate: string) => {
     setSelectedDate(newDate);
-    loadData(lon, lat, locationLabel, newDate);
+    // "Now" only makes sense for today — future dates default to midday
+    let time = selectedTime;
+    if (newDate !== todayStr && selectedTime === 'now') { time = 12; setSelectedTime(12); }
+    loadData(lon, lat, locationLabel, newDate, time);
+  };
+
+  const handleTimeChange = (val: string) => {
+    const time: 'now' | number = val === 'now' ? 'now' : parseInt(val, 10);
+    setSelectedTime(time);
+    loadData(lon, lat, locationLabel, selectedDate, time);
   };
 
   const handleSearch = async () => {
@@ -151,7 +179,7 @@ export default function App() {
     if (geo) {
       setLat(geo.lat); setLon(geo.lon); setLocationLabel(geo.label);
       setSearchInput(geo.label);
-      loadData(geo.lon, geo.lat, geo.label, selectedDate);
+      loadData(geo.lon, geo.lat, geo.label, selectedDate, selectedTime);
     }
   };
 
@@ -176,7 +204,7 @@ export default function App() {
 
   const loadSpot = (s: SavedSpot) => {
     setLat(s.lat); setLon(s.lon); setLocationLabel(s.label); setSearchInput(s.label);
-    loadData(s.lon, s.lat, s.label, selectedDate);
+    loadData(s.lon, s.lat, s.label, selectedDate, selectedTime);
   };
 
   // Tides for display: only the selected day (the full fetch spans 3 days for interpolation)
@@ -237,7 +265,7 @@ export default function App() {
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
-            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate)} title="Refresh">↻</button>
+            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh">↻</button>
           </div>
         </div>
       </header>
@@ -260,10 +288,22 @@ export default function App() {
               onChange={e => handleDateChange(e.target.value)}
               aria-label="Forecast date"
             />
-            {!isToday && (
-              <button className="btn btn-secondary btn-sm" onClick={() => handleDateChange(todayStr)}>← Back to today</button>
+            <label className="date-label">Time:</label>
+            <select
+              className="search-input time-input"
+              value={String(selectedTime)}
+              onChange={e => handleTimeChange(e.target.value)}
+              aria-label="Forecast time"
+            >
+              {isToday && <option value="now">Now</option>}
+              {Array.from({ length: 24 }, (_, i) => i).map(hh => (
+                <option key={hh} value={hh}>{fmtHour(hh)}</option>
+              ))}
+            </select>
+            {!isNow && (
+              <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedDate(todayStr); setSelectedTime('now'); loadData(lon, lat, locationLabel, todayStr, 'now'); }}>← Back to now</button>
             )}
-            {!isToday && <span className="date-note">Showing forecast for {new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>}
+            {!isNow && <span className="date-note">Showing {isToday ? "today's" : dateShort} conditions at {fmtHour(selectedTime === 'now' ? 12 : selectedTime)}</span>}
           </div>
         </section>
 
@@ -291,7 +331,7 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">Atmosphere{!isToday && ` — midday forecast, ${new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}`}</h3>
+          <h3 className="section-label">Atmosphere{timeContext}</h3>
           <div className="stat-grid-5">
             <StatCard icon={conditions.conditionIcon ?? '🌤️'} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
             <StatCard icon="💨" value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
@@ -302,12 +342,12 @@ export default function App() {
         </section>
 
         <section className="section">
-          <h3 className="section-label">Water conditions{!isToday && ` — midday forecast, ${new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}`}</h3>
+          <h3 className="section-label">Water conditions{timeContext}</h3>
           <div className="stat-grid-4">
-            <StatCard icon="🌊" value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isToday ? 'Water temp' : 'Water temp (latest reading)'} />
+            <StatCard icon="🌊" value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
             <StatCard icon="〰️" value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
             <StatCard icon="⏱️" value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
-            <StatCard icon="↕️" value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isToday ? 'Tide now' : 'Tide at midday'} />
+            <StatCard icon="↕️" value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
           </div>
         </section>
 
@@ -333,8 +373,13 @@ export default function App() {
           <div className="chart-wrap">
             {dayTides.length > 0
               ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart for today" />
-              : <div className="muted" style={{ padding: '2rem 0' }}>Loading tide data...</div>}
+              : <div className="muted" style={{ padding: '2rem 0' }}>
+                  {stationChecked && !tideStation
+                    ? 'No NOAA tide station within 100 miles — this looks like an inland spot, so tide data isn\u2019t available here.'
+                    : 'Loading tide data...'}
+                </div>}
           </div>
+          {tideStation && <p className="station-note">Tide data from NOAA station: {tideStation.name} ({tideStation.distanceMi} mi away)</p>}
         </section>
 
         <div className="two-col">
@@ -351,7 +396,7 @@ export default function App() {
                     <span className="tide-ht">{parseFloat(p.v).toFixed(1)} ft</span>
                   </div>
                 );
-              }) : <span className="muted">Loading...</span>}
+              }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : 'Loading...'}</span>}
             </div>
           </section>
           <section className="section">
@@ -432,7 +477,7 @@ export default function App() {
 
         <footer className="footer">
           <span>Data: Open-Meteo · NOAA CO-OPS · Claude AI</span>
-          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel, selectedDate)}>↻ Refresh</button>
+          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)}>↻ Refresh</button>
         </footer>
       </main>
     </div>
