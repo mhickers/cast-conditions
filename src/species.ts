@@ -15,7 +15,7 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
   { name: 'Bluefish',        icon: '🌊', regions: ['northeast','midatlantic','southeast'],              tempMin: 58, tempMax: 82, lures: 'Metal spoons, poppers with wire leaders; cut bait', tip: 'Aggressive surface feeders. Active in choppy conditions. Topwater lures work well.' },
   { name: 'Flounder',        icon: '🐟', regions: ['northeast','midatlantic','southeast','gulf'],       tempMin: 55, tempMax: 80, lures: 'Gulp swimming mullet on bucktails; minnow-and-squid rigs', tip: 'Prefer calmer water. Fish bottom near sandy channels on incoming tide.' },
-  { name: 'Weakfish',        icon: '🌙', regions: ['midatlantic'],                                     tempMin: 58, tempMax: 78, lures: 'Pink soft plastics, small jigs; live grass shrimp', tip: 'Excellent night bite near full moon. Fish tidal creeks and flats on incoming.' },
+  { name: 'Weakfish',        icon: '🌙', regions: ['midatlantic'],                                     tempMin: 58, tempMax: 78, lures: 'Pink soft plastics, small jigs; live grass shrimp', tip: 'Night feeders — work tidal creeks and flats after dark on moving water.' },
   { name: 'Kingfish',        icon: '☀️', regions: ['midatlantic','southeast','gulf'],                  tempMin: 62, tempMax: 84, lures: 'Bloodworms or Fishbites on small hooks, hi-lo rigs', tip: 'Summer species, love calm surf. Small hooks and fresh bait in the wash.' },
   { name: 'Sea bass',        icon: '⚓', regions: ['northeast','midatlantic','southeast'],              tempMin: 50, tempMax: 72, lures: 'Squid strips and clam on hi-lo rigs; diamond jigs', tip: 'Rocky bottom dwellers. Best around structure and reefs in moderate conditions.' },
   { name: 'Red drum',        icon: '🔴', regions: ['midatlantic','southeast','gulf'],                  tempMin: 60, tempMax: 85, lures: 'Gold spoons, scented paddletails; cut mullet or blue crab', tip: 'Tailing in shallow flats on rising tide. Look for nervous water.' },
@@ -128,7 +128,7 @@ export function getSpeciesForLocation(
     if (isFullMoon) score += 10;
 
     const biteScore = Math.min(100, Math.max(0, Math.round(score)));
-    const biteLabel: 'Hot bite' | 'Active' | 'Slow' = biteScore > 70 ? 'Hot bite' : biteScore > 45 ? 'Active' : 'Slow';
+    const biteLabel: 'Hot bite' | 'Active' | 'Slow' = biteScore > 75 ? 'Hot bite' : biteScore > 52 ? 'Active' : 'Slow';
     return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip, lures: sp.lures };
   });
 }
@@ -144,7 +144,8 @@ export function buildScoreNarrative(
   waveFt: number,
   pressureMb: number,
   moonPhase: number,
-  isInland: boolean = false
+  isInland: boolean = false,
+  score?: number
 ): string[] {
   const region = isInland ? getInlandRegion(lat, lon) : getRegion(lat, lon);
   const regional = ALL_SPECIES.filter(s => s.regions.includes(region));
@@ -195,7 +196,8 @@ export function buildScoreNarrative(
     else if (restPos.length) sentences.push(`${cap(restPos.join(' and '))}.`);
     else if (restNeg.length) sentences.push(`${cap(restNeg[0])}.`);
   } else if (positives.length) {
-    sentences.push(`${cap(positives.slice(0, 3).join(', '))} — a solid day to be on the water.`);
+    const tail = score == null || score >= 6.5 ? ' — a solid day to be on the water.' : '.';
+    sentences.push(`${cap(positives.slice(0, 3).join(', '))}${tail}`);
   } else if (negatives.length) {
     sentences.push(`${cap(negatives.slice(0, 3).join(', and '))}.`);
   }

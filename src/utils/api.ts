@@ -1,5 +1,5 @@
 import type { Conditions, HourlyForecast, TideData } from '../types';
-import { degToCompass } from './fishing';
+import { degToCompass, calcFishingScore } from './fishing';
 
 // "Today" in the user's local timezone (toISOString alone gives UTC,
 // which flips to tomorrow for US users in the evening)
@@ -163,7 +163,28 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
       fetch(base + '&interval=30'), // smooth 30-minute curve for the chart
     ]);
     const [eventsD, curveD] = await Promise.all([eventsRes.json(), curveRes.json()]);
-    return { events: eventsD.predictions ?? [], curve: curveD.predictions ?? [] };
+    const events = eventsD.predictions ?? [];
+    let curve = curveD.predictions ?? [];
+    // Subordinate NOAA stations only publish high/low events — synthesize a
+    // smooth curve between them (cosine interpolation, the standard approximation)
+    if (!curve.length && events.length > 1) {
+      curve = [];
+      const fmtLocal = (d: Date) => {
+        const p = (n: number) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+      };
+      for (let i = 0; i < events.length - 1; i++) {
+        const t1 = new Date(events[i].t.replace(' ', 'T')).getTime();
+        const t2 = new Date(events[i + 1].t.replace(' ', 'T')).getTime();
+        const v1 = parseFloat(events[i].v), v2 = parseFloat(events[i + 1].v);
+        for (let t = t1; t < t2; t += 30 * 60000) {
+          const frac = (t - t1) / (t2 - t1);
+          const v = v1 + (v2 - v1) * (1 - Math.cos(Math.PI * frac)) / 2;
+          curve.push({ t: fmtLocal(new Date(t)), v: v.toFixed(2) });
+        }
+      }
+    }
+    return { events, curve };
   } catch {}
   return { events: [], curve: [] };
 }
@@ -174,19 +195,31 @@ export async function fetchAISummary(conditions: Partial<Conditions>, moonName: 
     ? new Date(dateStr + 'T12:00:00').toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })
     : 'today';
 
+  // Build the conditions list ONLY from data we actually have — the AI must
+  // never narrate values the dashboard shows as unavailable.
+  const lines: string[] = [];
+  if (conditions.conditionLabel) lines.push(`- Weather: ${conditions.conditionLabel}${conditions.precipChance != null ? `, ${conditions.precipChance}% chance of rain` : ''}`);
+  if (conditions.windMph != null) lines.push(`- Wind: ${conditions.windMph.toFixed(0)} mph${conditions.windDir ? ` from ${conditions.windDir}` : ''}`);
+  if (conditions.airTempF != null) lines.push(`- Air temp: ${conditions.airTempF}°F`);
+  if (conditions.waterTempF != null) lines.push(`- Water temp: ${conditions.waterTempF.toFixed(0)}°F`);
+  if (conditions.waveFt != null) lines.push(`- Wave height: ${conditions.waveFt} ft${conditions.wavePeriod ? `, period ${conditions.wavePeriod} sec` : ''}`);
+  if (conditions.pressureMb != null) {
+    const t = conditions.pressureTrend;
+    lines.push(`- Barometric pressure: ${conditions.pressureMb} mb${t != null ? ` (${t <= -2 ? 'falling — front approaching' : t >= 3 ? 'rising quickly' : 'steady'})` : ''}`);
+  }
+  lines.push(`- Moon: ${moonName} (${moonIllum}% illuminated)`);
+  if (conditions.tideDirection) lines.push(`- Tide: ${conditions.tideDirection}`);
+  lines.push(`- Overall fishing score: ${score}/10`);
+
   const prompt = `You are a knowledgeable fishing guide. Given these ${isFuture ? 'forecasted' : 'current'} conditions at ${location} for ${dayLabel}, write a 2-3 sentence plain-English fishing summary. Be specific, practical, and conversational. Mention what species to target and best tactics.
 
 Conditions:
-- Weather: ${conditions.conditionLabel ?? 'unknown'}, ${conditions.precipChance != null ? conditions.precipChance + '% chance of rain' : 'precipitation unknown'}
-- Wind: ${conditions.windMph?.toFixed(0)} mph from ${conditions.windDir}
-- Air temp: ${conditions.airTempF}°F, Water temp: ${conditions.waterTempF ?? 'unknown'}°F
-- Wave height: ${conditions.waveFt} ft, Wave period: ${conditions.wavePeriod} sec
-- Barometric pressure: ${conditions.pressureMb} mb (${(conditions.pressureMb ?? 1013) > 1013 ? 'high/stable' : 'low/falling'})
-- Moon: ${moonName} (${moonIllum}% illuminated)
-- Tide direction: ${conditions.tideDirection ?? 'unknown'}
-- Overall fishing score: ${score}/10
+${lines.join('\n')}
 
-Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide. Respond in plain text only — no markdown, no asterisks, no bullet points.`;
+STRICT RULES:
+- Reference ONLY the conditions listed above. If tide is not listed, do not mention tides at all. Same for waves, water temp, or any other missing value.
+- Your tone must match the score: below 5 is a tough day, 5-6.5 is mixed, above 6.5 is promising. Never call a below-6 day "great" or "solid".
+- Keep it to 2-3 sentences max. Warm and helpful like a local guide. Plain text only — no markdown, no asterisks, no bullet points.`;
 
   // Calls our own serverless function (/api/summary) which holds the API key
   // server-side — more reliable and keeps the key out of the browser.
@@ -225,4 +258,31 @@ export async function fetchAIAdvice(prompt: string): Promise<string | null> {
     if (res.ok && data.text) return data.text.replace(/\*/g, '');
   } catch {}
   return null;
+}
+
+// 7-day outlook: one daily score per day (midday conditions + pressure trend)
+export async function fetchWeekOutlook(lat: number, lon: number): Promise<Array<{ date: string; score: number }>> {
+  const start = localToday();
+  const endD = new Date(); endD.setDate(endD.getDate() + 6);
+  const end = localToday(endD);
+  const [w, m] = await Promise.all([
+    fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,surface_pressure&wind_speed_unit=mph&timezone=auto&start_date=${start}&end_date=${end}`),
+    fetchJson(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height&length_unit=imperial&timezone=auto&start_date=${start}&end_date=${end}`),
+  ]);
+  if (!w?.hourly?.time?.length) return [];
+  const out: Array<{ date: string; score: number }> = [];
+  const days = Math.floor(w.hourly.time.length / 24);
+  for (let d = 0; d < Math.min(7, days); d++) {
+    const idx = d * 24 + 12;
+    const dateStr = w.hourly.time[idx].slice(0, 10);
+    const trend = w.hourly.surface_pressure ? w.hourly.surface_pressure[idx] - w.hourly.surface_pressure[idx - 6] : null;
+    const { score } = calcFishingScore({
+      windMph: w.hourly.wind_speed_10m?.[idx],
+      waveFt: m?.hourly?.wave_height?.[idx] ?? undefined,
+      pressureMb: w.hourly.surface_pressure?.[idx],
+      pressureTrend: trend,
+    } as any, new Date(dateStr + 'T12:00:00'));
+    out.push({ date: dateStr, score });
+  }
+  return out;
 }

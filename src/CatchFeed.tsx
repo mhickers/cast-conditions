@@ -42,9 +42,8 @@ export default function CatchFeed({ onSubmitClick }: Props) {
       {loading && <div className="muted cf-loading">Loading catches...</div>}
 
       {!loading && catches.length === 0 && (
-        <div className="cf-empty">
-          <div className="cf-empty-icon">🎣</div>
-          <p>No catches yet — be the first to share one!</p>
+        <div className="cf-empty cf-empty-compact">
+          <p>Caught something good? Share it with local anglers —</p>
           <button className="btn" onClick={onSubmitClick}>Share a catch</button>
         </div>
       )}

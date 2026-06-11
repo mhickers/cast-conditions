@@ -24,23 +24,44 @@ export function getMoonPhase(forDate?: Date): MoonInfo {
   return { phase, illum, name, desc };
 }
 
-export function calcFishingScore(d: Partial<Conditions>): FishingScore {
+export function calcFishingScore(d: Partial<Conditions>, forDate?: Date): FishingScore {
   let s = 5;
-  const tips: string[] = [];
-  const moon = getMoonPhase();
-  if ((d.windMph ?? 10) < 8)  { s += 1.2; tips.push('calm winds'); }
-  else if ((d.windMph ?? 10) > 18) { s -= 1.2; tips.push('strong wind'); }
-  if ((d.waveFt ?? 2) < 2)    { s += 1;   tips.push('smooth seas'); }
-  else if ((d.waveFt ?? 2) > 4) { s -= 1.5; tips.push('choppy seas'); }
-  if ((d.pressureMb ?? 1013) > 1015) { s += 0.5; tips.push('high pressure'); }
-  else if ((d.pressureMb ?? 1013) < 1005) { s -= 0.5; tips.push('falling pressure'); }
-  if (Math.abs(moon.phase - 14.77) < 3) { s += 1; tips.push('full moon feeding'); }
-  else if (moon.phase < 3 || moon.phase > 27) { s += 0.5; tips.push('new moon'); }
-  const wt = d.waterTempF ?? 65;
-  if (wt > 58 && wt < 78) { s += 0.5; tips.push('ideal water temp'); }
+  const factors: Array<{ label: string; delta: number }> = [];
+  const add = (label: string, delta: number) => { s += delta; factors.push({ label, delta }); };
+  const moon = getMoonPhase(forDate);
+
+  // Wind
+  if (d.windMph != null) {
+    if (d.windMph < 8) add('Calm winds', 1.2);
+    else if (d.windMph > 18) add('Strong winds', -1.4);
+    else if (d.windMph > 13) add('Stiff breeze', -0.5);
+  }
+  // Seas (when wave data exists)
+  if (d.waveFt != null) {
+    if (d.waveFt < 2) add('Manageable seas', 0.8);
+    else if (d.waveFt > 4) add('Rough seas', -1.5);
+  }
+  // Pressure TREND beats absolute pressure — falling ahead of a front is the
+  // classic bite trigger; sharply rising post-front slows things down.
+  if (d.pressureTrend != null) {
+    if (d.pressureTrend <= -2) add('Falling pressure (front approaching)', 1.0);
+    else if (d.pressureTrend >= 3) add('Rapidly rising pressure', -0.8);
+    else add('Steady pressure', 0.2);
+  } else if (d.pressureMb != null) {
+    if (d.pressureMb < 1000) add('Very low pressure (stormy)', -0.5);
+  }
+  // Moon
+  if (Math.abs(moon.phase - 14.77) < 3) add('Full moon feeding', 0.9);
+  else if (moon.phase < 3 || moon.phase > 27) add('New moon tides', 0.5);
+  // Water temp
+  if (d.waterTempF != null && d.waterTempF > 58 && d.waterTempF < 78) add('Productive water temp', 0.5);
+  // Tide movement
+  if (d.tideDirection === 'rising') add('Incoming tide', 0.5);
+  else if (d.tideDirection === 'falling') add('Outgoing tide', 0.2);
+
   s = Math.min(10, Math.max(1, Math.round(s * 10) / 10));
-  let label = s >= 7.5 ? 'Great conditions' : s >= 5.5 ? 'Decent day' : s >= 3.5 ? 'Fair conditions' : 'Tough conditions';
-  return { score: s, tips, label };
+  const label = s >= 7.5 ? 'Great conditions' : s >= 5.5 ? 'Decent day' : s >= 3.5 ? 'Fair conditions' : 'Tough conditions';
+  return { score: s, tips: factors.map(f => f.label.toLowerCase()), label, factors };
 }
 
 export function calcSpecies(d: Partial<Conditions>): Species[] {
@@ -80,6 +101,8 @@ export function scoreColor(score: number): { bg: string; text: string } {
 export interface SolunarPeriods {
   majors: Array<[string, string]>;
   minors: Array<[string, string]>;
+  majorHours: number[];
+  minorHours: number[];
 }
 
 export function getSolunarPeriods(forDate: Date): SolunarPeriods {
@@ -103,5 +126,7 @@ export function getSolunarPeriods(forDate: Date): SolunarPeriods {
       [fmtT(rise - 0.5), fmtT(rise + 0.5)],
       [fmtT(set - 0.5), fmtT(set + 0.5)],
     ],
+    majorHours: [transit, underfoot],
+    minorHours: [rise, set],
   };
 }

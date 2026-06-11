@@ -2,6 +2,8 @@
 // local fishing reports (bait shop pages, report sites, public forums),
 // then blends them with seasonal patterns for the location.
 
+const { createClient } = require('@supabase/supabase-js');
+
 const hits = new Map();
 const LIMIT = 10; // searches are pricier than plain summaries
 const WINDOW = 60 * 60 * 1000;
@@ -24,6 +26,20 @@ module.exports = async (req, res) => {
   if (!location || !species || typeof location !== 'string' || typeof species !== 'string'
       || location.length > 120 || species.length > 200) {
     return res.status(400).json({ error: 'Invalid request' });
+  }
+
+  // Cache: identical location+species+day requests are free and instant
+  const cacheKey = `${location}|${species}|${dateLabel}`.toLowerCase().slice(0, 250);
+  const supaUrl = process.env.REACT_APP_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supa = supaUrl && serviceKey ? createClient(supaUrl, serviceKey) : null;
+  if (supa) {
+    try {
+      const { data: hit } = await supa.from('bait_cache').select('advice, created_at').eq('key', cacheKey).maybeSingle();
+      if (hit && Date.now() - new Date(hit.created_at).getTime() < 12 * 3600 * 1000) {
+        return res.status(200).json({ text: hit.advice, cached: true });
+      }
+    } catch {}
   }
 
   const prompt = `You are an expert local fishing guide for the area around ${location}. Today is ${dateLabel}.${conditionsSummary ? ` Current conditions: ${conditionsSummary}.` : ''}
@@ -73,6 +89,9 @@ STRICT RULES:
       .trim();
 
     if (!text) return res.status(502).json({ error: 'Empty response' });
+    if (supa) {
+      try { await supa.from('bait_cache').upsert({ key: cacheKey, advice: text, created_at: new Date().toISOString() }); } catch {}
+    }
     return res.status(200).json({ text });
   } catch {
     return res.status(500).json({ error: 'Request failed' });

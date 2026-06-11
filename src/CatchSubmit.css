@@ -9,7 +9,7 @@
   padding: 1rem;
 }
 .cs-modal {
-  background: #FDFBF7;
+  background: var(--surface);
   border-radius: 14px;
   max-width: 440px;
   width: 100%;

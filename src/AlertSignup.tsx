@@ -9,6 +9,7 @@ interface Props {
 
 export default function AlertSignup({ locationLabel, lat, lon }: Props) {
   const [email, setEmail] = useState('');
+  const [threshold, setThreshold] = useState(7.5);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -18,7 +19,7 @@ export default function AlertSignup({ locationLabel, lat, lon }: Props) {
     setBusy(true); setError('');
     try {
       const { error: err } = await supabase.from('alerts').insert({
-        email: email.trim(), label: locationLabel, lat, lon, threshold: 7.5,
+        email: email.trim(), label: locationLabel, lat, lon, threshold,
       });
       if (err) throw err;
       setDone(true);
@@ -33,10 +34,16 @@ export default function AlertSignup({ locationLabel, lat, lon }: Props) {
       <h3 className="section-label">Condition alerts</h3>
       <div className="card">
         {done ? (
-          <p className="alert-success">✓ You're set! We'll email you when {locationLabel} scores 7.5 or higher.</p>
+          <p className="alert-success">✓ You're set! We'll email you when {locationLabel} scores {threshold} or higher.</p>
         ) : (
           <>
-            <p className="alert-desc">Get an email when conditions at <strong>{locationLabel}</strong> hit a fishing score of 7.5+ (checked each morning).</p>
+            <p className="alert-desc">Get an email when conditions at <strong>{locationLabel}</strong> hit a fishing score of{' '}
+              <select className="threshold-select" value={threshold} onChange={e => setThreshold(parseFloat(e.target.value))} aria-label="Alert threshold">
+                <option value={7}>7+</option>
+                <option value={7.5}>7.5+</option>
+                <option value={8}>8+</option>
+                <option value={8.5}>8.5+</option>
+              </select>{' '}(checked each morning).</p>
             <div className="add-spot-row">
               <input
                 className="search-input"

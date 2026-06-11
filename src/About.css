@@ -10,7 +10,7 @@
 }
 
 .about-modal {
-  background: #FDFBF7;
+  background: var(--surface);
   border-radius: 14px;
   max-width: 520px;
   width: 100%;

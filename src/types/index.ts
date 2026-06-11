@@ -16,6 +16,7 @@ export interface Conditions {
   sunset: string | null;
   sourcesUsed: number;
   verified: boolean;
+  pressureTrend: number | null;
 }
 
 export interface TidePrediction {
@@ -35,6 +36,7 @@ export interface FishingScore {
   score: number;
   tips: string[];
   label: string;
+  factors: Array<{ label: string; delta: number }>;
 }
 
 export interface Species {

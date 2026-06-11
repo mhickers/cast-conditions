@@ -14,11 +14,11 @@ import {
 } from 'chart.js';
 import type { Conditions, TideData, HourlyForecast, SavedSpot } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, weatherCodeToCondition, localToday } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, weatherCodeToCondition, localToday } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Compass, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
@@ -119,6 +119,14 @@ export default function App() {
   );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
+  const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
+  const [showBreakdown, setShowBreakdown] = useState(false);
+  const [theme, setTheme] = useState<string>(() => {
+    try {
+      return localStorage.getItem('theme')
+        || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch { return 'light'; }
+  });
   const [spotMsg, setSpotMsg] = useState('');
   const [stationChecked, setStationChecked] = useState(false);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -152,7 +160,7 @@ export default function App() {
   };
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
-  const { score, label: scoreLabel } = calcFishingScore(conditions);
+  const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
   const species = getSpeciesForLocation(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
@@ -161,8 +169,17 @@ export default function App() {
   );
   const scoreNarrative = buildScoreNarrative(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
-    conditions.waveFt ?? 2, conditions.pressureMb ?? 1013, moon.phase, isInland
+    conditions.waveFt ?? 2, conditions.pressureMb ?? 1013, moon.phase, isInland, score
   );
+
+  // 6-hour pressure delta from the hourly series (the angler's "trend")
+  const pressureTrendAt = (h: HourlyForecast | null, idx: number): number | null => {
+    if (!h?.surface_pressure || idx < 3) return null;
+    const prev = h.surface_pressure[Math.max(0, idx - 6)];
+    const now = h.surface_pressure[Math.min(idx, h.surface_pressure.length - 1)];
+    if (prev == null || now == null) return null;
+    return Math.round((now - prev) * 10) / 10;
+  };
 
   // ---- Data loading: progressive (weather renders first, the rest streams in) ----
   const loadData = useCallback(async (lo: number, la: number, lbl: string, dateStr: string, time: 'now' | number) => {
@@ -211,10 +228,14 @@ export default function App() {
     try {
       const weather = await fetchWeather(la, lo, dateStr, hour);
       if (seq !== loadSeq.current) return;
-      setConditions(c => ({ ...c, ...weather.conditions, sourcesUsed: 1, verified: false }));
+      const trendIdx = hour ?? (dateStr === localToday() ? new Date().getHours() : 12);
+      const pTrend = pressureTrendAt(weather.hourly, trendIdx);
+      setConditions(c => ({ ...c, ...weather.conditions, pressureTrend: pTrend, sourcesUsed: 1, verified: false }));
       setHourly(weather.hourly);
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setLoading(false);
+
+      fetchWeekOutlook(la, lo).then(ws => { if (seq === loadSeq.current) setWeekScores(ws); }).catch(() => {});
 
       const extra = await stationsChain;
       if (seq !== loadSeq.current) return;
@@ -258,6 +279,11 @@ export default function App() {
 
   useEffect(() => { loadData(lon, lat, locationLabel, selectedDate, selectedTime); }, []); // eslint-disable-line
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('theme', theme); } catch {}
+  }, [theme]);
+
   const rememberLocation = (la: number, lo: number, lbl: string) => {
     try { localStorage.setItem(LAST_LOC_KEY, JSON.stringify({ lat: la, lon: lo, label: lbl })); } catch {}
   };
@@ -284,6 +310,7 @@ export default function App() {
         ? Math.max(...hourly.precipitation_probability.slice(Math.max(0, idx - 1), idx + 4)) : c.precipChance,
       tideNow: tide?.v ?? null,
       tideDirection: tide?.dir ?? null,
+      pressureTrend: pressureTrendAt(hourly, idx),
       verified: false,
       sourcesUsed: 1,
     }));
@@ -400,19 +427,30 @@ export default function App() {
   // ---- Best time to fish: hourly score timeline ----
   const hourlyScores = useMemo(() => {
     if (!hourly || !hourly.time.length) return [];
+    const sunriseH = conditions.sunrise ? new Date(conditions.sunrise).getHours() + new Date(conditions.sunrise).getMinutes() / 60 : null;
+    const sunsetH = conditions.sunset ? new Date(conditions.sunset).getHours() + new Date(conditions.sunset).getMinutes() / 60 : null;
+    const sol = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
     return Array.from({ length: Math.min(24, hourly.time.length) }, (_, hh) => {
       const refTime = new Date(`${selectedDate}T${String(hh).padStart(2, '0')}:00:00`).getTime();
       const tide = tideAt(tides.curve, refTime);
-      const { score: s } = calcFishingScore({
+      const trend = hourly.surface_pressure && hh >= 3
+        ? hourly.surface_pressure[hh] - hourly.surface_pressure[Math.max(0, hh - 6)] : null;
+      let s = calcFishingScore({
         windMph: hourly.wind_speed_10m[hh],
         waveFt: hourly.wave_height?.[hh] ?? undefined,
         pressureMb: hourly.surface_pressure?.[hh] ?? undefined,
+        pressureTrend: trend,
         waterTempF: conditions.waterTempF ?? null,
         tideDirection: tide?.dir ?? null,
-      } as Partial<Conditions>);
-      return s;
+      } as Partial<Conditions>, new Date(selectedDate + 'T12:00:00')).score;
+      // Prime-time bonuses: dawn/dusk and solunar majors — this is also what
+      // keeps the timeline visually consistent with the solunar table below
+      if (sunriseH != null && Math.abs(hh - sunriseH) <= 1.5) s += 0.8;
+      if (sunsetH != null && Math.abs(hh - sunsetH) <= 1.5) s += 0.8;
+      if (sol.majorHours.some(m => Math.abs(hh - m) <= 1 || Math.abs(hh - m) >= 23)) s += 0.5;
+      return Math.min(10, Math.round(s * 10) / 10);
     });
-  }, [hourly, tides, conditions.waterTempF, selectedDate]);
+  }, [hourly, tides, conditions.waterTempF, conditions.sunrise, conditions.sunset, selectedDate]);
 
   const bestWindow = useMemo(() => {
     if (hourlyScores.length < 3) return null;
@@ -425,7 +463,8 @@ export default function App() {
   }, [hourlyScores]);
 
   const timelineColor = (s: number) =>
-    s >= 7.5 ? '#1D9E75' : s >= 5.5 ? '#378ADD' : s >= 3.5 ? '#EF9F27' : '#E24B4A';
+    s >= 8 ? '#168A63' : s >= 7 ? '#1D9E75' : s >= 6 ? '#2C9ED4' : s >= 5 ? '#378ADD'
+    : s >= 4 ? '#EF9F27' : s >= 3 ? '#E07B2E' : '#E24B4A';
 
   // ---- Tide chart data (smooth curve, selected day only) ----
   const dayCurve = tides.curve.filter(p => p.t.startsWith(selectedDate));
@@ -486,6 +525,7 @@ export default function App() {
           </div>
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
+            <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
             <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
             <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh"><RefreshCw size={15} /></button>
           </div>
@@ -554,11 +594,51 @@ export default function App() {
               <h2 className="score-label">{loading ? 'Loading conditions...' : scoreLabel}</h2>
               <p className="score-tips">
                 {loading ? `Fetching live data for ${locationLabel}` : scoreNarrative.length ? scoreNarrative.join(' ') : 'Based on current conditions.'}
-                {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature cross-checked against the National Weather Service">✓ Multi-source verified</span>}
+                {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature agree across NOAA weather stations and the Open-Meteo forecast model">✓ NOAA + Open-Meteo</span>}
               </p>
+              {!loading && scoreFactors.length > 0 && (
+                <button className="breakdown-toggle" onClick={() => setShowBreakdown(v => !v)}>
+                  {showBreakdown ? 'Hide breakdown' : 'How is this scored?'}
+                </button>
+              )}
+              {showBreakdown && (
+                <div className="breakdown">
+                  <div className="breakdown-row"><span>Baseline</span><span>5.0</span></div>
+                  {scoreFactors.map((f, i) => (
+                    <div key={i} className="breakdown-row">
+                      <span>{f.label}</span>
+                      <span className={f.delta >= 0 ? 'delta-pos' : 'delta-neg'}>{f.delta >= 0 ? '+' : ''}{f.delta.toFixed(1)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
+
+        {weekScores.length > 0 && (
+          <section className="section">
+            <h3 className="section-label">7-day outlook — which day should you go?</h3>
+            <div className="week-strip">
+              {weekScores.map(d => {
+                const dt = new Date(d.date + 'T12:00:00');
+                const active = d.date === selectedDate;
+                return (
+                  <button
+                    key={d.date}
+                    className={`week-card${active ? ' week-active' : ''}`}
+                    onClick={() => handleDateChange(d.date)}
+                    title={`View ${dt.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}`}
+                  >
+                    <span className="week-day">{dt.toLocaleDateString([], { weekday: 'short' })}</span>
+                    <span className="week-date">{dt.getDate()}</span>
+                    <span className="week-score" style={{ background: timelineColor(d.score) }}>{d.score.toFixed(1)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {hourlyScores.length > 0 && (
           <section className="section">
@@ -571,7 +651,7 @@ export default function App() {
                 <div
                   key={hh}
                   className={`timeline-seg${selectedTime === hh ? ' timeline-active' : ''}`}
-                  style={{ background: timelineColor(s) }}
+                  style={{ background: timelineColor(s), height: `${Math.round(25 + ((s - 1) / 9) * 75)}%` }}
                   title={`${fmtHour(hh)}: ${s.toFixed(1)}/10 — click to view`}
                   onClick={() => handleTimeChange(String(hh))}
                 />
@@ -597,7 +677,7 @@ export default function App() {
             <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
             <StatCard icon={<Compass size={18} />} value={conditions.windDir ?? '--'} unit="" label="Wind direction" />
             <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
-            <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit="mb" label="Barometric" />
+            <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
         </section>
 
@@ -777,9 +857,9 @@ export default function App() {
 
         <AlertSignup locationLabel={locationLabel} lat={lat} lon={lon} />
 
-        <Feedback />
-
         <CatchFeed onSubmitClick={() => setShowSubmit(true)} />
+
+        <Feedback />
 
         <footer className="footer">
           <span>Data: Open-Meteo · NOAA CO-OPS · NWS · Claude AI</span>
