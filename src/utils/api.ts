@@ -111,8 +111,13 @@ export async function fetchWaterTemp(): Promise<number | null> {
 
 export async function fetchTides(dateStr: string): Promise<TidePrediction[]> {
   try {
-    const noaaDate = dateStr.replace(/-/g, '');
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${NOAA_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json&begin_date=${noaaDate}&end_date=${noaaDate}`);
+    // Fetch a 3-day window (day before → day after) so current-tide
+    // interpolation always has bracketing events, even late at night.
+    const center = new Date(dateStr + 'T12:00:00');
+    const before = new Date(center); before.setDate(before.getDate() - 1);
+    const after = new Date(center); after.setDate(after.getDate() + 1);
+    const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
+    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${NOAA_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`);
     const d = await res.json();
     return d.predictions ?? [];
   } catch {}
@@ -139,29 +144,18 @@ Conditions:
 
 Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide.`;
 
-  const apiKey = process.env.REACT_APP_ANTHROPIC_API_KEY || '';
-
-  // Retry up to 2 times — handles transient network/rate-limit blips
+  // Calls our own serverless function (/api/summary) which holds the API key
+  // server-side — more reliable and keeps the key out of the browser.
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/summary', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }],
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
       });
       if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
-      const text = data.content?.find((b: any) => b.type === 'text')?.text;
-      if (text) return text;
+      if (data.text) return data.text;
     } catch (e) {
       if (attempt === 1) console.error('AI summary failed:', e);
       await new Promise(r => setTimeout(r, 1000));

@@ -171,11 +171,14 @@ export default function App() {
     loadData(s.lon, s.lat, s.label, selectedDate);
   };
 
+  // Tides for display: only the selected day (the full fetch spans 3 days for interpolation)
+  const dayTides = tides.filter(p => p.t.startsWith(selectedDate));
+
   const tideChartData = {
-    labels: tides.map(p => new Date(p.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
+    labels: dayTides.map(p => new Date(p.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })),
     datasets: [{
       label: 'Tide (ft)',
-      data: tides.map(p => parseFloat(p.v)),
+      data: dayTides.map(p => parseFloat(p.v)),
       borderColor: '#185FA5',
       backgroundColor: 'rgba(55,138,221,0.15)',
       fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#185FA5',
@@ -320,7 +323,7 @@ export default function App() {
         <section className="section">
           <h3 className="section-label">Tide chart — {isToday ? 'today' : new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</h3>
           <div className="chart-wrap">
-            {tides.length > 0
+            {dayTides.length > 0
               ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart for today" />
               : <div className="muted" style={{ padding: '2rem 0' }}>Loading tide data...</div>}
           </div>
@@ -330,7 +333,7 @@ export default function App() {
           <section className="section">
             <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
             <div className="card">
-              {tides.length > 0 ? tides.slice(0, 4).map((p, i) => {
+              {dayTides.length > 0 ? dayTides.slice(0, 4).map((p, i) => {
                 const isH = p.type === 'H';
                 const t = new Date(p.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 return (
