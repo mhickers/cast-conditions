@@ -146,6 +146,7 @@ Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide.`;
 
   // Calls our own serverless function (/api/summary) which holds the API key
   // server-side — more reliable and keeps the key out of the browser.
+  let lastError = '';
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const res = await fetch('/api/summary', {
@@ -153,13 +154,17 @@ Keep it to 2-3 sentences max. Be warm and helpful like a local fishing guide.`;
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
-      if (!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        lastError = data?.error || `HTTP ${res.status}`;
+        throw new Error(lastError);
+      }
       if (data.text) return data.text;
-    } catch (e) {
-      if (attempt === 1) console.error('AI summary failed:', e);
+      lastError = 'Empty response';
+    } catch (e: any) {
+      if (!lastError) lastError = e?.message || 'Network error';
       await new Promise(r => setTimeout(r, 1000));
     }
   }
-  return 'AI summary is temporarily unavailable — the conditions data above is still live and accurate.';
+  return `AI summary unavailable (${lastError}) — the conditions data above is still live and accurate.`;
 }

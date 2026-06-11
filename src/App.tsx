@@ -4,7 +4,7 @@ import CatchFeed from './CatchFeed';
 import CatchSubmit from './CatchSubmit';
 import Admin from './Admin';
 import Feedback from './Feedback';
-import { getSpeciesForLocation } from './species';
+import { getSpeciesForLocation, buildScoreNarrative } from './species';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -69,7 +69,7 @@ export default function App() {
   const isToday = selectedDate === todayStr;
 
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
-  const { score, tips, label: scoreLabel } = calcFishingScore(conditions);
+  const { score, label: scoreLabel } = calcFishingScore(conditions);
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
   const species = getSpeciesForLocation(
     lat, lon,
@@ -78,6 +78,14 @@ export default function App() {
     conditions.waveFt ?? 2,
     conditions.pressureMb ?? 1013,
     conditions.tideDirection ?? null,
+    moon.phase
+  );
+  const scoreNarrative = buildScoreNarrative(
+    lat, lon,
+    conditions.waterTempF ?? null,
+    conditions.windMph ?? 10,
+    conditions.waveFt ?? 2,
+    conditions.pressureMb ?? 1013,
     moon.phase
   );
 
@@ -268,7 +276,7 @@ export default function App() {
             <div className="score-info">
               <h2 className="score-label">{loading ? 'Loading conditions...' : scoreLabel}</h2>
               <p className="score-tips">
-                {loading ? `Fetching live data for ${locationLabel}` : tips.length ? `Factors: ${tips.join(', ')}.` : 'Based on current conditions.'}
+                {loading ? `Fetching live data for ${locationLabel}` : scoreNarrative.length ? scoreNarrative.join(' ') : 'Based on current conditions.'}
                 {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature cross-checked against the National Weather Service">✓ Multi-source verified</span>}
               </p>
             </div>

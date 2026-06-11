@@ -107,3 +107,70 @@ export function getSpeciesForLocation(
     return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip };
   });
 }
+
+// Build 2-3 readable narrative factors explaining the fishing score,
+// e.g. "Ideal water temp for flounder and striped bass, but high winds
+// are making conditions difficult."
+export function buildScoreNarrative(
+  lat: number,
+  lon: number,
+  waterTempF: number | null,
+  windMph: number,
+  waveFt: number,
+  pressureMb: number,
+  moonPhase: number
+): string[] {
+  const region = getRegion(lat, lon);
+  const regional = ALL_SPECIES.filter(s => s.regions.includes(region));
+  const wt = waterTempF;
+
+  const positives: string[] = [];
+  const negatives: string[] = [];
+
+  // Water temp vs species
+  if (wt != null) {
+    const inRange = regional.filter(s => wt >= s.tempMin && wt <= s.tempMax).slice(0, 2);
+    if (inRange.length >= 2) positives.push(`ideal water temp for ${inRange[0].name.toLowerCase()} and ${inRange[1].name.toLowerCase()}`);
+    else if (inRange.length === 1) positives.push(`ideal water temp for ${inRange[0].name.toLowerCase()}`);
+    else negatives.push(`water temp is outside the comfort zone for most local species`);
+  }
+
+  // Wind
+  if (windMph < 8) positives.push('light winds keeping things comfortable');
+  else if (windMph > 18) negatives.push('high winds are making conditions difficult');
+  else if (windMph > 12) negatives.push('a stiff breeze may complicate casting');
+
+  // Seas
+  if (waveFt < 1.5) positives.push('calm seas');
+  else if (waveFt > 4) negatives.push('rough seas could keep small boats at the dock');
+
+  // Moon
+  const nearFull = Math.abs(moonPhase - 14.77) < 3;
+  const nearNew = moonPhase < 2.5 || moonPhase > 27;
+  if (nearFull) positives.push('the full moon should boost nighttime feeding activity');
+  else if (nearNew) positives.push('the new moon favors strong tidal movement and dawn bites');
+
+  // Pressure
+  if (pressureMb > 1020) negatives.push('barometric pressure is running high, which can slow the bite');
+  else if (pressureMb < 1005) positives.push('falling pressure often triggers a feeding window before weather arrives');
+  else if (pressureMb >= 1012 && pressureMb <= 1020) positives.push('stable pressure');
+
+  // Compose into 1-3 sentences pairing positives with contrasting negatives
+  const sentences: string[] = [];
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  if (positives.length && negatives.length) {
+    sentences.push(`${cap(positives[0])}, but ${negatives[0]}.`);
+    const restPos = positives.slice(1, 3);
+    const restNeg = negatives.slice(1, 2);
+    if (restPos.length && restNeg.length) sentences.push(`${cap(restPos.join(' and '))}; however, ${restNeg[0]}.`);
+    else if (restPos.length) sentences.push(`${cap(restPos.join(' and '))}.`);
+    else if (restNeg.length) sentences.push(`${cap(restNeg[0])}.`);
+  } else if (positives.length) {
+    sentences.push(`${cap(positives.slice(0, 3).join(', '))} — a solid day to be on the water.`);
+  } else if (negatives.length) {
+    sentences.push(`${cap(negatives.slice(0, 3).join(', and '))}.`);
+  }
+
+  return sentences.slice(0, 3);
+}
