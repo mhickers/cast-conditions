@@ -1,31 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- Fish Conditions logo: leaping fish over waves -->
-  <circle cx="256" cy="256" r="248" fill="#0C2340"/>
-  <circle cx="256" cy="256" r="248" fill="none" stroke="#185FA5" stroke-width="12"/>
-  <!-- Moon glow behind the fish -->
-  <circle cx="142" cy="126" r="42" fill="#F5F0E8" opacity="0.92"/>
-  <!-- Leaping fish -->
-  <g transform="rotate(-18 256 230)">
-    <path d="M 110 240
-             C 160 162, 320 158, 378 222
-             L 452 168
-             C 446 200, 444 222, 450 240
-             C 444 258, 446 280, 452 312
-             L 378 258
-             C 320 322, 160 318, 110 240 Z"
-          fill="#E6F1FB"/>
-    <!-- Dorsal fin -->
-    <path d="M 212 190 L 250 130 L 288 186 Z" fill="#85B7EB"/>
+  <defs>
+    <radialGradient id="badge" cx="42%" cy="36%" r="80%">
+      <stop offset="0%" stop-color="#143C6B"/>
+      <stop offset="100%" stop-color="#0A1B33"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#C6DEF6"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="256" cy="256" r="248" fill="url(#badge)"/>
+  <circle cx="256" cy="256" r="240" fill="none" stroke="#2F7BC4" stroke-width="10"/>
+
+  <!-- Crescent moon -->
+  <path d="M 156 86 A 40 40 0 1 0 178 158 A 32 32 0 1 1 156 86 Z" fill="#F2EDE2" opacity="0.95"/>
+
+  <g transform="rotate(-16 256 232)">
+    <!-- Swept dorsal fin (tucked under body) -->
+    <path d="M 222 200
+             C 234 142, 272 112, 314 114
+             C 292 134, 276 158, 270 196
+             C 252 188, 236 192, 222 200 Z"
+          fill="#7FB3E8"/>
+    <!-- Sleek fish body with crescent tail -->
+    <path d="M 112 240
+             C 142 184, 220 158, 296 176
+             C 330 184, 352 198, 362 216
+             C 388 198, 414 174, 442 154
+             C 428 186, 423 212, 427 238
+             C 423 264, 428 290, 442 322
+             C 414 302, 388 278, 362 260
+             C 352 278, 330 292, 296 300
+             C 220 318, 142 296, 112 240 Z"
+          fill="url(#body)"/>
     <!-- Pectoral fin -->
-    <path d="M 224 252 C 244 274, 268 280, 286 274 C 270 290, 240 290, 224 252 Z" fill="#85B7EB"/>
-    <!-- Gill line -->
-    <path d="M 196 196 C 212 222, 212 258, 196 284" fill="none" stroke="#85B7EB" stroke-width="10" stroke-linecap="round"/>
+    <path d="M 232 250
+             C 256 266, 284 270, 306 262
+             C 292 286, 256 288, 232 250 Z"
+          fill="#7FB3E8"/>
+    <!-- Gill curve -->
+    <path d="M 198 198 C 216 224, 216 256, 198 282"
+          fill="none" stroke="#7FB3E8" stroke-width="9" stroke-linecap="round"/>
     <!-- Eye -->
-    <circle cx="158" cy="226" r="15" fill="#0C2340"/>
+    <circle cx="160" cy="228" r="13" fill="#0C2340"/>
+    <circle cx="156" cy="223" r="4" fill="#FFFFFF"/>
   </g>
+
   <!-- Waves -->
-  <path d="M 92 376 Q 130 350, 168 376 T 244 376 T 320 376 T 396 376 T 430 372"
-        fill="none" stroke="#378ADD" stroke-width="20" stroke-linecap="round"/>
-  <path d="M 132 424 Q 166 402, 200 424 T 268 424 T 336 424 T 388 420"
-        fill="none" stroke="#185FA5" stroke-width="16" stroke-linecap="round"/>
+  <path d="M 98 380 Q 134 356, 170 380 T 242 380 T 314 380 T 386 380 T 424 376"
+        fill="none" stroke="#3F8FD9" stroke-width="18" stroke-linecap="round"/>
+  <path d="M 140 426 Q 172 406, 204 426 T 268 426 T 332 426 T 380 422"
+        fill="none" stroke="#1E5F9E" stroke-width="14" stroke-linecap="round"/>
 </svg>

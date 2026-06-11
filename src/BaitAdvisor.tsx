@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { fetchAIAdvice } from './utils/api';
+import { Anchor, RefreshCw } from 'lucide-react';
+import type { Conditions } from './types';
 
 interface Props {
   locationLabel: string;
   dateStr: string;
+  speciesOptions: string[];
   topSpecies: string[];
-  waterTempF: number | null;
+  conditions: Partial<Conditions>;
   isInland: boolean;
 }
 
-export default function BaitAdvisor({ locationLabel, dateStr, topSpecies, waterTempF, isInland }: Props) {
+export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland }: Props) {
+  const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,14 +20,35 @@ export default function BaitAdvisor({ locationLabel, dateStr, topSpecies, waterT
   const getAdvice = async () => {
     setLoading(true);
     setError('');
-    const dayLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric' });
-    const prompt = `You are an expert local fishing guide for the area around ${locationLabel}. Date: ${dayLabel}.${waterTempF ? ` Water temp: ${waterTempF.toFixed(0)}°F.` : ''} The most active species right now: ${topSpecies.join(', ')}.
+    setAdvice('');
+    const speciesStr = selected === 'top' ? topSpecies.join(', ') : selected;
+    const dateLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
+    const condBits: string[] = [];
+    if (conditions.conditionLabel) condBits.push(conditions.conditionLabel.toLowerCase());
+    if (conditions.windMph != null) condBits.push(`${Math.round(conditions.windMph)} mph wind`);
+    if (conditions.waterTempF != null) condBits.push(`${conditions.waterTempF.toFixed(0)}°F water`);
+    if (conditions.pressureMb != null) condBits.push(`${conditions.pressureMb} mb pressure`);
 
-Give specific bait, lure${isInland ? ', and fly' : ''} recommendations for each of those species for this exact location and time of year. ${isInland ? 'If this is trout water, name the likely hatches this month and matching fly patterns with sizes. ' : ''}Mention colors and sizes where they matter. Be concrete and local, like advice from the counter of the nearest tackle shop. Keep it under 130 words. Format as one short line per species like "Striped bass: ...". Plain text only — no markdown, no asterisks.`;
-
-    const result = await fetchAIAdvice(prompt);
-    if (result) setAdvice(result);
-    else setError('Could not load suggestions right now — try again in a minute.');
+    try {
+      const res = await fetch('/api/bait', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: locationLabel,
+          species: speciesStr,
+          dateLabel,
+          conditionsSummary: condBits.join(', '),
+          isInland,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.text) throw new Error(data?.error || 'failed');
+      setAdvice(data.text);
+    } catch (e: any) {
+      setError(e?.message === 'Too many requests — try again later'
+        ? 'You\u2019ve hit the hourly limit for report scans — try again in a bit.'
+        : 'Couldn\u2019t complete the report scan right now — try again in a minute.');
+    }
     setLoading(false);
   };
 
@@ -32,18 +56,30 @@ Give specific bait, lure${isInland ? ', and fly' : ''} recommendations for each 
     <section className="section">
       <h3 className="section-label">Bait & lure advisor</h3>
       <div className="card">
-        {!advice && !loading && (
-          <>
-            <p className="alert-desc">Get bait, lure{isInland ? ', fly, and hatch' : ''} recommendations tailored to <strong>{locationLabel}</strong> for this date — like asking the local tackle shop.</p>
-            <button className="btn" onClick={getAdvice}>🪝 Get local suggestions</button>
-            {error && <div className="search-error" style={{ marginTop: 8 }}>{error}</div>}
-          </>
-        )}
-        {loading && <p className="muted">Asking the local guide...</p>}
+        <p className="alert-desc">
+          Scans recent public fishing reports near <strong>{locationLabel}</strong> — bait shop report pages,
+          regional report sites, and forums — and blends them with seasonal patterns for this date.
+        </p>
+        <div className="add-spot-row">
+          <select className="search-input" value={selected} onChange={e => setSelected(e.target.value)} aria-label="Species for bait advice">
+            <option value="top">Top species here ({topSpecies.slice(0, 2).join(', ')}...)</option>
+            {speciesOptions.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <button className="btn" onClick={getAdvice} disabled={loading}>
+            {loading ? 'Scanning...' : 'Get suggestions'}
+          </button>
+        </div>
+
+        {loading && <p className="muted" style={{ marginTop: 10 }}>Scanning recent local reports — this takes 10–20 seconds...</p>}
+        {error && <div className="search-error" style={{ marginTop: 10 }}>{error}</div>}
+
         {advice && (
           <>
-            <p className="bait-advice">{advice}</p>
-            <button className="btn btn-secondary btn-sm" onClick={getAdvice} style={{ marginTop: 10 }}>↻ Refresh suggestions</button>
+            <p className="bait-advice" style={{ marginTop: 12 }}>{advice}</p>
+            <div className="bait-footer">
+              <span className="bait-source-note"><Anchor size={11} style={{ verticalAlign: '-1px' }} /> Aggregated from recent public reports + seasonal patterns — verify with your local shop.</span>
+              <button className="btn btn-secondary btn-sm" onClick={getAdvice}><RefreshCw size={12} style={{ verticalAlign: '-1px' }} /> Refresh</button>
+            </div>
           </>
         )}
       </div>

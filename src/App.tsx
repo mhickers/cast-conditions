@@ -14,7 +14,13 @@ import {
 } from 'chart.js';
 import type { Conditions, TideData, HourlyForecast, SavedSpot } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, weatherCodeToCondition } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, weatherCodeToCondition, localToday } from './utils/api';
+import {
+  Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
+  Wind, Compass, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2,
+} from 'lucide-react';
+import CatchLog from './CatchLog';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { crossCheckWeather } from './utils/crosscheck';
 import { findNearestStation, NearestStation } from './utils/stations';
@@ -36,7 +42,17 @@ function MoonSVG({ phase }: { phase: number }) {
   );
 }
 
-function StatCard({ icon, value, unit, label }: { icon: string; value: string; unit: string; label: string }) {
+const condIcon = (label?: string | null) => {
+  const map: Record<string, React.ReactNode> = {
+    'Sunny': <Sun size={18} />, 'Mostly sunny': <CloudSun size={18} />, 'Partly cloudy': <CloudSun size={18} />,
+    'Cloudy': <Cloud size={18} />, 'Foggy': <CloudFog size={18} />, 'Drizzle': <CloudDrizzle size={18} />,
+    'Rain': <CloudRain size={18} />, 'Showers': <CloudRain size={18} />, 'Snow': <Snowflake size={18} />,
+    'Thunderstorms': <Zap size={18} />,
+  };
+  return (label && map[label]) || <CloudSun size={18} />;
+};
+
+function StatCard({ icon, value, unit, label }: { icon: React.ReactNode; value: string; unit: string; label: string }) {
   return (
     <div className="stat-card">
       <div className="stat-icon">{icon}</div>
@@ -94,12 +110,12 @@ export default function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => {
-    const t = new Date().toISOString().slice(0, 10);
-    const max = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().slice(0, 10); })();
+    const t = localToday();
+    const max = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return localToday(d); })();
     return /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate >= t && pDate <= max ? pDate : t;
   });
   const [selectedTime, setSelectedTime] = useState<'now' | number>(() =>
-    /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate !== new Date().toISOString().slice(0, 10) ? 12 : 'now'
+    /^\d{4}-\d{2}-\d{2}$/.test(pDate) && pDate !== localToday() ? 12 : 'now'
   );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [stationChecked, setStationChecked] = useState(false);
@@ -108,8 +124,8 @@ export default function App() {
   const loadSeq = useRef(0);
   const isAdmin = window.location.pathname === '/admin';
 
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const maxDateStr = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().slice(0, 10); })();
+  const todayStr = localToday();
+  const maxDateStr = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return localToday(d); })();
   const isToday = selectedDate === todayStr;
   const isNow = isToday && selectedTime === 'now';
   const fmtHour = (hh: number) => new Date(2000, 0, 1, hh).toLocaleTimeString([], { hour: 'numeric' });
@@ -166,7 +182,7 @@ export default function App() {
       ]);
       if (seq !== loadSeq.current) return;
 
-      const refTime = time === 'now' && dateStr === new Date().toISOString().slice(0, 10)
+      const refTime = time === 'now' && dateStr === localToday()
         ? Date.now()
         : new Date(`${dateStr}T${String(time === 'now' ? 12 : time).padStart(2, '0')}:00:00`).getTime();
       const tide = tideAt(tideData.curve, refTime);
@@ -183,7 +199,7 @@ export default function App() {
       });
 
       // 4. NWS cross-check in the background — updates the badge when done
-      if (dateStr === new Date().toISOString().slice(0, 10) && time === 'now') {
+      if (dateStr === localToday() && time === 'now') {
         crossCheckWeather(la, lo, conds.windMph ?? 0, conds.airTempF ?? 0).then(check => {
           if (seq === loadSeq.current && viewIsNow.current) {
             setConditions(c => ({ ...c, windMph: check.windMph, airTempF: check.airTempF, sourcesUsed: check.sourcesUsed, verified: check.verified }));
@@ -194,7 +210,7 @@ export default function App() {
       if (seq === loadSeq.current) {
         setLoading(false);
         setTideLoading(false);
-        setSearchError('Unable to load conditions. Check your connection and try again.');
+        setSearchError('Couldn\u2019t reach the weather service — this is usually temporary, so try Refresh in a moment. (Ad blockers can also block api.open-meteo.com.)');
         setAiSummary('Unable to load conditions.');
       }
     }
@@ -379,7 +395,7 @@ export default function App() {
   // ---- Hourly forecast cards ----
   const forecastSlots = (() => {
     if (!hourly) return [];
-    const slots: { time: Date; wind: number; dir: string; temp: number | null; wave: number | null; icon: string; precip: number | null }[] = [];
+    const slots: { time: Date; wind: number; dir: string; temp: number | null; wave: number | null; cond: string; precip: number | null }[] = [];
     const startIdx = isToday
       ? hourly.time.findIndex(t => new Date(t) >= new Date())
       : 5;
@@ -392,7 +408,7 @@ export default function App() {
         dir: degToCompass(hourly.wind_direction_10m[i] ?? 0),
         temp: hourly.temperature_2m ? Math.round(hourly.temperature_2m[i]) : null,
         wave: hourly.wave_height ? hourly.wave_height[i] : null,
-        icon: wc.icon,
+        cond: wc.label,
         precip: hourly.precipitation_probability?.[i] ?? null,
       });
     }
@@ -414,7 +430,7 @@ export default function App() {
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
-            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh">↻</button>
+            <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh"><RefreshCw size={15} /></button>
           </div>
         </div>
       </header>
@@ -434,10 +450,10 @@ export default function App() {
             <datalist id="loc-suggestions">
               {suggestions.map(s => <option key={s.label} value={s.label} />)}
             </datalist>
-            <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location">📍</button>
+            <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location"><MapPin size={15} /></button>
             <button className="btn" onClick={handleSearch}>Search</button>
-            <button className="btn btn-secondary" onClick={saveSpot}>♡ Save spot</button>
-            <button className="btn btn-secondary" onClick={shareConditions}>↗ Share</button>
+            <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} style={{ verticalAlign: '-2px' }} /> Save spot</button>
+            <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
           </div>
           {shareMsg && <div className="share-msg">{shareMsg}</div>}
           {searchError && <div className="search-error">{searchError}</div>}
@@ -519,11 +535,11 @@ export default function App() {
         <section className="section">
           <h3 className="section-label">Atmosphere{timeContext}</h3>
           <div className="stat-grid-5">
-            <StatCard icon={conditions.conditionIcon ?? '🌤️'} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
-            <StatCard icon="💨" value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
-            <StatCard icon="🧭" value={conditions.windDir ?? '--'} unit="" label="Wind direction" />
-            <StatCard icon="🌡️" value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
-            <StatCard icon="📊" value={conditions.pressureMb?.toString() ?? '--'} unit="mb" label="Barometric" />
+            <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
+            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
+            <StatCard icon={<Compass size={18} />} value={conditions.windDir ?? '--'} unit="" label="Wind direction" />
+            <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
+            <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit="mb" label="Barometric" />
           </div>
         </section>
 
@@ -531,10 +547,10 @@ export default function App() {
           <section className="section">
             <h3 className="section-label">Water conditions{timeContext}</h3>
             <div className="stat-grid-4">
-              <StatCard icon="🌊" value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
-              <StatCard icon="〰️" value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
-              <StatCard icon="⏱️" value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
-              <StatCard icon="↕️" value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
+              <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
+              <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
+              <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
+              <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
             </div>
           </section>
         )}
@@ -545,11 +561,11 @@ export default function App() {
             {forecastSlots.map((s, i) => (
               <div key={i} className="fc-card">
                 <div className="fc-time">{s.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                <div className="fc-icon">{s.icon}</div>
-                {s.precip != null && s.precip > 0 && <div className="fc-precip">💧 {s.precip}%</div>}
+                <div className="fc-icon">{condIcon(s.cond)}</div>
+                {s.precip != null && s.precip > 0 && <div className="fc-precip"><Droplet size={10} style={{ verticalAlign: '-1px' }} /> {s.precip}%</div>}
                 {s.temp != null && <div className="fc-val">{s.temp}°F</div>}
-                <div className="fc-sub">💨 {s.wind} mph {s.dir}</div>
-                {s.wave != null && <div className="fc-sub">〰️ {s.wave.toFixed(1)} ft</div>}
+                <div className="fc-sub">{s.wind} mph {s.dir}</div>
+                {s.wave != null && <div className="fc-sub">{s.wave.toFixed(1)} ft waves</div>}
               </div>
             ))}
             {forecastSlots.length === 0 && <span className="muted">Loading forecast...</span>}
@@ -596,14 +612,14 @@ export default function App() {
             <div className="card">
               <div className="sun-row">
                 <div className="sun-item">
-                  <span className="sun-icon">🌅</span>
+                  <span className="sun-icon"><Sunrise size={22} /></span>
                   <div>
                     <div className="sun-time">{conditions.sunrise ? new Date(conditions.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
                     <div className="sun-label">Sunrise</div>
                   </div>
                 </div>
                 <div className="sun-item">
-                  <span className="sun-icon">🌇</span>
+                  <span className="sun-icon"><Sunset size={22} /></span>
                   <div>
                     <div className="sun-time">{conditions.sunset ? new Date(conditions.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
                     <div className="sun-label">Sunset</div>
@@ -643,7 +659,7 @@ export default function App() {
                     <div className="bite-bar" style={{ width: `${sp.biteScore}%`, background: color }} />
                   </div>
                   <p className="species-tip">{sp.tip}</p>
-                  <p className="species-lures">🪝 {sp.lures}</p>
+                  <p className="species-lures"><strong>Lures:</strong> {sp.lures}</p>
                 </div>
               );
             })}
@@ -653,8 +669,9 @@ export default function App() {
         <BaitAdvisor
           locationLabel={locationLabel}
           dateStr={selectedDate}
-          topSpecies={[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 3).map(s => s.name)}
-          waterTempF={conditions.waterTempF ?? null}
+          speciesOptions={species.map(sp => sp.name)}
+          topSpecies={[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 3).map(sp => sp.name)}
+          conditions={conditions}
           isInland={isInland}
         />
 
@@ -664,10 +681,10 @@ export default function App() {
             {spots.length === 0 && <p className="muted" style={{ padding: '4px 0 8px' }}>No saved spots yet. Search a location and click "Save spot".</p>}
             {spots.map(s => (
               <div key={s.id} className="spot-row">
-                <span className="spot-pin">📍</span>
+                <span className="spot-pin"><MapPin size={15} /></span>
                 <span className="spot-name">{s.label}</span>
                 <button className="btn btn-sm" onClick={() => loadSpot(s)}>Load</button>
-                <button className="btn-ghost" onClick={() => deleteSpot(s.id)} aria-label={`Delete ${s.label}`}>🗑</button>
+                <button className="btn-ghost" onClick={() => deleteSpot(s.id)} aria-label={`Delete ${s.label}`}><Trash2 size={15} /></button>
               </div>
             ))}
             <div className="add-spot-row">
@@ -677,6 +694,14 @@ export default function App() {
           </div>
         </section>
 
+        <CatchLog
+          speciesOptions={species.map(sp => sp.name)}
+          locationLabel={locationLabel}
+          conditions={conditions}
+          score={score}
+          moonName={moon.name}
+        />
+
         <AlertSignup locationLabel={locationLabel} lat={lat} lon={lon} />
 
         <Feedback />
@@ -685,7 +710,7 @@ export default function App() {
 
         <footer className="footer">
           <span>Data: Open-Meteo · NOAA CO-OPS · NWS · Claude AI</span>
-          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)}>↻ Refresh</button>
+          <button className="btn btn-secondary" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)}><RefreshCw size={13} style={{ verticalAlign: '-2px' }} /> Refresh</button>
         </footer>
       </main>
     </div>
