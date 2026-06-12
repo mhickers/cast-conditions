@@ -8,6 +8,14 @@ export function localToday(d: Date = new Date()): string {
   return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
 }
 
+// Add one calendar day to a YYYY-MM-DD string. Anchored at local noon so a
+// 1-hour DST shift can never bump it to the wrong date.
+function nextDay(dateStr: string): string {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + 1);
+  return localToday(d);
+}
+
 // Fetch JSON with retry; returns null instead of throwing so one flaky
 // source (or an ad blocker) can't take down the whole dashboard.
 async function fetchJson(url: string, tries = 2): Promise<any | null> {
@@ -60,7 +68,10 @@ function isToday(dateStr: string): boolean {
 export async function fetchWeather(lat: number, lon: number, dateStr: string, hour: number | null): Promise<{ conditions: Partial<Conditions>; hourly: HourlyForecast }> {
   const today = isToday(dateStr);
   const useNow = today && hour === null;
-  const dateParams = `&start_date=${dateStr}&end_date=${dateStr}`;
+  // For "today", fetch through tomorrow as well so the 24-hour forecast can
+  // roll past midnight instead of running out at the end of the calendar day.
+  const endDate = today ? nextDay(dateStr) : dateStr;
+  const dateParams = `&start_date=${dateStr}&end_date=${endDate}`;
 
   const hourlyParams = 'hourly=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation_probability&daily=sunrise,sunset&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=auto';
   const currentParams = today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation' : '';

@@ -496,7 +496,8 @@ export default function App() {
       ? hourly.time.findIndex(t => new Date(t) >= new Date())
       : 5;
     const step = isToday ? 1 : 2;
-    for (let i = Math.max(0, startIdx); i < hourly.time.length && slots.length < 12; i += step) {
+    const maxSlots = isToday ? 24 : 12;
+    for (let i = Math.max(0, startIdx); i < hourly.time.length && slots.length < maxSlots; i += step) {
       const wc = weatherCodeToCondition(hourly.weather_code?.[i] ?? 0);
       slots.push({
         time: new Date(hourly.time[i]),

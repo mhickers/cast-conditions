@@ -68,6 +68,12 @@ export default function CatchSubmit({ onClose }: Props) {
         });
 
       if (insertError) throw insertError;
+      // Fire-and-forget owner notification — never blocks or fails the user flow
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'catch', species, location: location.trim(), angler_name: anglerName.trim() }),
+      }).catch(() => {});
       setSubmitted(true);
     } catch (e: any) {
       setError('Something went wrong. Please try again.');

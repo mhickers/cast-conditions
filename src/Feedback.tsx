@@ -24,6 +24,12 @@ export default function Feedback() {
         email: email.trim() || null,
       });
       if (err) throw err;
+      // Fire-and-forget owner notification — never blocks or fails the user flow
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'feedback', category, message: message.trim(), email: email.trim() || null }),
+      }).catch(() => {});
       setSubmitted(true);
     } catch {
       setError('Something went wrong. Please try again.');
