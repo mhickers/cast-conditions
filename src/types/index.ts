@@ -2,6 +2,7 @@ export interface Conditions {
   windMph: number;
   windDir: string;
   windDeg: number;
+  windGustMph?: number | null;
   airTempF: number;
   pressureMb: number;
   waterTempF: number | null;

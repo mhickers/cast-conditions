@@ -143,7 +143,7 @@ export default function Admin() {
                 <img src={c.photo_url} alt={c.species} className="admin-img" />
                 <div className="admin-card-info">
                   <div className="admin-species">{c.species}</div>
-                  <div className="admin-meta">📍 {c.location}</div>
+                  {c.location && <div className="admin-meta">📍 {c.location}</div>}
                   <div className="admin-meta">📅 {formatDate(c.catch_date)}</div>
                   <div className="admin-meta">👤 {c.angler_name}</div>
                   <div className="admin-meta" style={{ fontSize: 11, color: 'var(--text-muted)' }}>

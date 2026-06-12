@@ -6,10 +6,36 @@ interface Props {
   onClose: () => void;
 }
 
-const SPECIES = [
-  'Striped bass', 'Flounder', 'Bluefish', 'Sea bass',
-  'Weakfish', 'Kingfish', 'Tuna', 'Mahi-mahi',
-  'Fluke', 'Porgy', 'Red drum', 'Other',
+const SPECIES_GROUPS: { group: string; options: string[] }[] = [
+  {
+    group: 'Saltwater',
+    options: [
+      'Striped bass', 'Bluefish', 'Fluke (summer flounder)', 'Winter flounder',
+      'Black sea bass', 'Tautog (blackfish)', 'Weakfish', 'Porgy (scup)',
+      'Kingfish', 'Red drum (redfish)', 'Black drum', 'Spotted seatrout',
+      'Snook', 'Tarpon', 'Sheepshead', 'Pompano', 'Spanish mackerel',
+      'Atlantic mackerel', 'False albacore', 'Bonito', 'Bluefin tuna',
+      'Yellowfin tuna', 'Mahi-mahi', 'Wahoo', 'Cobia', 'Amberjack',
+      'Grouper', 'Snapper', 'Southern flounder', 'Halibut', 'Lingcod',
+      'Rockfish', 'Surfperch', 'Croaker', 'Spot', 'Whiting', 'Triggerfish',
+      'Spadefish', 'Shark', 'Skate',
+    ],
+  },
+  {
+    group: 'Freshwater',
+    options: [
+      'Largemouth bass', 'Smallmouth bass', 'Spotted bass', 'White bass',
+      'Hybrid striped bass (wiper)', 'Landlocked striped bass', 'Bluegill',
+      'Pumpkinseed', 'Redear sunfish', 'Black crappie', 'White crappie',
+      'Yellow perch', 'Walleye', 'Sauger', 'Northern pike',
+      'Muskellunge (muskie)', 'Chain pickerel', 'Channel catfish',
+      'Blue catfish', 'Flathead catfish', 'Bullhead', 'Rainbow trout',
+      'Brown trout', 'Brook trout', 'Lake trout', 'Cutthroat trout',
+      'Steelhead', 'Chinook salmon', 'Coho salmon', 'Atlantic salmon',
+      'Kokanee', 'Common carp', 'Freshwater drum', 'Bowfin', 'Longnose gar',
+      'Sturgeon', 'Whitefish',
+    ],
+  },
 ];
 
 export default function CatchSubmit({ onClose }: Props) {
@@ -35,8 +61,6 @@ export default function CatchSubmit({ onClose }: Props) {
   const handleSubmit = async () => {
     if (!photo) { setError('Please add a photo.'); return; }
     if (!species) { setError('Please select a species.'); return; }
-    if (!location.trim()) { setError('Please enter a location.'); return; }
-    if (!anglerName.trim()) { setError('Please enter your name.'); return; }
 
     setSubmitting(true);
     setError('');
@@ -62,8 +86,8 @@ export default function CatchSubmit({ onClose }: Props) {
           photo_url: urlData.publicUrl,
           species,
           location: location.trim(),
-          catch_date: catchDate,
-          angler_name: anglerName.trim(),
+          catch_date: catchDate || new Date().toISOString().slice(0, 10),
+          angler_name: anglerName.trim() || 'Anonymous',
           approved: false,
         });
 
@@ -119,7 +143,7 @@ export default function CatchSubmit({ onClose }: Props) {
 
         <div className="cs-fields">
           <div className="cs-field">
-            <label className="cs-label">Your name</label>
+            <label className="cs-label">Your name <span className="cs-optional">(optional)</span></label>
             <input className="search-input" value={anglerName} onChange={e => setAnglerName(e.target.value)} placeholder="e.g. Mike H." />
           </div>
 
@@ -127,17 +151,22 @@ export default function CatchSubmit({ onClose }: Props) {
             <label className="cs-label">Species</label>
             <select className="search-input cs-select" value={species} onChange={e => setSpecies(e.target.value)}>
               <option value="">Select species...</option>
-              {SPECIES.map(s => <option key={s} value={s}>{s}</option>)}
+              {SPECIES_GROUPS.map(g => (
+                <optgroup key={g.group} label={g.group}>
+                  {g.options.map(s => <option key={s} value={s}>{s}</option>)}
+                </optgroup>
+              ))}
+              <option value="Other">Other / not listed</option>
             </select>
           </div>
 
           <div className="cs-field">
-            <label className="cs-label">Location</label>
+            <label className="cs-label">Location <span className="cs-optional">(optional)</span></label>
             <input className="search-input" value={location} onChange={e => setLocation(e.target.value)} placeholder="e.g. Margate City, NJ" />
           </div>
 
           <div className="cs-field">
-            <label className="cs-label">Date caught</label>
+            <label className="cs-label">Date caught <span className="cs-optional">(optional)</span></label>
             <input className="search-input" type="date" value={catchDate} onChange={e => setCatchDate(e.target.value)} />
           </div>
         </div>

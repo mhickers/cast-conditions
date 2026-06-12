@@ -67,3 +67,5 @@
 .cs-success-icon { font-size: 48px; margin-bottom: 12px; }
 .cs-success h3 { font-family: 'Bitter', serif; font-size: 20px; color: #0C2340; margin-bottom: 8px; }
 .cs-success p { font-size: 14px; color: #5F5E5A; margin-bottom: 1.5rem; line-height: 1.5; }
+
+.cs-optional { font-weight: 400; color: var(--text-muted); font-size: 11px; }

@@ -52,13 +52,14 @@ const condIcon = (label?: string | null) => {
   return (label && map[label]) || <CloudSun size={18} />;
 };
 
-function StatCard({ icon, value, unit, label }: { icon: React.ReactNode; value: string; unit: string; label: string }) {
+function StatCard({ icon, value, unit, label, sub }: { icon: React.ReactNode; value: string; unit: string; label: string; sub?: string }) {
   return (
     <div className="stat-card">
       <div className="stat-icon">{icon}</div>
       <div className="stat-val">{value}</div>
       <div className="stat-unit">{unit}</div>
       <div className="stat-label">{label}</div>
+      {sub && <div className="stat-sub">{sub}</div>}
     </div>
   );
 }
@@ -675,7 +676,7 @@ export default function App() {
           <h3 className="section-label">Atmosphere{timeContext}</h3>
           <div className="stat-grid-4">
             <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
-            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit={conditions.windDir ? `mph · ${conditions.windDir}` : 'mph'} label="Wind" />
+            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit={conditions.windDir ? `mph · ${conditions.windDir}` : 'mph'} label="Wind" sub={conditions.windGustMph != null ? `gusts to ${Math.round(conditions.windGustMph)} mph` : undefined} />
             <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>

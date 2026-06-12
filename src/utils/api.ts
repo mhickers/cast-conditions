@@ -73,8 +73,8 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
   const endDate = today ? nextDay(dateStr) : dateStr;
   const dateParams = `&start_date=${dateStr}&end_date=${endDate}`;
 
-  const hourlyParams = 'hourly=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation_probability&daily=sunrise,sunset&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=auto';
-  const currentParams = today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,surface_pressure,weather_code,precipitation' : '';
+  const hourlyParams = 'hourly=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,weather_code,precipitation_probability&daily=sunrise,sunset&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=auto';
+  const currentParams = today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,weather_code,precipitation' : '';
 
   let [wJson, mJson] = await Promise.all([
     fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${currentParams}&${hourlyParams}${dateParams}`),
@@ -105,6 +105,7 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
       windMph: c.wind_speed_10m,
       windDir: degToCompass(c.wind_direction_10m),
       windDeg: c.wind_direction_10m,
+      windGustMph: c.wind_gusts_10m != null ? Math.round(c.wind_gusts_10m) : null,
       airTempF: Math.round(c.temperature_2m),
       pressureMb: Math.round(c.surface_pressure),
       waveFt: mc?.wave_height != null ? parseFloat(mc.wave_height.toFixed(1)) : undefined,
@@ -125,6 +126,7 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
       windMph: h?.wind_speed_10m?.[idx] ?? 0,
       windDir: degToCompass(h?.wind_direction_10m?.[idx] ?? 0),
       windDeg: h?.wind_direction_10m?.[idx] ?? 0,
+      windGustMph: h?.wind_gusts_10m?.[idx] != null ? Math.round(h.wind_gusts_10m[idx]) : null,
       airTempF: Math.round(h?.temperature_2m?.[idx] ?? 0),
       pressureMb: Math.round(h?.surface_pressure?.[idx] ?? 1013),
       waveFt: waveVal != null ? parseFloat(waveVal.toFixed(1)) : undefined,

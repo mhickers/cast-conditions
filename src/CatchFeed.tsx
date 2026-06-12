@@ -57,8 +57,8 @@ export default function CatchFeed({ onSubmitClick }: Props) {
                 <div className="cf-species-badge">{c.species}</div>
               </div>
               <div className="cf-info">
-                <div className="cf-location">📍 {c.location}</div>
-                <div className="cf-meta">{formatDate(c.catch_date)} · {c.angler_name}</div>
+                {c.location && <div className="cf-location">📍 {c.location}</div>}
+                <div className="cf-meta">{formatDate(c.catch_date)}{c.angler_name ? ` · ${c.angler_name}` : ''}</div>
               </div>
             </div>
           ))}
@@ -75,8 +75,8 @@ export default function CatchFeed({ onSubmitClick }: Props) {
               <button className="about-close cf-lbclose" onClick={() => setExpanded(null)} aria-label="Close">✕</button>
               <img src={c.photo_url} alt={c.species} className="cf-lightbox-img" />
               <div className="cf-lightbox-info">
-                <strong>{c.species}</strong> · {c.location} · {formatDate(c.catch_date)}
-                <div style={{ marginTop: 4, fontSize: 13, color: 'var(--text-muted)' }}>Shared by {c.angler_name}</div>
+                <strong>{c.species}</strong>{c.location ? ` · ${c.location}` : ''} · {formatDate(c.catch_date)}
+                <div style={{ marginTop: 4, fontSize: 13, color: 'var(--text-muted)' }}>Shared by {c.angler_name || 'Anonymous'}</div>
               </div>
             </div>
           </div>
