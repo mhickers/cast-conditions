@@ -381,7 +381,7 @@ export default function App() {
     const url = `${window.location.origin}/?${params.toString()}`;
     const text = `Fishing conditions for ${locationLabel}`;
     if (navigator.share) {
-      try { await navigator.share({ title: 'Fish Conditions', text, url }); return; } catch {}
+      try { await navigator.share({ title: 'Fish Condish', text, url }); return; } catch {}
     }
     try {
       await navigator.clipboard.writeText(url);
@@ -523,7 +523,7 @@ export default function App() {
         <div className="header-inner">
           <div className="logo">
             <img src="/logo.svg" alt="" className="logo-img" />
-            <span className="logo-text">Fish Conditions</span>
+            <span className="logo-text">Fish Condish</span>
           </div>
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}

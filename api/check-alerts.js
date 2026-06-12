@@ -3,6 +3,9 @@
 
 const { createClient } = require('@supabase/supabase-js');
 
+// See notify.js — set MAIL_FROM in Vercel after verifying the domain in Resend.
+const MAIL_FROM = process.env.MAIL_FROM || 'Fish Condish <onboarding@resend.dev>';
+
 function moonPhaseDays(d) {
   const known = new Date(2000, 0, 6, 18, 14, 0);
   const cycle = 29.53058867;
@@ -61,14 +64,14 @@ module.exports = async (req, res) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
           body: JSON.stringify({
-            from: 'Fish Conditions <onboarding@resend.dev>',
+            from: MAIL_FROM,
             to: [a.email],
             subject: `🎣 Great fishing conditions today at ${a.label} — score ${score}/10`,
             html: `
               <h2>Today looks great at ${a.label}!</h2>
               <p>The fishing score is <strong>${score}/10</strong> — wind ${Math.round(wind)} mph${wave != null ? `, waves ${wave.toFixed(1)} ft` : ''}.</p>
-              <p><a href="https://cast-conditions.vercel.app">Check the full conditions →</a></p>
-              <p style="font-size:12px;color:#888;">You get this alert when ${a.label} scores ${a.threshold ?? 7.5}+. <a href="https://cast-conditions.vercel.app/api/unsubscribe?id=${a.id}">Unsubscribe</a></p>
+              <p><a href="https://fishcondish.com">Check the full conditions →</a></p>
+              <p style="font-size:12px;color:#888;">You get this alert when ${a.label} scores ${a.threshold ?? 7.5}+. <a href="https://fishcondish.com/api/unsubscribe?id=${a.id}">Unsubscribe</a></p>
             `,
           }),
         });

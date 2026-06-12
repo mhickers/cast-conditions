@@ -6,7 +6,12 @@
 // notification to your own inbox. Low risk for now; can be hardened later
 // (e.g. a shared token or rate limit) if it ever gets abused.
 
-const SITE = 'https://cast-conditions.vercel.app';
+const SITE = 'https://fishcondish.com';
+
+// Sender for outbound email. Defaults to Resend's shared address so mail keeps
+// working before domain verification; set MAIL_FROM in Vercel once fishcondish.com
+// is verified in Resend (e.g. 'Fish Condish <alerts@fishcondish.com>').
+const MAIL_FROM = process.env.MAIL_FROM || 'Fish Condish <onboarding@resend.dev>';
 
 // Basic HTML-escape + length cap so user-supplied text can't inject markup
 const esc = (s) =>
@@ -54,7 +59,7 @@ module.exports = async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
       body: JSON.stringify({
-        from: 'Fish Conditions <onboarding@resend.dev>',
+        from: MAIL_FROM,
         to: [notifyEmail],
         subject,
         html,
