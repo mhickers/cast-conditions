@@ -75,3 +75,12 @@ export interface TideData {
   events: TidePrediction[];
   curve: TideCurvePoint[];
 }
+
+export interface RiverData {
+  siteId: string;
+  siteName: string;
+  distanceMi: number;
+  flowCfs: number | null;
+  gageFt: number | null;
+  waterTempF: number | null;
+}

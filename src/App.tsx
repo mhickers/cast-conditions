@@ -12,9 +12,9 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, Tooltip, Filler,
 } from 'chart.js';
-import type { Conditions, TideData, HourlyForecast, SavedSpot } from './types';
+import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, weatherCodeToCondition, localToday } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, weatherCodeToCondition, localToday } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
@@ -120,6 +120,8 @@ export default function App() {
   );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
+  const [river, setRiver] = useState<RiverData | null>(null);
+  const [riverLoading, setRiverLoading] = useState(false);
   const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
@@ -188,6 +190,8 @@ export default function App() {
     viewIsNow.current = time === 'now';
     setLoading(true);
     setTideLoading(true);
+    setRiver(null);
+    setRiverLoading(true);
     setSearchError('');
     setAiSummary('Analyzing conditions with AI...');
     const hour = time === 'now' ? null : time;
@@ -210,18 +214,23 @@ export default function App() {
         setNearbyStations(nearby);
         setTideStation(tideSt);
         setStationChecked(true);
-        const [waterTemp, tideData] = await Promise.all([
+        const [waterTemp, tideData, riverData] = await Promise.all([
           tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
           tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
+          tideSt ? Promise.resolve(null) : fetchRiverData(la, lo),
         ]);
         if (seq !== loadSeq.current) return null;
+        setRiver(riverData);
+        setRiverLoading(false);
         setTides(tideData);
         setTideLoading(false);
         const tide = tideAt(tideData.curve, refTime);
-        setConditions(c => ({ ...c, waterTempF: waterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
-        return { waterTemp, tideData };
+        // Inland spots have no NOAA water-temp station, so fall back to the USGS gauge reading.
+        const finalWaterTemp = waterTemp ?? riverData?.waterTempF ?? null;
+        setConditions(c => ({ ...c, waterTempF: finalWaterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
+        return { waterTemp: finalWaterTemp, tideData };
       } catch {
-        if (seq === loadSeq.current) { setStationChecked(true); setTideLoading(false); }
+        if (seq === loadSeq.current) { setStationChecked(true); setTideLoading(false); setRiverLoading(false); }
         return null;
       }
     })();
@@ -691,6 +700,28 @@ export default function App() {
               <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
               <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
             </div>
+          </section>
+        )}
+
+        {isInland && (
+          <section className="section">
+            <h3 className="section-label">River conditions{timeContext}</h3>
+            {river ? (
+              <>
+                <div className="stat-grid-3">
+                  <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
+                  <StatCard icon={<Waves size={18} />} value={river.flowCfs != null ? Math.round(river.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
+                  <StatCard icon={<ArrowUpDown size={18} />} value={river.gageFt != null ? river.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
+                </div>
+                <div className="station-row">
+                  <span className="station-note">USGS gauge: {river.siteName} ({river.distanceMi} mi)</span>
+                </div>
+              </>
+            ) : (
+              <div className="muted" style={{ padding: '1rem 0' }}>
+                {riverLoading ? 'Loading river data...' : 'No USGS stream gauge found near this spot.'}
+              </div>
+            )}
           </section>
         )}
 

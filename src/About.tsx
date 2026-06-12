@@ -14,7 +14,7 @@ export default function About({ onClose }: Props) {
           <button className="about-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
-        <p className="about-lead">Real-time fishing conditions for US coastal anglers.</p>
+        <p className="about-lead">Real-time fishing conditions for US anglers — coastal and inland.</p>
 
         <div className="about-section">
           <h3>What it shows</h3>
@@ -41,7 +41,7 @@ export default function About({ onClose }: Props) {
 
         <div className="about-section">
           <h3>Coverage</h3>
-          <p>Weather data works for any location. On the coast, tides and water temperature come from the nearest NOAA station automatically. Inland, the app switches to freshwater species — bass, walleye, trout, catfish, and more — and hides tide data that doesn't apply.</p>
+          <p>Weather data works for any location. On the coast, tides and water temperature come from the nearest NOAA station automatically. Inland, the app switches to freshwater species — bass, walleye, trout, catfish, and more — and shows real-time river flow, gage height, and water temperature from the nearest USGS stream gauge in place of tides.</p>
         </div>
 
         <div className="about-footer">

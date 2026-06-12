@@ -64,6 +64,7 @@ body { font-family: 'Source Sans 3', system-ui, sans-serif; background: var(--sa
 
 /* Stat cards */
 .stat-grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.stat-grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
 .stat-icon { font-size: 18px; margin-bottom: 6px; }
 .stat-val { font-family: 'Bitter', serif; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
@@ -127,6 +128,7 @@ body { font-family: 'Source Sans 3', system-ui, sans-serif; background: var(--sa
 
 @media (max-width: 640px) {
   .stat-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .stat-grid-3 { grid-template-columns: repeat(2, 1fr); }
   .species-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col { grid-template-columns: 1fr; }
   .search-row { flex-wrap: wrap; }

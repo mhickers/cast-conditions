@@ -1,4 +1,4 @@
-import type { Conditions, HourlyForecast, TideData } from '../types';
+import type { Conditions, HourlyForecast, TideData, RiverData } from '../types';
 import { degToCompass, calcFishingScore } from './fishing';
 
 // "Today" in the user's local timezone (toISOString alone gives UTC,
@@ -298,4 +298,70 @@ export async function fetchWeekOutlook(lat: number, lon: number): Promise<Array<
     out.push({ date: dateStr, score });
   }
   return out;
+}
+
+// Distance in miles between two coordinates (haversine).
+function distMi(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3958.8;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+// Real-time river/stream conditions from the nearest USGS gauge — used for
+// inland spots where NOAA tides and water-temp stations don't apply. Pulls
+// discharge (00060, cfs), gage height (00065, ft), and water temp (00010, °C).
+// Independent and resilient: returns null on any failure so it can never block
+// the rest of the dashboard.
+export async function fetchRiverData(lat: number, lon: number): Promise<RiverData | null> {
+  const d = 0.5; // ~34-mile search box around the point
+  const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
+  const json = await fetchJson(
+    `https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`
+  );
+  const series = json?.value?.timeSeries;
+  if (!Array.isArray(series) || series.length === 0) return null;
+
+  // Group the parameter time-series by gauge site
+  const sites: Record<string, { name: string; lat: number; lon: number; params: Record<string, number> }> = {};
+  for (const ts of series) {
+    try {
+      const si = ts.sourceInfo;
+      const id = si?.siteCode?.[0]?.value;
+      if (!id) continue;
+      const sLat = parseFloat(si.geoLocation?.geogLocation?.latitude);
+      const sLon = parseFloat(si.geoLocation?.geogLocation?.longitude);
+      if (!isFinite(sLat) || !isFinite(sLon)) continue;
+      const code = ts.variable?.variableCode?.[0]?.value;
+      const noData = parseFloat(ts.variable?.noDataValue);
+      const arr = ts.values?.[0]?.value;
+      const latest = Array.isArray(arr) && arr.length ? arr[arr.length - 1] : null;
+      const v = latest != null ? parseFloat(latest.value) : NaN;
+      if (!isFinite(v) || (isFinite(noData) && v === noData)) continue;
+      if (!sites[id]) sites[id] = { name: si.siteName || 'USGS gauge', lat: sLat, lon: sLon, params: {} };
+      sites[id].params[code] = v;
+    } catch {}
+  }
+
+  const list = Object.entries(sites).map(([id, s]) => ({ id, ...s, dist: distMi(lat, lon, s.lat, s.lon) }));
+  if (!list.length) return null;
+  // Prefer gauges that report discharge (i.e. actual rivers), then the nearest
+  list.sort((a, b) => {
+    const af = a.params['00060'] != null ? 0 : 1;
+    const bf = b.params['00060'] != null ? 0 : 1;
+    return af !== bf ? af - bf : a.dist - b.dist;
+  });
+  const best = list[0];
+  const tempC = best.params['00010'];
+  return {
+    siteId: best.id,
+    siteName: best.name,
+    distanceMi: Math.round(best.dist),
+    flowCfs: best.params['00060'] ?? null,
+    gageFt: best.params['00065'] ?? null,
+    waterTempF: tempC != null ? Math.round((tempC * 9 / 5 + 32) * 10) / 10 : null,
+  };
 }
