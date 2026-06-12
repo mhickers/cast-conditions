@@ -17,7 +17,7 @@ import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCom
 import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, weatherCodeToCondition, localToday } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
-  Wind, Compass, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
+  Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
   Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
@@ -672,10 +672,9 @@ export default function App() {
 
         <section className="section">
           <h3 className="section-label">Atmosphere{timeContext}</h3>
-          <div className="stat-grid-5">
+          <div className="stat-grid-4">
             <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
-            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit="mph" label="Wind speed" />
-            <StatCard icon={<Compass size={18} />} value={conditions.windDir ?? '--'} unit="" label="Wind direction" />
+            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit={conditions.windDir ? `mph · ${conditions.windDir}` : 'mph'} label="Wind" />
             <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
@@ -799,7 +798,7 @@ export default function App() {
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
           {!stationChecked && <p className="muted" style={{ padding: '4px 0' }}>Loading species for this location...</p>}
           <div className="species-grid" style={!stationChecked ? { display: 'none' } : undefined}>
-            {species.map((sp, i) => {
+            {[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 6).map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
               return (
                 <div key={i} className="species-card">

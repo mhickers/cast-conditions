@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import { CatchPost } from './supabase';
 import './Admin.css';
 
+interface FeedbackPost {
+  id: string;
+  created_at: string;
+  category: string;
+  message: string;
+  email: string | null;
+}
+
 async function adminCall(password: string, action: string, extra: Record<string, any> = {}) {
   const res = await fetch('/api/admin', {
     method: 'POST',
@@ -17,8 +25,11 @@ export default function Admin() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState('');
   const [pwError, setPwError] = useState('');
+  const [tab, setTab] = useState<'catches' | 'feedback'>('catches');
   const [pending, setPending] = useState<CatchPost[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackPost[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fbLoading, setFbLoading] = useState(false);
   const [actionMsg, setActionMsg] = useState('');
 
   const loadPending = async (password: string) => {
@@ -28,6 +39,15 @@ export default function Admin() {
       setPending(data.pending ?? []);
     } catch (e: any) { setActionMsg(`Failed to load: ${e?.message || 'unknown error'}`); }
     setLoading(false);
+  };
+
+  const loadFeedback = async (password: string) => {
+    setFbLoading(true);
+    try {
+      const data = await adminCall(password, 'feedback');
+      setFeedback(data.feedback ?? []);
+    } catch (e: any) { setActionMsg(`Failed to load: ${e?.message || 'unknown error'}`); }
+    setFbLoading(false);
   };
 
   const login = async () => {
@@ -41,6 +61,14 @@ export default function Admin() {
       setPwError(e.message === 'Incorrect password' ? 'Incorrect password.' : 'Login failed — try again.');
     }
   };
+
+  const switchTab = (t: 'catches' | 'feedback') => {
+    setActionMsg('');
+    setTab(t);
+    if (t === 'feedback') loadFeedback(pw);
+  };
+
+  const refresh = () => (tab === 'catches' ? loadPending(pw) : loadFeedback(pw));
 
   const approve = async (id: string) => {
     try {
@@ -68,7 +96,7 @@ export default function Admin() {
       <div className="admin-wrap">
         <div className="admin-login">
           <h2 className="admin-title">🎣 Fish Conditions — Admin</h2>
-          <p className="admin-sub">Enter your admin password to review catch submissions.</p>
+          <p className="admin-sub">Enter your admin password to review submissions.</p>
           <input
             className="search-input"
             type="password"
@@ -87,39 +115,77 @@ export default function Admin() {
   return (
     <div className="admin-wrap">
       <div className="admin-header">
-        <h2 className="admin-title">🎣 Catch moderation</h2>
+        <div className="admin-tabs">
+          <button className={`admin-tab${tab === 'catches' ? ' active' : ''}`} onClick={() => switchTab('catches')}>
+            Catch moderation{pending.length ? ` (${pending.length})` : ''}
+          </button>
+          <button className={`admin-tab${tab === 'feedback' ? ' active' : ''}`} onClick={() => switchTab('feedback')}>
+            Feedback
+          </button>
+        </div>
         {actionMsg && <span className="admin-action-msg">{actionMsg}</span>}
-        <button className="btn btn-secondary" onClick={() => loadPending(pw)} style={{ marginLeft: 'auto' }}>↻ Refresh</button>
+        <button className="btn btn-secondary" onClick={refresh} style={{ marginLeft: 'auto' }}>↻ Refresh</button>
       </div>
 
-      {loading && <p className="muted">Loading pending submissions...</p>}
+      {tab === 'catches' && (
+        <>
+          {loading && <p className="muted">Loading pending submissions...</p>}
 
-      {!loading && pending.length === 0 && (
-        <div className="admin-empty">
-          <p>No pending submissions — all caught up! 🎣</p>
-        </div>
+          {!loading && pending.length === 0 && (
+            <div className="admin-empty">
+              <p>No pending submissions — all caught up! 🎣</p>
+            </div>
+          )}
+
+          <div className="admin-grid">
+            {pending.map(c => (
+              <div key={c.id} className="admin-card">
+                <img src={c.photo_url} alt={c.species} className="admin-img" />
+                <div className="admin-card-info">
+                  <div className="admin-species">{c.species}</div>
+                  <div className="admin-meta">📍 {c.location}</div>
+                  <div className="admin-meta">📅 {formatDate(c.catch_date)}</div>
+                  <div className="admin-meta">👤 {c.angler_name}</div>
+                  <div className="admin-meta" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    Submitted {new Date(c.created_at).toLocaleString()}
+                  </div>
+                </div>
+                <div className="admin-actions">
+                  <button className="btn admin-approve" onClick={() => approve(c.id)}>✓ Approve</button>
+                  <button className="btn admin-reject" onClick={() => reject(c.id, c.photo_url)}>✕ Reject</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
-      <div className="admin-grid">
-        {pending.map(c => (
-          <div key={c.id} className="admin-card">
-            <img src={c.photo_url} alt={c.species} className="admin-img" />
-            <div className="admin-card-info">
-              <div className="admin-species">{c.species}</div>
-              <div className="admin-meta">📍 {c.location}</div>
-              <div className="admin-meta">📅 {formatDate(c.catch_date)}</div>
-              <div className="admin-meta">👤 {c.angler_name}</div>
-              <div className="admin-meta" style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                Submitted {new Date(c.created_at).toLocaleString()}
+      {tab === 'feedback' && (
+        <>
+          {fbLoading && <p className="muted">Loading feedback...</p>}
+
+          {!fbLoading && feedback.length === 0 && (
+            <div className="admin-empty">
+              <p>No feedback yet.</p>
+            </div>
+          )}
+
+          <div className="fb-admin-list">
+            {feedback.map(f => (
+              <div key={f.id} className="fb-admin-card">
+                <div className="fb-admin-top">
+                  <span className={`fb-admin-cat fb-cat-${f.category.toLowerCase().split(' ')[0]}`}>{f.category}</span>
+                  <span className="fb-admin-date">{new Date(f.created_at).toLocaleString()}</span>
+                </div>
+                <p className="fb-admin-msg">{f.message}</p>
+                {f.email && (
+                  <a className="fb-admin-email" href={`mailto:${f.email}`}>✉ {f.email}</a>
+                )}
               </div>
-            </div>
-            <div className="admin-actions">
-              <button className="btn admin-approve" onClick={() => approve(c.id)}>✓ Approve</button>
-              <button className="btn admin-reject" onClick={() => reject(c.id, c.photo_url)}>✕ Reject</button>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 }
