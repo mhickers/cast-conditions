@@ -316,14 +316,14 @@ function distMi(lat1: number, lon1: number, lat2: number, lon2: number): number 
 // discharge (00060, cfs), gage height (00065, ft), and water temp (00010, °C).
 // Independent and resilient: returns null on any failure so it can never block
 // the rest of the dashboard.
-export async function fetchRiverData(lat: number, lon: number): Promise<RiverData | null> {
+export async function fetchRiverData(lat: number, lon: number): Promise<RiverData[]> {
   const d = 0.5; // ~34-mile search box around the point
   const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
   const json = await fetchJson(
     `https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`
   );
   const series = json?.value?.timeSeries;
-  if (!Array.isArray(series) || series.length === 0) return null;
+  if (!Array.isArray(series) || series.length === 0) return [];
 
   // Group the parameter time-series by gauge site
   const sites: Record<string, { name: string; lat: number; lon: number; params: Record<string, number> }> = {};
@@ -347,21 +347,19 @@ export async function fetchRiverData(lat: number, lon: number): Promise<RiverDat
   }
 
   const list = Object.entries(sites).map(([id, s]) => ({ id, ...s, dist: distMi(lat, lon, s.lat, s.lon) }));
-  if (!list.length) return null;
-  // Prefer gauges that report discharge (i.e. actual rivers), then the nearest
-  list.sort((a, b) => {
-    const af = a.params['00060'] != null ? 0 : 1;
-    const bf = b.params['00060'] != null ? 0 : 1;
-    return af !== bf ? af - bf : a.dist - b.dist;
+  if (!list.length) return [];
+  // Nearest first for the picker; the caller defaults to the nearest gauge that
+  // actually reports discharge (a real river vs. a closer creek).
+  list.sort((a, b) => a.dist - b.dist);
+  return list.slice(0, 8).map(s => {
+    const tempC = s.params['00010'];
+    return {
+      siteId: s.id,
+      siteName: s.name,
+      distanceMi: Math.round(s.dist),
+      flowCfs: s.params['00060'] ?? null,
+      gageFt: s.params['00065'] ?? null,
+      waterTempF: tempC != null ? Math.round((tempC * 9 / 5 + 32) * 10) / 10 : null,
+    };
   });
-  const best = list[0];
-  const tempC = best.params['00010'];
-  return {
-    siteId: best.id,
-    siteName: best.name,
-    distanceMi: Math.round(best.dist),
-    flowCfs: best.params['00060'] ?? null,
-    gageFt: best.params['00065'] ?? null,
-    waterTempF: tempC != null ? Math.round((tempC * 9 / 5 + 32) * 10) / 10 : null,
-  };
 }

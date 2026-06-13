@@ -120,7 +120,8 @@ export default function App() {
   );
   const [tideStation, setTideStation] = useState<NearestStation | null>(null);
   const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
-  const [river, setRiver] = useState<RiverData | null>(null);
+  const [rivers, setRivers] = useState<RiverData[]>([]);
+  const [riverStation, setRiverStation] = useState<RiverData | null>(null);
   const [riverLoading, setRiverLoading] = useState(false);
   const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -161,6 +162,16 @@ export default function App() {
       localStorage.setItem('tideStationOverrides', JSON.stringify(map));
     } catch {}
   };
+  const getRiverOverride = (lbl: string): RiverData | null => {
+    try { return (JSON.parse(localStorage.getItem('riverGaugeOverrides') || '{}'))[lbl] ?? null; } catch { return null; }
+  };
+  const saveRiverOverride = (lbl: string, r: RiverData) => {
+    try {
+      const map = JSON.parse(localStorage.getItem('riverGaugeOverrides') || '{}');
+      map[lbl] = r;
+      localStorage.setItem('riverGaugeOverrides', JSON.stringify(map));
+    } catch {}
+  };
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
@@ -190,7 +201,8 @@ export default function App() {
     viewIsNow.current = time === 'now';
     setLoading(true);
     setTideLoading(true);
-    setRiver(null);
+    setRivers([]);
+    setRiverStation(null);
     setRiverLoading(true);
     setSearchError('');
     setAiSummary('Analyzing conditions with AI...');
@@ -214,19 +226,27 @@ export default function App() {
         setNearbyStations(nearby);
         setTideStation(tideSt);
         setStationChecked(true);
-        const [waterTemp, tideData, riverData] = await Promise.all([
+        const [waterTemp, tideData, riverList] = await Promise.all([
           tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
           tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
-          tideSt ? Promise.resolve(null) : fetchRiverData(la, lo),
+          tideSt ? Promise.resolve([] as RiverData[]) : fetchRiverData(la, lo),
         ]);
         if (seq !== loadSeq.current) return null;
-        setRiver(riverData);
+        setRivers(riverList);
+        // Default to a remembered gauge, else the nearest one that reports
+        // discharge (a real river), else simply the nearest.
+        const rOverride = getRiverOverride(lbl);
+        const selRiver =
+          (rOverride && riverList.find(r => r.siteId === rOverride.siteId)) ||
+          riverList.find(r => r.flowCfs != null) ||
+          riverList[0] || null;
+        setRiverStation(selRiver);
         setRiverLoading(false);
         setTides(tideData);
         setTideLoading(false);
         const tide = tideAt(tideData.curve, refTime);
-        // Inland spots have no NOAA water-temp station, so fall back to the USGS gauge reading.
-        const finalWaterTemp = waterTemp ?? riverData?.waterTempF ?? null;
+        // Inland spots have no NOAA water-temp station, so fall back to the selected USGS gauge.
+        const finalWaterTemp = waterTemp ?? selRiver?.waterTempF ?? null;
         setConditions(c => ({ ...c, waterTempF: finalWaterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
         return { waterTemp: finalWaterTemp, tideData };
       } catch {
@@ -338,6 +358,15 @@ export default function App() {
     const refTime = isNow ? Date.now() : new Date(`${selectedDate}T${String(selectedTime === 'now' ? 12 : selectedTime).padStart(2, '0')}:00:00`).getTime();
     const tide = tideAt(tideData.curve, refTime);
     setConditions(c => ({ ...c, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
+  };
+
+  const changeRiverGauge = (siteId: string) => {
+    const r = rivers.find(x => x.siteId === siteId);
+    if (!r) return;
+    setRiverStation(r);
+    saveRiverOverride(locationLabel, r);
+    // Reflect the selected gauge's own water temp (drives the card + score + species)
+    setConditions(c => ({ ...c, waterTempF: r.waterTempF ?? null }));
   };
 
   const handleTimeChange = (val: string) => {
@@ -706,15 +735,25 @@ export default function App() {
         {isInland && (
           <section className="section">
             <h3 className="section-label">River conditions{timeContext}</h3>
-            {river ? (
+            {riverStation ? (
               <>
                 <div className="stat-grid-3">
                   <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
-                  <StatCard icon={<Waves size={18} />} value={river.flowCfs != null ? Math.round(river.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
-                  <StatCard icon={<ArrowUpDown size={18} />} value={river.gageFt != null ? river.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
+                  <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
+                  <StatCard icon={<ArrowUpDown size={18} />} value={riverStation.gageFt != null ? riverStation.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
                 </div>
                 <div className="station-row">
-                  <span className="station-note">USGS gauge: {river.siteName} ({river.distanceMi} mi)</span>
+                  <span className="station-note">USGS gauge:</span>
+                  <select
+                    className="search-input station-select"
+                    value={riverStation.siteId}
+                    onChange={e => changeRiverGauge(e.target.value)}
+                    aria-label="Choose river gauge"
+                  >
+                    {rivers.map(r => (
+                      <option key={r.siteId} value={r.siteId}>{r.siteName} ({r.distanceMi} mi)</option>
+                    ))}
+                  </select>
                 </div>
               </>
             ) : (
