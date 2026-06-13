@@ -1,0 +1,19 @@
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.fishcondish.app',
+  appName: 'Fish Condish',
+  webDir: 'build', // Create React App build output
+  ios: {
+    contentInset: 'always',
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 800,
+      backgroundColor: '#0C2340',
+      showSpinner: false,
+    },
+  },
+};
+
+export default config;

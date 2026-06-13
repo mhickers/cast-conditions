@@ -18,10 +18,11 @@ import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutl
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
+import { isNative, getCurrentPositionNative, remindAtDawn } from './native';
 import { crossCheckWeather } from './utils/crosscheck';
 import { findNearestStation, findNearbyStations, NearestStation } from './utils/stations';
 import './App.css';
@@ -428,9 +429,18 @@ export default function App() {
     } catch { setShareMsg(url); }
   };
 
-  const useMyLocation = () => {
-    if (!navigator.geolocation) { setSearchError('Location access is not supported by this browser.'); return; }
+  const useMyLocation = async () => {
     setSearchError('');
+    if (isNative()) {
+      const p = await getCurrentPositionNative();
+      if (p) {
+        const lbl = await reverseGeocode(p.lat, p.lon);
+        goToLocation(p.lat, p.lon, lbl);
+        return;
+      }
+      // native GPS failed/denied — fall through to the browser API
+    }
+    if (!navigator.geolocation) { setSearchError('Location access is not supported by this browser.'); return; }
     navigator.geolocation.getCurrentPosition(
       async pos => {
         const la = pos.coords.latitude, lo = pos.coords.longitude;
@@ -439,6 +449,12 @@ export default function App() {
       },
       () => setSearchError('Location access was denied — you can still search by city or zip.')
     );
+  };
+
+  const remindMe = async () => {
+    const ok = await remindAtDawn(locationLabel, conditions.sunrise);
+    setSpotMsg(ok ? 'Dawn reminder set ✓' : 'Enable notifications in Settings to set a reminder');
+    setTimeout(() => setSpotMsg(''), 2500);
   };
 
   // ---- Saved spots ----
@@ -591,6 +607,7 @@ export default function App() {
             <button className="btn" onClick={handleSearch}>Search</button>
             <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
             <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
+            {isNative() && <button className="btn btn-secondary" onClick={remindMe} title="Remind me at dawn"><Bell size={14} style={{ verticalAlign: '-2px' }} /> Remind me</button>}
           </div>
           {shareMsg && <div className="share-msg">{shareMsg}</div>}
           {spotMsg && <div className="share-msg">{spotMsg}</div>}
