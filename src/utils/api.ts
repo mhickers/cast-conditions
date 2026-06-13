@@ -16,6 +16,13 @@ function nextDay(dateStr: string): string {
   return localToday(d);
 }
 
+// Route Open-Meteo requests through our own same-origin /api/weather proxy in
+// production, so ad blockers (which block the open-meteo.com domains directly)
+// can't break weather data. In local dev, hit Open-Meteo directly.
+function wx(url: string): string {
+  return process.env.NODE_ENV === 'production' ? `/api/weather?u=${encodeURIComponent(url)}` : url;
+}
+
 // Fetch JSON with retry; returns null instead of throwing so one flaky
 // source (or an ad blocker) can't take down the whole dashboard.
 async function fetchJson(url: string, tries = 2): Promise<any | null> {
@@ -48,7 +55,7 @@ export function weatherCodeToCondition(code: number): { label: string; icon: str
 }
 
 export async function geocodeLocation(query: string): Promise<{ lat: number; lon: number; label: string } | null> {
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`;
+  const url = wx(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`);
   const res = await fetch(url);
   const d = await res.json();
   if (d.results?.length) {
@@ -77,13 +84,13 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
   const currentParams = today ? '&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,surface_pressure,weather_code,precipitation' : '';
 
   let [wJson, mJson] = await Promise.all([
-    fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${currentParams}&${hourlyParams}${dateParams}`),
-    fetchJson(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}${today ? '&current=wave_height,wave_period' : ''}&hourly=wave_height,wave_period&length_unit=imperial&timezone=auto${dateParams}`),
+    fetchJson(wx(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${currentParams}&${hourlyParams}${dateParams}`)),
+    fetchJson(wx(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}${today ? '&current=wave_height,wave_period' : ''}&hourly=wave_height,wave_period&length_unit=imperial&timezone=auto${dateParams}`)),
   ]);
 
   // If the full request failed, retry once with a simpler request shape
   if (!wJson || wJson.error || !wJson.hourly) {
-    wJson = await fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&${hourlyParams}${dateParams}`);
+    wJson = await fetchJson(wx(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&${hourlyParams}${dateParams}`));
   }
 
   // Weather is essential; waves are optional (marine API has outages and
@@ -279,8 +286,8 @@ export async function fetchWeekOutlook(lat: number, lon: number): Promise<Array<
   const endD = new Date(); endD.setDate(endD.getDate() + 6);
   const end = localToday(endD);
   const [w, m] = await Promise.all([
-    fetchJson(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,surface_pressure&wind_speed_unit=mph&timezone=auto&start_date=${start}&end_date=${end}`),
-    fetchJson(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height&length_unit=imperial&timezone=auto&start_date=${start}&end_date=${end}`),
+    fetchJson(wx(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,surface_pressure&wind_speed_unit=mph&timezone=auto&start_date=${start}&end_date=${end}`)),
+    fetchJson(wx(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&hourly=wave_height&length_unit=imperial&timezone=auto&start_date=${start}&end_date=${end}`)),
   ]);
   if (!w?.hourly?.time?.length) return [];
   const out: Array<{ date: string; score: number }> = [];
