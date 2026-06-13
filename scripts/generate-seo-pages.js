@@ -48,6 +48,66 @@ const TOWNS = [
   { name: 'Lake Hopatcong, NJ', lat: 40.9415, lon: -74.661, type: 'inland', water: 'Lake Hopatcong' },
   { name: 'Greenwood Lake, NJ', lat: 41.1726, lon: -74.3457, type: 'inland', water: 'Greenwood Lake' },
   { name: 'Hackettstown, NJ', lat: 40.854, lon: -74.829, type: 'inland', water: 'the Musconetcong River' },
+
+  // ===== Top US fishing destinations (national) =====
+  // --- Northeast coast ---
+  { name: 'Montauk, NY', lat: 41.0359, lon: -71.9545, type: 'coastal', water: 'Montauk Point and the rips', species: 'striped bass, bluefish, false albacore, fluke, and black sea bass' },
+  { name: 'Gloucester, MA', lat: 42.6159, lon: -70.6620, type: 'coastal', water: 'Cape Ann and Massachusetts Bay', species: 'striped bass, bluefish, haddock, and cod' },
+  { name: 'Chatham, MA', lat: 41.6818, lon: -69.9597, type: 'coastal', water: 'the Cape Cod flats and rips', species: 'striped bass, bluefish, fluke, and black sea bass' },
+  { name: 'Block Island, RI', lat: 41.1712, lon: -71.5580, type: 'coastal', water: "the island's rips and reefs", species: 'striped bass, bluefish, fluke, and false albacore' },
+  // --- Mid-Atlantic ---
+  { name: 'Ocean City, MD', lat: 38.3365, lon: -75.0849, type: 'coastal', water: 'the inlet, surf, and back bays', species: 'striped bass, flounder, tautog, and bluefish' },
+  { name: 'Virginia Beach, VA', lat: 36.8529, lon: -75.9780, type: 'coastal', water: 'the Chesapeake Bay mouth and surf', species: 'striped bass (rockfish), red drum, flounder, and cobia' },
+  // --- Southeast coast ---
+  { name: 'Nags Head, NC', lat: 35.9573, lon: -75.6240, type: 'coastal', water: 'the Outer Banks surf and sounds', species: 'red drum, striped bass, bluefish, and flounder' },
+  { name: 'Cape Hatteras, NC', lat: 35.2493, lon: -75.5288, type: 'coastal', water: 'the Hatteras surf and inlet', species: 'red drum, false albacore, bluefish, and king mackerel' },
+  { name: 'Morehead City, NC', lat: 34.7229, lon: -76.7261, type: 'coastal', water: 'Bogue Sound and the nearshore reefs' },
+  { name: 'Charleston, SC', lat: 32.7765, lon: -79.9311, type: 'coastal', water: 'the harbor, creeks, and nearshore reefs', species: 'red drum, spotted seatrout, flounder, and sheepshead' },
+  { name: 'Hilton Head Island, SC', lat: 32.2163, lon: -80.7526, type: 'coastal', water: 'the sounds and tidal creeks' },
+  { name: 'Savannah, GA', lat: 32.0809, lon: -81.0912, type: 'coastal', water: 'the tidal rivers and sounds' },
+  // --- Florida ---
+  { name: 'Jacksonville, FL', lat: 30.3322, lon: -81.6557, type: 'coastal', water: 'the St. Johns River mouth and surf' },
+  { name: 'St. Augustine, FL', lat: 29.9012, lon: -81.3124, type: 'coastal', water: 'the inlet, ICW, and surf' },
+  { name: 'Stuart, FL', lat: 27.1973, lon: -80.2528, type: 'coastal', water: 'the St. Lucie Inlet and offshore', species: 'sailfish, snook, tarpon, and snapper' },
+  { name: 'Boca Grande, FL', lat: 26.7484, lon: -82.2596, type: 'coastal', water: 'Boca Grande Pass and the harbor', species: 'tarpon, snook, redfish, and grouper' },
+  { name: 'Naples, FL', lat: 26.1420, lon: -81.7948, type: 'coastal', water: 'the passes and nearshore reefs' },
+  { name: 'Islamorada, FL', lat: 24.9243, lon: -80.6276, type: 'coastal', water: 'the Florida Keys flats and reef', species: 'bonefish, tarpon, permit, mahi-mahi, and snapper' },
+  { name: 'Key West, FL', lat: 24.5551, lon: -81.7800, type: 'coastal', water: 'the reef, wrecks, and flats', species: 'tarpon, permit, snapper, grouper, and mahi-mahi' },
+  { name: 'Miami, FL', lat: 25.7617, lon: -80.1918, type: 'coastal', water: 'Biscayne Bay and the Gulf Stream' },
+  { name: 'Tampa, FL', lat: 27.9506, lon: -82.4572, type: 'coastal', water: "Tampa Bay's flats and passes", species: 'snook, redfish, spotted seatrout, and tarpon' },
+  { name: 'Destin, FL', lat: 30.3935, lon: -86.4958, type: 'coastal', water: 'Destin Pass and the offshore grounds', species: 'red snapper, king mackerel, cobia, and grouper' },
+  { name: 'Pensacola, FL', lat: 30.4213, lon: -87.2169, type: 'coastal', water: 'the pass, bay, and Gulf' },
+  // --- Gulf coast ---
+  { name: 'Orange Beach, AL', lat: 30.2697, lon: -87.5836, type: 'coastal', water: 'Perdido Pass and the Gulf reefs' },
+  { name: 'Biloxi, MS', lat: 30.3960, lon: -88.8853, type: 'coastal', water: 'the Mississippi Sound and barrier islands' },
+  { name: 'Venice, LA', lat: 29.2769, lon: -89.3540, type: 'coastal', water: 'the Mississippi Delta passes', species: 'redfish, speckled trout, yellowfin tuna, and cobia' },
+  { name: 'Grand Isle, LA', lat: 29.2366, lon: -89.9873, type: 'coastal', water: 'the surf, passes, and rigs' },
+  { name: 'Galveston, TX', lat: 29.3013, lon: -94.7977, type: 'coastal', water: 'the jetties, bay, and surf', species: 'redfish, speckled trout, flounder, and red snapper' },
+  { name: 'Port Aransas, TX', lat: 27.8339, lon: -97.0611, type: 'coastal', water: 'the jetties and Aransas Pass' },
+  { name: 'South Padre Island, TX', lat: 26.1118, lon: -97.1681, type: 'coastal', water: 'the Lower Laguna Madre and Gulf' },
+  // --- Pacific coast ---
+  { name: 'San Diego, CA', lat: 32.7157, lon: -117.1611, type: 'coastal', water: 'the kelp beds and offshore banks', species: 'yellowtail, tuna, calico bass, and rockfish' },
+  { name: 'Bodega Bay, CA', lat: 38.3332, lon: -123.0480, type: 'coastal', water: 'the bay and coastal reefs', species: 'rockfish, lingcod, salmon, and Dungeness crab' },
+  { name: 'Astoria, OR', lat: 46.1879, lon: -123.8313, type: 'coastal', water: 'the Columbia River mouth', species: 'Chinook salmon, sturgeon, and steelhead' },
+  { name: 'Westport, WA', lat: 46.9043, lon: -124.1048, type: 'coastal', water: 'Grays Harbor and the coast' },
+  // --- Alaska ---
+  { name: 'Sitka, AK', lat: 57.0531, lon: -135.3300, type: 'coastal', water: 'the sounds and outer coast', species: 'king and coho salmon, halibut, and rockfish' },
+  { name: 'Homer, AK', lat: 59.6425, lon: -151.5483, type: 'coastal', water: 'Kachemak Bay and Cook Inlet', species: 'halibut, king salmon, and rockfish' },
+  // --- Inland lakes & rivers ---
+  { name: 'Lake of the Ozarks, MO', lat: 38.1989, lon: -92.7560, type: 'inland', water: 'Lake of the Ozarks', species: 'largemouth and spotted bass, crappie, catfish, and white bass' },
+  { name: 'Lake Guntersville, AL', lat: 34.3580, lon: -86.2947, type: 'inland', water: 'Lake Guntersville', species: 'largemouth bass, crappie, and catfish' },
+  { name: 'Lake Fork, TX', lat: 32.8390, lon: -95.5666, type: 'inland', water: 'Lake Fork Reservoir', species: 'trophy largemouth bass and crappie' },
+  { name: 'Lake Okeechobee, FL', lat: 27.0500, lon: -80.8300, type: 'inland', water: 'Lake Okeechobee', species: 'largemouth bass, black crappie (specks), and bluegill' },
+  { name: 'Lake Champlain, VT', lat: 44.4759, lon: -73.2121, type: 'inland', water: 'Lake Champlain', species: 'smallmouth and largemouth bass, lake trout, and walleye' },
+  { name: 'Port Clinton, OH', lat: 41.5125, lon: -82.9377, type: 'inland', water: "Lake Erie's western basin", species: 'walleye, yellow perch, and smallmouth bass' },
+  { name: 'Mille Lacs Lake, MN', lat: 46.2480, lon: -93.6530, type: 'inland', water: 'Mille Lacs Lake', species: 'walleye, smallmouth bass, and northern pike' },
+  { name: 'Lake Tahoe, CA', lat: 38.9399, lon: -119.9772, type: 'inland', water: 'Lake Tahoe', species: 'mackinaw (lake trout), rainbow trout, and kokanee' },
+  { name: 'Lake Havasu City, AZ', lat: 34.4839, lon: -114.3225, type: 'inland', water: 'Lake Havasu', species: 'largemouth and smallmouth bass, striped bass, and catfish' },
+  { name: 'Toledo Bend, TX', lat: 31.1800, lon: -93.5700, type: 'inland', water: 'Toledo Bend Reservoir', species: 'largemouth bass, crappie, and catfish' },
+  { name: 'Kentucky Lake, KY', lat: 36.9900, lon: -88.2700, type: 'inland', water: 'Kentucky Lake', species: 'largemouth and smallmouth bass, crappie, and catfish' },
+  { name: 'Bull Shoals Lake, AR', lat: 36.3780, lon: -92.5810, type: 'inland', water: 'Bull Shoals Lake', species: 'largemouth, smallmouth, and spotted bass; trout below the dam' },
+  { name: 'Ennis, MT', lat: 45.3490, lon: -111.7280, type: 'inland', water: 'the Madison River', species: 'wild rainbow and brown trout' },
+  { name: 'Lake Powell, AZ', lat: 36.9147, lon: -111.4558, type: 'inland', water: 'Lake Powell', species: 'striped bass, largemouth and smallmouth bass, and walleye' },
 ];
 
 const COASTAL_SPECIES = 'striped bass, fluke (summer flounder), bluefish, black sea bass, tautog, weakfish, and kingfish';
@@ -58,21 +118,30 @@ const slugify = (name) =>
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Distance in miles (for geographic "nearby spots" internal links)
+const distMi = (a, b, c, d) => {
+  const R = 3958.8, p = Math.PI / 180;
+  const dLat = (c - a) * p, dLon = (d - b) * p;
+  const x = Math.sin(dLat / 2) ** 2 + Math.cos(a * p) * Math.cos(c * p) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(x));
+};
+
 function pageHtml(town, allTowns) {
   const slug = slugify(town.name);
   const url = `${SITE}/fishing/${slug}/`;
   const appLink = `/?lat=${town.lat.toFixed(4)}&lon=${town.lon.toFixed(4)}&label=${encodeURIComponent(town.name)}`;
-  const species = town.type === 'coastal' ? COASTAL_SPECIES : INLAND_SPECIES;
+  const species = town.species || (town.type === 'coastal' ? COASTAL_SPECIES : INLAND_SPECIES);
   const waterData = town.type === 'coastal'
     ? 'live tides from the nearest NOAA station, water temperature, wave height, and wind'
-    : 'real-time river flow and gage height from the nearest USGS gauge, water temperature, and wind';
+    : 'real-time flow and water level from the nearest USGS gauge, water temperature, and wind';
   const title = `${town.name} Fishing Report & Conditions — Fish Condish`;
   const desc = `Live fishing conditions for ${town.name}: fishing score, best times to fish, ${town.type === 'coastal' ? 'tides, water temp' : 'river flow, water temp'}, weather, and a species bite forecast. Free, updated in real time.`;
 
-  // Nearby-town links (same type first), for internal linking
+  // Nearest towns by distance, for sensible internal linking
   const nearby = allTowns
     .filter(t => t.name !== town.name)
-    .sort((a, b) => (a.type === town.type ? 0 : 1) - (b.type === town.type ? 0 : 1))
+    .map(t => ({ ...t, _d: distMi(town.lat, town.lon, t.lat, t.lon) }))
+    .sort((a, b) => a._d - b._d)
     .slice(0, 8);
 
   return `<!DOCTYPE html>
@@ -136,10 +205,10 @@ footer a{color:var(--ocean)}
 <li><strong>Bait &amp; lure advisor</strong> — AI suggestions grounded in recent local fishing reports.</li>
 <li><strong>Solunar feeding periods, moon phase, sunrise/sunset</strong> — the timing details anglers actually use.</li>
 </ul>
-<h2>Live ${town.type === 'coastal' ? 'tide and water' : 'river and water'} data</h2>
+<h2>Live ${town.type === 'coastal' ? 'tide and water' : 'water'} data</h2>
 <p>${town.type === 'coastal'
   ? `Tides and water temperature for ${esc(town.name)} come straight from the nearest NOAA station, with a smooth tide curve, today's highs and lows, and a station picker if you fish a different part of ${esc(town.water)}.`
-  : `River conditions for ${esc(town.name)} come straight from the nearest USGS stream gauge — live flow (cfs), gage height, and water temperature — with a gauge picker if you fish a different stretch of ${esc(town.water)}.`}</p>
+  : `Water conditions for ${esc(town.name)} come straight from the nearest USGS gauge — flow, gage height, and water temperature where it's reported — with a picker to switch between nearby monitoring sites on ${esc(town.water)}.`}</p>
 <p>It's free, works on your phone, and installs like an app. Local anglers also share recent catches right in the feed.</p>
 <a class="cta" href="${appLink}">Check the ${esc(town.name)} fishing score →</a>
 <h2>Nearby spots</h2>
