@@ -14,6 +14,14 @@ const path = require('path');
 
 const SITE = 'https://fishcondish.com';
 
+// AI-generated local reports (optional). Produced by scripts/generate-ai-reports.js
+// and cached in scripts/ai-reports.json so the BUILD never calls the API — it just
+// reads this file. Pages without a cached report render fine without that section.
+let AI_REPORTS = {};
+try {
+  AI_REPORTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'ai-reports.json'), 'utf8'));
+} catch { AI_REPORTS = {}; }
+
 // type: 'coastal' | 'inland' — drives the species copy and wording
 const TOWNS = [
   // --- South Jersey shore ---
@@ -416,6 +424,11 @@ function pageHtml(town, allTowns) {
     .sort((a, b) => a._d - b._d)
     .slice(0, 8);
 
+  const report = AI_REPORTS[slug];
+  const reportSection = report && Array.isArray(report.paragraphs) && report.paragraphs.length
+    ? `<section class="report"><h2>${esc(town.name)} fishing report</h2>${report.paragraphs.map(p => `<p>${esc(p)}</p>`).join('')}</section>`
+    : '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -459,6 +472,9 @@ ul{margin:8px 0 8px 22px}
 li{margin:4px 0}
 .nearby{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .nearby a{background:var(--sky);color:var(--navy);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;font-family:Arial,Helvetica,sans-serif}
+.report{background:#fff;border:1px solid #d9e4ef;border-left:4px solid var(--ocean);border-radius:10px;padding:16px 20px;margin:20px 0}
+.report h2{margin:0 0 6px;font-size:19px}
+.report p{font-size:16px;margin:8px 0}
 footer{text-align:center;font-size:13px;color:var(--muted);padding:24px;font-family:Arial,Helvetica,sans-serif}
 footer a{color:var(--ocean)}
 </style>
@@ -469,6 +485,7 @@ footer a{color:var(--ocean)}
 <h1>${esc(town.name)} Fishing Report &amp; Live Conditions</h1>
 <p>Planning to fish ${esc(town.water)}? Fish Condish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
 <a class="cta" href="${appLink}">See live ${esc(town.name)} conditions →</a>
+${reportSection}
 <h2>What you'll get for ${esc(town.name)}</h2>
 <ul>
 <li><strong>Fishing score (1–10)</strong> — one number that weighs ${waterData} into a single read on the bite.</li>
@@ -493,25 +510,30 @@ ${nearby.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(t.name)}</a>`).j
 </html>`;
 }
 
-// ---- generate ----
-const outRoot = path.join(__dirname, '..', 'public', 'fishing');
-fs.rmSync(outRoot, { recursive: true, force: true });
-fs.mkdirSync(outRoot, { recursive: true });
+// ---- generate (only when run directly, not when required by the AI script) ----
+if (require.main === module) {
+  const outRoot = path.join(__dirname, '..', 'public', 'fishing');
+  fs.rmSync(outRoot, { recursive: true, force: true });
+  fs.mkdirSync(outRoot, { recursive: true });
 
-for (const town of TOWNS) {
-  const dir = path.join(outRoot, slugify(town.name));
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'index.html'), pageHtml(town, TOWNS));
-}
+  for (const town of TOWNS) {
+    const dir = path.join(outRoot, slugify(town.name));
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), pageHtml(town, TOWNS));
+  }
 
-// sitemap.xml (homepage + all town pages)
-const today = new Date().toISOString().slice(0, 10);
-const urls = [`${SITE}/`, ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`)];
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+  // sitemap.xml (homepage + all town pages)
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [`${SITE}/`, ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`)];
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `;
-fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), sitemap);
+  fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), sitemap);
 
-console.log(`Generated ${TOWNS.length} SEO pages in public/fishing/ + sitemap.xml`);
+  const withReports = TOWNS.filter(t => AI_REPORTS[slugify(t.name)]).length;
+  console.log(`Generated ${TOWNS.length} SEO pages in public/fishing/ + sitemap.xml (${withReports} with AI reports)`);
+}
+
+module.exports = { TOWNS, slugify };

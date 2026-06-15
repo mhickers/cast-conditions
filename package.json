@@ -38,7 +38,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cap:sync": "npm run build && npx cap sync",
-    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios"
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
+    "ai:reports": "node scripts/generate-ai-reports.js"
   },
   "eslintConfig": {
     "extends": [
