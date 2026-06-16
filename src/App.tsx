@@ -21,6 +21,7 @@ import {
   Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
+import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { isNative, getCurrentPositionNative, remindAtDawn } from './native';
 import { crossCheckWeather } from './utils/crosscheck';
@@ -751,7 +752,7 @@ export default function App() {
 
         {isInland && (
           <section className="section">
-            <h3 className="section-label">River conditions{timeContext}</h3>
+            <h3 className="section-label">River &amp; lake conditions{timeContext}</h3>
             {riverStation ? (
               <>
                 <div className="stat-grid-3">
@@ -892,7 +893,7 @@ export default function App() {
               return (
                 <div key={i} className="species-card">
                   <div className="species-header">
-                    <span className="species-icon">{sp.icon}</span>
+                    <span className="species-icon"><SpeciesIcon name={sp.name} size={18} /></span>
                     <span className="species-name">{sp.name}</span>
                     <span className="bite-label" style={{ color }}>{sp.biteLabel}</span>
                   </div>
