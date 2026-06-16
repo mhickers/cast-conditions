@@ -148,7 +148,11 @@ export default function App() {
   const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
-  const isInland = stationChecked && !tideStation;
+  // Coastal spots sit within a few miles of a NOAA tide station; an inland
+  // lake near the coast can still have one 15-25 mi away, which used to make
+  // it read as coastal (showing saltwater species). Treat a distant station
+  // as inland so freshwater spots get freshwater species + river/lake data.
+  const isInland = stationChecked && (!tideStation || tideStation.distanceMi > 12);
   const isSaved = spots.some(s => s.label === locationLabel);
 
   const getStationOverride = (lbl: string): NearestStation | null => {
@@ -676,7 +680,10 @@ export default function App() {
 
         {weekScores.length > 0 && (
           <section className="section">
-            <h3 className="section-label">7-day outlook — which day should you go?</h3>
+            <h3 className="section-label">7-Day Outlook — When Should I Go?</h3>
+            <p className="muted" style={{ marginTop: -2, marginBottom: 10 }}>
+              Each day is a quick midday forecast for planning ahead. The big score up top is for your selected time and also folds in live water temp and tide, so the two can differ. Tap a day to see its full breakdown.
+            </p>
             <div className="week-strip">
               {weekScores.map(d => {
                 const dt = new Date(d.date + 'T12:00:00');
@@ -918,7 +925,7 @@ export default function App() {
         />
 
         <section className="section">
-          <h3 className="section-label">Saved spots</h3>
+          <h3 className="section-label">Saved spots <span className="log-private-tag">private — saved on this device</span></h3>
           <div className="card">
             {spots.length === 0 && <p className="muted" style={{ padding: '4px 0 8px' }}>No saved spots yet. Search a location and click "Save spot".</p>}
             {spots.map(s => (

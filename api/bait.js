@@ -22,14 +22,17 @@ module.exports = async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY || process.env.REACT_APP_ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
 
-  const { location, species, dateLabel, conditionsSummary, isInland } = req.body || {};
+  const { location, species, dateLabel, conditionsSummary, isInland, detail } = req.body || {};
   if (!location || !species || typeof location !== 'string' || typeof species !== 'string'
       || location.length > 120 || species.length > 200) {
     return res.status(400).json({ error: 'Invalid request' });
   }
 
-  // Cache: identical location+species+day requests are free and instant
-  const cacheKey = `${location}|${species}|${dateLabel}`.toLowerCase().slice(0, 250);
+  // Detailed mode = a single species was picked (not the "top species" summary)
+  const detailed = detail === true && !species.includes(',');
+
+  // Cache: identical location+species+day+mode requests are free and instant
+  const cacheKey = `${location}|${species}|${dateLabel}|${detailed ? 'd' : 's'}`.toLowerCase().slice(0, 250);
   const supaUrl = process.env.REACT_APP_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const supa = supaUrl && serviceKey ? createClient(supaUrl, serviceKey) : null;
@@ -42,11 +45,27 @@ module.exports = async (req, res) => {
     } catch {}
   }
 
-  const prompt = `You are an expert local fishing guide for the area around ${location}. Today is ${dateLabel}.${conditionsSummary ? ` Current conditions: ${conditionsSummary}.` : ''}
+  const grounding = `You are an expert local fishing guide for the area around ${location}. Today is ${dateLabel}.${conditionsSummary ? ` Current conditions: ${conditionsSummary}.` : ''}
 
 Requested species: ${species}.
 
-First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species.split(',')[0]} ${location.split(',')[0]}".
+First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species.split(',')[0]} ${location.split(',')[0]}".`;
+
+  const detailedPrompt = `${grounding}
+
+Then write a detailed report for ${species} ONLY at this location, as plain text. Use these exact labels, each on its own line, with a blank line between them:
+
+Baits & lures: the specific baits, lure types, sizes, and colors producing now.
+Technique: how to present them — retrieve, depth, rigging, and speed.
+Where to fish: the structure and water to target on this kind of waterbody.
+Timing & conditions: the best time of day, ${isInland ? 'water temp, and weather' : 'tide stage, time of day, and weather'} for this date.
+
+STRICT RULES:
+- Cover ONLY ${species}. Never mention other species, regulations, or slot limits.
+- Keep the whole report under ~160 words. Plain text only — no markdown, asterisks, bullets, or headers other than the four labels above.
+- Work recent report intel in where you have it; otherwise rely on seasonal patterns for this exact area and month.`;
+
+  const summaryPrompt = `${grounding}
 
 Then answer in this EXACT compact format — one line per requested species, nothing else before or after:
 
@@ -59,6 +78,8 @@ STRICT RULES:
 - Max 40 words per species line.
 - Plain text only — no markdown, no asterisks, no bullets, no headers, no intro or closing sentence.
 - If recent reports mention the requested species, work that intel into the line; if not, rely on seasonal patterns for this exact area and month.`;
+
+  const prompt = detailed ? detailedPrompt : summaryPrompt;
 
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {

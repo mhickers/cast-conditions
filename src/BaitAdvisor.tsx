@@ -39,6 +39,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
           dateLabel,
           conditionsSummary: condBits.join(', '),
           isInland,
+          detail: selected !== 'top',
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -59,6 +60,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
         <p className="alert-desc">
           Scans recent public fishing reports near <strong>{locationLabel}</strong> — bait shop report pages,
           regional report sites, and forums — and blends them with seasonal patterns for this date.
+          Leave it on <strong>Top species</strong> for a quick rundown, or pick one species for a full breakdown of baits, lures, technique, where to fish, and timing.
         </p>
         <div className="add-spot-row">
           <select className="search-input" value={selected} onChange={e => setSelected(e.target.value)} aria-label="Species for bait advice">
