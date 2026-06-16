@@ -25,6 +25,38 @@ const US_STATES: Record<string, string> = {
   VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
 };
 
+// The Open-Meteo geocoder only indexes populated places, so it can't find
+// rivers, lakes, bays, or reservoirs. OpenStreetMap's Nominatim does. We use
+// it as a fallback (and bias toward water features). Low-volume use only —
+// the app's domain Referer identifies it per OSM's usage policy.
+async function geocodeNominatim(query: string, count: number): Promise<GeoResult[]> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=jsonv2&limit=${count}&countrycodes=us&addressdetails=1&accept-language=en`
+    );
+    if (!res.ok) return [];
+    const d = await res.json();
+    if (!Array.isArray(d)) return [];
+    const isWater = (r: any) =>
+      ['natural', 'water', 'waterway'].includes(r.class) ||
+      ['water', 'bay', 'river', 'reservoir', 'lake', 'stream', 'pond', 'strait', 'lagoon', 'canal', 'wetland'].includes(r.type);
+    // Surface water features first, otherwise keep Nominatim's importance order
+    const ordered = [...d].sort((a, b) => (isWater(b) ? 1 : 0) - (isWater(a) ? 1 : 0));
+    return ordered
+      .map((r: any) => {
+        const short = r.name || (r.display_name || '').split(',')[0];
+        const state = r.address?.state;
+        return {
+          lat: parseFloat(r.lat),
+          lon: parseFloat(r.lon),
+          label: [short, state, 'US'].filter(Boolean).join(', '),
+        };
+      })
+      .filter(g => Number.isFinite(g.lat) && Number.isFinite(g.lon));
+  } catch {}
+  return [];
+}
+
 async function geocodeQuery(name: string, count: number): Promise<any[]> {
   try {
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=${count}&language=en&format=json`);
@@ -95,7 +127,7 @@ export async function resolveLocation(query: string): Promise<GeoResult | null> 
     } catch {}
   }
 
-  // 3. City name (handles "City", "City, NJ", and "City, NJ, US" formats)
+  // 3. City / town name via Open-Meteo (populated places only)
   const results = await geocodeSmart(trimmed, 1);
   if (results.length) {
     const r = results[0];
@@ -105,6 +137,11 @@ export async function resolveLocation(query: string): Promise<GeoResult | null> 
       label: [r.name, r.admin1, r.country_code].filter(Boolean).join(', '),
     };
   }
+
+  // 4. Natural features — rivers, lakes, bays, reservoirs — via OpenStreetMap
+  const osm = await geocodeNominatim(trimmed, 5);
+  if (osm.length) return osm[0];
+
   return null;
 }
 
@@ -122,9 +159,13 @@ export async function reverseGeocode(lat: number, lon: number): Promise<string> 
 export async function suggestLocations(query: string): Promise<GeoResult[]> {
   if (query.trim().length < 2 || COORD_REGEX.test(query) || ZIP_REGEX.test(query)) return [];
   const results = await geocodeSmart(query.trim(), 5);
-  return results.map((r: any) => ({
-    lat: r.latitude,
-    lon: r.longitude,
-    label: [r.name, r.admin1, r.country_code].filter(Boolean).join(', '),
-  }));
+  if (results.length) {
+    return results.map((r: any) => ({
+      lat: r.latitude,
+      lon: r.longitude,
+      label: [r.name, r.admin1, r.country_code].filter(Boolean).join(', '),
+    }));
+  }
+  // No town matched — surface water features (lakes, bays, rivers) instead
+  return geocodeNominatim(query.trim(), 5);
 }

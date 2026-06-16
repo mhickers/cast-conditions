@@ -415,7 +415,7 @@ export default function App() {
     if (match) { goToLocation(match.lat, match.lon, match.label); return; }
     const geo = await resolveLocation(searchInput);
     if (geo) goToLocation(geo.lat, geo.lon, geo.label);
-    else setSearchError(`Couldn't find "${searchInput}" — try a city name, zip code, or coordinates like 39.33, -74.50`);
+    else setSearchError(`Couldn't find "${searchInput}" — try a town, a lake/river/bay name, a zip code, or coordinates like 39.33, -74.50`);
   };
 
   const shareConditions = async () => {
@@ -900,7 +900,7 @@ export default function App() {
               return (
                 <div key={i} className="species-card">
                   <div className="species-header">
-                    <span className="species-icon"><SpeciesIcon name={sp.name} size={18} /></span>
+                    <span className="species-icon"><SpeciesIcon name={sp.name} size={30} /></span>
                     <span className="species-name">{sp.name}</span>
                     <span className="bite-label" style={{ color }}>{sp.biteLabel}</span>
                   </div>
