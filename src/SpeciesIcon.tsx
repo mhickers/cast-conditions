@@ -23,7 +23,7 @@ function classify(name: string): FishType {
   if (/salmon|steelhead|chinook|coho|sockeye|kokanee/.test(n)) return 'salmon';
   if (/pike|musky|muskie|\bgar\b|barracuda|needlefish|mackerel|\beel\b/.test(n)) return 'pike';
   if (/catfish|bullhead|channel cat/.test(n)) return 'catfish';
-  if (/crappie|bluegill|sunfish|\bperch\b|pumpkinseed|panfish|\bbream\b|redear/.test(n)) return 'panfish';
+  if (/crappie|bluegill|sunfish|\bperch\b|pumpkinseed|panfish|\bbream\b|redear|sheepshead|scup|porgy|spadefish|triggerfish/.test(n)) return 'panfish';
   return 'gamefish';
 }
 

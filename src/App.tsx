@@ -359,12 +359,39 @@ export default function App() {
     setTideStation(st);
     saveStationOverride(locationLabel, st);
     setTideLoading(true);
-    const tideData = await fetchTides(selectedDate, st.id);
-    setTides(tideData);
-    setTideLoading(false);
+    const seq = ++loadSeq.current;
+    const hour = selectedTime === 'now' ? null : selectedTime;
     const refTime = isNow ? Date.now() : new Date(`${selectedDate}T${String(selectedTime === 'now' ? 12 : selectedTime).padStart(2, '0')}:00:00`).getTime();
-    const tide = tideAt(tideData.curve, refTime);
-    setConditions(c => ({ ...c, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
+    try {
+      // Re-center weather, marine, and water temp on the chosen station's
+      // location so every reading corresponds to that spot, not the search point.
+      const [weather, tempSt] = await Promise.all([
+        fetchWeather(st.lat, st.lon, selectedDate, hour),
+        findNearestStation(st.lat, st.lon, 'watertemp', 150),
+      ]);
+      if (seq !== loadSeq.current) return;
+      const [waterTemp, tideData] = await Promise.all([
+        tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
+        fetchTides(selectedDate, st.id),
+      ]);
+      if (seq !== loadSeq.current) return;
+      const tide = tideAt(tideData.curve, refTime);
+      const trendIdx = hour ?? (selectedDate === localToday() ? new Date().getHours() : 12);
+      setConditions(c => ({
+        ...c, ...weather.conditions,
+        pressureTrend: pressureTrendAt(weather.hourly, trendIdx),
+        waterTempF: waterTemp ?? c.waterTempF ?? null,
+        tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null,
+        sourcesUsed: 1, verified: false,
+      }));
+      setHourly(weather.hourly);
+      setTides(tideData);
+      setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    } catch {
+      // keep the prior readings if the re-fetch fails
+    } finally {
+      if (seq === loadSeq.current) setTideLoading(false);
+    }
   };
 
   const changeRiverGauge = (siteId: string) => {

@@ -5,6 +5,8 @@ export interface NearestStation {
   id: string;
   name: string;
   distanceMi: number;
+  lat: number;
+  lon: number;
 }
 
 const cache: Record<string, Array<{ id: string; name: string; lat: number; lng: number }>> = {};
@@ -60,7 +62,7 @@ export async function findNearbyStations(
     const dir = await loadDirectory(type);
     return dir
       .filter(s => s.lat != null && s.lng != null)
-      .map(s => ({ id: s.id, name: s.name, distanceMi: Math.round(haversineMi(lat, lon, s.lat, s.lng) * 10) / 10 }))
+      .map(s => ({ id: s.id, name: s.name, lat: s.lat, lon: s.lng, distanceMi: Math.round(haversineMi(lat, lon, s.lat, s.lng) * 10) / 10 }))
       .filter(s => s.distanceMi <= maxMiles)
       .sort((a, b) => a.distanceMi - b.distanceMi)
       .slice(0, count);
