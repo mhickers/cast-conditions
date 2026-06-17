@@ -385,6 +385,19 @@ const TOWNS = [
   { name: 'Point Judith, RI', lat: 41.3637, lon: -71.4912, type: 'coastal', water: 'the Point Judith rips and Block Island Sound' },
   { name: 'Carolina Beach, NC', lat: 34.0352, lon: -77.8936, type: 'coastal', water: 'the surf, piers, and inlet' },
   { name: 'Pawleys Island, SC', lat: 33.4307, lon: -79.1220, type: 'coastal', water: 'the creeks and surf' },
+  { name: 'Long Beach Island, NJ', lat: 39.6573, lon: -74.1857, type: 'coastal', water: 'the LBI surf, inlets, and Barnegat Bay' },
+  { name: 'Cape Cod, MA', lat: 41.6688, lon: -70.2962, type: 'coastal', water: 'Cape Cod beaches, bays, and the canal' },
+  { name: 'Cape Cod Canal, MA', lat: 41.7704, lon: -70.5207, type: 'coastal', water: 'the fast-moving canal current' },
+  { name: 'Falmouth, MA', lat: 41.5515, lon: -70.6148, type: 'coastal', water: 'Vineyard Sound and the Falmouth shoreline' },
+  { name: 'Outer Banks, NC', lat: 35.5585, lon: -75.4665, type: 'coastal', water: 'the OBX surf, sounds, and inlets' },
+  { name: 'Florida Keys, FL', lat: 24.7798, lon: -80.9533, type: 'coastal', water: 'the flats, channels, bridges, and reef' },
+  { name: 'Chesapeake Bay, MD', lat: 38.3, lon: -76.3, type: 'coastal', water: 'the bay channels, flats, and tidal rivers' },
+  { name: 'Sandy Hook, NJ', lat: 40.4604, lon: -73.9962, type: 'coastal', water: 'the Sandy Hook surf and rips' },
+  { name: 'Finger Lakes, NY', lat: 42.7, lon: -76.8, type: 'inland', water: 'the deep, clear Finger Lakes' },
+  { name: 'Lake Erie, OH', lat: 41.7, lon: -82.4, type: 'inland', water: 'Lake Erie walleye and bass grounds' },
+  { name: 'Kenai River, AK', lat: 60.5544, lon: -150.854, type: 'inland', water: 'Kenai River salmon and trout runs' },
+  { name: 'Columbia River, OR', lat: 45.651, lon: -121.9, type: 'inland', water: 'Columbia River salmon and steelhead' },
+  { name: 'Lake St. Clair, MI', lat: 42.453, lon: -82.7, type: 'inland', water: 'the smallmouth and muskie flats' },
 ];
 
 const COASTAL_SPECIES = 'striped bass, fluke (summer flounder), bluefish, black sea bass, tautog, weakfish, and kingfish';

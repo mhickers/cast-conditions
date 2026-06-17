@@ -84,3 +84,10 @@ export interface RiverData {
   gageFt: number | null;
   waterTempF: number | null;
 }
+
+export type ClarityLevel = 'Clear' | 'Stained' | 'Muddy';
+export interface WaterClarity {
+  level: ClarityLevel;
+  reason: string;
+  lureHint: string;
+}

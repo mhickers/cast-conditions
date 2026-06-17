@@ -1,4 +1,4 @@
-import type { MoonInfo, FishingScore, Conditions, Species } from '../types';
+import type { MoonInfo, FishingScore, Conditions, Species, WaterClarity } from '../types';
 
 export function degToCompass(d: number): string {
   const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
@@ -129,4 +129,29 @@ export function getSolunarPeriods(forDate: Date): SolunarPeriods {
     majorHours: [transit, underfoot],
     minorHours: [rise, set],
   };
+}
+
+// Derived water-clarity estimate. There's no clean free real-time clarity feed
+// (especially saltwater), so we infer it from data we already pull. Strongest
+// for the surf (wave height + wind churn sand); for inland we lean on recent /
+// incoming wet weather, which is the best signal available without rain history.
+export function calcWaterClarity(c: Partial<Conditions>, isInland: boolean): WaterClarity {
+  const wave = c.waveFt ?? 0;
+  const wind = c.windMph ?? 0;
+  const rain = c.precipChance ?? 0;
+  const wet = /rain|storm|shower|drizzle|thunder|squall/i.test(c.conditionLabel || '');
+
+  if (!isInland) {
+    if (wave >= 4 || wind >= 22)
+      return { level: 'Muddy', reason: 'Heavy surf and wind are churning up sand and sediment.', lureHint: 'Go bright and loud — chartreuse, white, rattles, or added scent.' };
+    if (wave >= 2 || wind >= 14 || (wet && rain >= 60))
+      return { level: 'Stained', reason: 'Chop and wind are putting some color in the water.', lureHint: 'Split the difference — natural colors with a little flash or contrast.' };
+    return { level: 'Clear', reason: 'Calm seas and light wind mean clean water and good visibility.', lureHint: 'Favor natural colors and finesse presentations — fish can see well.' };
+  }
+
+  if (wet && rain >= 70)
+    return { level: 'Muddy', reason: 'Active wet weather likely has the water up and off-color.', lureHint: 'Go bright and loud — chartreuse, dark silhouettes, rattles, or scent.' };
+  if (rain >= 40 || wet)
+    return { level: 'Stained', reason: 'Recent or incoming rain may be putting a stain in the water.', lureHint: 'Natural colors with some contrast or flash tend to work best.' };
+  return { level: 'Clear', reason: 'Stable, dry conditions — the water is likely running clear.', lureHint: 'Favor natural colors and finesse presentations — fish can see well.' };
 }

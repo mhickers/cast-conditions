@@ -297,3 +297,19 @@ canvas { max-width: 100%; }
   .sun-row { gap: 14px; flex-wrap: wrap; }
   .score-bar { gap: 12px; }
 }
+
+/* Water clarity card */
+.clarity-card { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--border); border-left-width: 4px; border-radius: 12px; padding: 12px 14px; }
+.clarity-icon { flex: none; margin-top: 2px; }
+.clarity-level { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: 16px; line-height: 1.2; }
+.clarity-reason { font-size: 13px; color: var(--text); margin-top: 2px; }
+.clarity-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.clarity-clear { border-left-color: #1C9C8B; }
+.clarity-clear .clarity-icon, .clarity-clear .clarity-level { color: #168A7B; }
+.clarity-stained { border-left-color: #C8862A; }
+.clarity-stained .clarity-icon, .clarity-stained .clarity-level { color: #B5781F; }
+.clarity-muddy { border-left-color: #8A5A33; }
+.clarity-muddy .clarity-icon, .clarity-muddy .clarity-level { color: #7A4E2B; }
+[data-theme='dark'] .clarity-clear .clarity-icon, [data-theme='dark'] .clarity-clear .clarity-level { color: #34C9B5; }
+[data-theme='dark'] .clarity-stained .clarity-icon, [data-theme='dark'] .clarity-stained .clarity-level { color: #E0A23E; }
+[data-theme='dark'] .clarity-muddy .clarity-icon, [data-theme='dark'] .clarity-muddy .clarity-level { color: #C08A5A; }

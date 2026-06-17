@@ -13,12 +13,12 @@ import {
   LineElement, Tooltip, Filler,
 } from 'chart.js';
 import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData } from './types';
-import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass } from './utils/fishing';
+import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass, calcWaterClarity } from './utils/fishing';
 import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, weatherCodeToCondition, localToday } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
@@ -182,6 +182,7 @@ export default function App() {
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
+  const waterClarity = calcWaterClarity(conditions, isInland);
   const species = getSpeciesForLocation(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
     conditions.waveFt ?? 2, conditions.pressureMb ?? 1013,
@@ -745,6 +746,18 @@ export default function App() {
           </div>
         </section>
 
+        <section className="section">
+          <h3 className="section-label">Water clarity{timeContext}</h3>
+          <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
+            <Eye size={20} className="clarity-icon" />
+            <div className="clarity-text">
+              <div className="clarity-level">{waterClarity.level}</div>
+              <div className="clarity-reason">{waterClarity.reason}</div>
+              <div className="clarity-hint">{waterClarity.lureHint}</div>
+            </div>
+          </div>
+        </section>
+
         {!isInland && (
           <section className="section">
             <h3 className="section-label">Water conditions{timeContext}</h3>
@@ -922,6 +935,7 @@ export default function App() {
           topSpecies={[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 3).map(sp => sp.name)}
           conditions={conditions}
           isInland={isInland}
+          waterClarity={waterClarity.level}
         />
 
         <section className="section">

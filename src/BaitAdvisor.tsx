@@ -9,9 +9,10 @@ interface Props {
   topSpecies: string[];
   conditions: Partial<Conditions>;
   isInland: boolean;
+  waterClarity?: string;
 }
 
-export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland }: Props) {
+export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland, waterClarity }: Props) {
   const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
     if (conditions.windMph != null) condBits.push(`${Math.round(conditions.windMph)} mph wind`);
     if (conditions.waterTempF != null) condBits.push(`${conditions.waterTempF.toFixed(0)}°F water`);
     if (conditions.pressureMb != null) condBits.push(`${conditions.pressureMb} mb pressure`);
+    if (waterClarity) condBits.push(`${waterClarity.toLowerCase()} water clarity`);
 
     try {
       const res = await fetch('/api/bait', {
