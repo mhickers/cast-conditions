@@ -394,13 +394,31 @@ export default function App() {
     }
   };
 
-  const changeRiverGauge = (siteId: string) => {
+  const changeRiverGauge = async (siteId: string) => {
     const r = rivers.find(x => x.siteId === siteId);
     if (!r) return;
     setRiverStation(r);
     saveRiverOverride(locationLabel, r);
-    // Reflect the selected gauge's own water temp (drives the card + score + species)
+    const seq = ++loadSeq.current;
+    const hour = selectedTime === 'now' ? null : selectedTime;
+    // Reflect the gauge's own water temp immediately (drives card + score + species)
     setConditions(c => ({ ...c, waterTempF: r.waterTempF ?? null }));
+    try {
+      // Re-center weather on the chosen gauge's location, same as tide stations
+      const weather = await fetchWeather(r.lat, r.lon, selectedDate, hour);
+      if (seq !== loadSeq.current) return;
+      const trendIdx = hour ?? (selectedDate === localToday() ? new Date().getHours() : 12);
+      setConditions(c => ({
+        ...c, ...weather.conditions,
+        pressureTrend: pressureTrendAt(weather.hourly, trendIdx),
+        waterTempF: r.waterTempF ?? c.waterTempF ?? null,
+        sourcesUsed: 1, verified: false,
+      }));
+      setHourly(weather.hourly);
+      setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    } catch {
+      // keep prior readings if the re-fetch fails
+    }
   };
 
   const handleTimeChange = (val: string) => {

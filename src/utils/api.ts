@@ -364,6 +364,8 @@ export async function fetchRiverData(lat: number, lon: number): Promise<RiverDat
       siteId: s.id,
       siteName: s.name,
       distanceMi: Math.round(s.dist),
+      lat: s.lat,
+      lon: s.lon,
       flowCfs: s.params['00060'] ?? null,
       gageFt: s.params['00065'] ?? null,
       waterTempF: tempC != null ? Math.round((tempC * 9 / 5 + 32) * 10) / 10 : null,

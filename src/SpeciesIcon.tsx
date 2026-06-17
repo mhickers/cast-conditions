@@ -8,22 +8,34 @@ import React, { useId } from 'react';
 
 type FishType =
   | 'gamefish' | 'stripedBass' | 'flatfish' | 'tuna' | 'mahi' | 'tarpon'
-  | 'snook' | 'redfish' | 'trout' | 'salmon' | 'pike' | 'catfish' | 'panfish';
+  | 'snook' | 'redfish' | 'trout' | 'salmon' | 'pike' | 'catfish' | 'panfish'
+  | 'bass' | 'bluefish' | 'walleye' | 'grouper' | 'snapper' | 'shark'
+  | 'sturgeon' | 'carp' | 'eel' | 'drum';
 
 function classify(name: string): FishType {
   const n = name.toLowerCase();
-  if (/striped bass|striper/.test(n)) return 'stripedBass';
+  if (/shark|\bmako\b|thresher|dogfish/.test(n)) return 'shark';
+  if (/sturgeon/.test(n)) return 'sturgeon';
+  if (/striped bass|striper|white bass|hybrid/.test(n)) return 'stripedBass';
   if (/flounder|fluke|halibut|\bsole\b|plaice|turbot|\bdab\b/.test(n)) return 'flatfish';
   if (/tuna|albacore|bonito|tunny/.test(n)) return 'tuna';
   if (/mahi|dorado|dolphinfish/.test(n)) return 'mahi';
   if (/tarpon/.test(n)) return 'tarpon';
   if (/snook/.test(n)) return 'snook';
   if (/red drum|redfish|channel bass/.test(n)) return 'redfish';
+  if (/\bdrum\b|croaker/.test(n)) return 'drum';
   if (/trout/.test(n)) return 'trout';
   if (/salmon|steelhead|chinook|coho|sockeye|kokanee/.test(n)) return 'salmon';
-  if (/pike|musky|muskie|\bgar\b|barracuda|needlefish|mackerel|\beel\b/.test(n)) return 'pike';
+  if (/\beel\b/.test(n)) return 'eel';
+  if (/pike|musky|muskie|\bgar\b|barracuda|needlefish|mackerel/.test(n)) return 'pike';
   if (/catfish|bullhead|channel cat/.test(n)) return 'catfish';
+  if (/\bcarp\b/.test(n)) return 'carp';
+  if (/walleye|sauger/.test(n)) return 'walleye';
+  if (/bluefish/.test(n)) return 'bluefish';
+  if (/snapper/.test(n)) return 'snapper';
+  if (/grouper|sea bass|jewfish|goliath|\bhind\b/.test(n)) return 'grouper';
   if (/crappie|bluegill|sunfish|\bperch\b|pumpkinseed|panfish|\bbream\b|redear|sheepshead|scup|porgy|spadefish|triggerfish/.test(n)) return 'panfish';
+  if (/largemouth|smallmouth|spotted bass|rock bass|peacock|\bbass\b/.test(n)) return 'bass';
   return 'gamefish';
 }
 
@@ -109,6 +121,74 @@ function shape(t: FishType, cid: string): React.ReactNode {
         <path d="M9 5.2l2-2.8 1.3 2.4 1.8-2.4 1.2 2.4 1.8-2.2 1.2 2.3 1.8-1.8 1.2 2.2z" />
         <g clipPath={`url(#${cid})`} fill={EYE}><rect x="9" y="3" width="0.8" height="20" /><rect x="13" y="3" width="0.8" height="20" /><rect x="17" y="3" width="0.8" height="20" /><rect x="21" y="3" width="0.8" height="20" /></g>
         <path d="M27.5 13 34 9.4 34 16.6z" /><Eye x={9} y={10.4} />
+      </>);
+    case 'bass':
+      return (<>
+        <path d="M3.5 13C7 7.6 13 6 18 6.2 24 6.4 28 8.8 31 13 28 17.2 24 19.6 18 19.8 13 20 7 18.4 3.5 13Z" />
+        <path d="M3.6 12.4 9.2 13.2 9 14.2 3.8 13.6Z" fill={EYE} />
+        <path d="M12 6.4l1.8-3 1.1 2.6 1.5-2.4 1 2.5 1.7-2 0.9 2.3 1.8-1.6 1 2z" />
+        <path d="M30 13 39.5 7.4 35.8 13 39.5 18.6z" /><Eye x={7.5} y={11.4} />
+      </>);
+    case 'bluefish':
+      return (<>
+        <path d="M3 13C8 9.5 15 8 22 8.4 27 8.7 31 10.4 33 13 31 15.6 27 17.3 22 17.6 15 18 8 16.5 3 13Z" />
+        <path d="M3 13 0.6 12 1.2 13 0.6 14z" /><path d="M3.4 12.6 8 13.4 7.8 14 3.6 13.4Z" fill={EYE} />
+        <path d="M15 8.3l1.8-2.4 1.2 2.3z" /><path d="M32.5 13 39.5 8.8 36.5 13 39.5 17.2z" /><Eye x={7} y={11.4} />
+      </>);
+    case 'walleye':
+      return (<>
+        <path d="M3 13C8 10 15 8.6 22 9.2 27 9.6 31 11 33 13 31 15 27 16.4 22 16.8 15 17.4 8 16 3 13Z" />
+        <path d="M8.5 9.2l1.6-2.6 1 2.2 1.3-2 0.9 2.1 1.3-1.7 0.8 1.9z" /><path d="M20 9.4q3-1.8 5 0l-4.5 0.9z" />
+        <path d="M33 13 39.5 9.4 38 13 39.5 16.6z" /><Eye x={7} y={11.6} r={1.3} />
+      </>);
+    case 'grouper':
+      return (<>
+        <path d="M3 13C3 8.5 7 6.5 12 6.5 19 6.5 25 8.5 28 13 25 17.5 19 19.5 12 19.5 7 19.5 3 17.5 3 13Z" />
+        <path d="M3 13 8.4 12 8.8 14.2 3.4 14.4Z" fill={EYE} />
+        <path d="M11 6.6l1.6-2.4 1.1 2.2 1.5-2 1 2.2 1.6-1.6 1 2z" />
+        <path d="M28 13C33 10 35.5 11.5 35.5 13 35.5 14.5 33 16 28 13Z" /><Eye x={7.5} y={11} />
+      </>);
+    case 'snapper':
+      return (<>
+        <path d="M3 12.2C6 8 11 6.6 16 6.8 23 7 28.5 9.4 31.5 13 28.5 16.6 23 18.6 16 18.8 10 19 6 17 3 13.4Z" />
+        <path d="M3 13.2 6.8 13 6.8 14 3.2 14z" fill={EYE} />
+        <path d="M14 6.9l1.8-2.4 1.2 2.3z" /><path d="M31.5 13 39.5 8.6 36.4 13 39.5 17.4z" /><Eye x={6.5} y={11} />
+      </>);
+    case 'shark':
+      return (<>
+        <path d="M2 13.2C7 11.2 14 10.6 21 11.4 25 11.8 28 12.4 30.5 13 28 13.4 25 13.9 21 14.4 14 15.2 7 14.6 2 13.2Z" />
+        <path d="M11 11 14 6.6 16.6 11.2z" /><path d="M11 13.8 13.8 17 15.4 14.2z" />
+        <path d="M30 12.6 38.8 7.6 36 13 38.2 15.8 33 13.6z" /><Eye x={4.5} y={12.6} />
+      </>);
+    case 'sturgeon':
+      return (<>
+        <path d="M2.5 12.6C9 11 17 10.6 25 11.6 28 12 30 12.6 31.5 13 30 13.4 28 14 25 14.4 17 15.4 9 15 2.5 13.4Z" />
+        <path d="M2.5 13 0.4 12.4 1 13.2 0.4 14z" />
+        <path d="M2.6 13.6 0.8 14.6 2.8 14.2z" /><path d="M3.4 13.8 1.8 15.2 3.6 14.6z" />
+        <path d="M22 11.2l2-2.2 1.4 1.8z" />
+        <path d="M8 10.8l0.8-1 0.6 1z" /><path d="M12 10.4l0.8-1 0.6 1z" /><path d="M16 10.3l0.8-1 0.6 1z" />
+        <path d="M31 13 38.8 8.2 36.3 13 38.4 15.6 33.5 13.6z" /><Eye x={5} y={12.2} r={0.7} />
+      </>);
+    case 'carp':
+      return (<>
+        <path d="M3 13C6 8 12 6.4 18 6.6 24 6.8 29 9 31.5 13 29 17 24 19.4 18 19.6 12 19.8 6 18 3 13Z" />
+        <path d="M3 13.4 1.2 14.2 3.2 14z" /><path d="M3.2 14 1.6 15 3.4 14.6z" />
+        <path d="M11 6.6C16 5 24 5.4 28 7.4 24 6.6 16 6.6 12 7.6z" />
+        <path d="M30 13 39 8 35.6 13 39 18z" /><Eye x={7.5} y={11.4} />
+      </>);
+    case 'eel':
+      return (<>
+        <path d="M3 12.4Q12 8 20 12.6 28 17 37 13.2L37.6 14.2Q28 18.4 20 13.8 12 9.2 3 13.8Z" />
+        <Eye x={5} y={12.4} r={0.7} />
+      </>);
+    case 'drum':
+      return (<>
+        <defs><clipPath id={cid}><path d="M3 13.4C6 8 12 6.2 18 6.6 24 7 29 9.4 31.5 13 29 16.6 24 18.8 18 19.2 12 19.6 6 18 3 13.4Z" /></clipPath></defs>
+        <path d="M3 13.4C6 8 12 6.2 18 6.6 24 7 29 9.4 31.5 13 29 16.6 24 18.8 18 19.2 12 19.6 6 18 3 13.4Z" />
+        <g clipPath={`url(#${cid})`} fill={EYE}><rect x="11" y="6" width="0.7" height="14" /><rect x="15" y="6" width="0.7" height="14" /><rect x="19" y="6" width="0.7" height="14" /></g>
+        <path d="M3 13.6 1.4 14.4 3.2 14.2z" />
+        <path d="M3.6 14.2 2 15.2 3.8 14.8z" /><path d="M4.4 14.4 3 15.6 4.6 15z" />
+        <path d="M30.5 13 39 8 35.6 13 39 18z" /><Eye x={7.5} y={11.6} />
       </>);
     default:
       return (<>

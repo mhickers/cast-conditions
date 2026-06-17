@@ -80,6 +80,8 @@ export interface RiverData {
   siteId: string;
   siteName: string;
   distanceMi: number;
+  lat: number;
+  lon: number;
   flowCfs: number | null;
   gageFt: number | null;
   waterTempF: number | null;
