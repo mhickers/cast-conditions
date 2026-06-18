@@ -2,6 +2,20 @@ import React, { useState } from 'react';
 import { Anchor, RefreshCw } from 'lucide-react';
 import type { Conditions } from './types';
 
+// Normalize the model's report text into clean paragraphs: strip stray bullet/
+// asterisk markers, collapse runs of blank lines, and split on blank lines so
+// spacing is controlled by CSS instead of however many newlines the API returned.
+function cleanAdvice(text: string): string[] {
+  return text
+    .replace(/\r/g, '')
+    .replace(/^[\t ]*[-•*]\s+/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .split(/\n{2,}/)
+    .map(s => s.replace(/[ \t]+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+
 interface Props {
   locationLabel: string;
   dateStr: string;
@@ -79,7 +93,9 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
 
         {advice && (
           <>
-            <p className="bait-advice" style={{ marginTop: 12 }}>{advice}</p>
+            <div className="bait-advice-wrap">
+              {cleanAdvice(advice).map((p, i) => <p key={i} className="bait-advice">{p}</p>)}
+            </div>
             <div className="bait-footer">
               <span className="bait-source-note"><Anchor size={11} style={{ verticalAlign: '-1px' }} /> Aggregated from recent public reports + seasonal patterns — verify with your local shop.</span>
               <button className="btn btn-secondary btn-sm" onClick={getAdvice}><RefreshCw size={12} style={{ verticalAlign: '-1px' }} /> Refresh</button>

@@ -35,9 +35,11 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
 
 /* Search */
-.search-row { display: flex; gap: 8px; }
+.search-primary { display: flex; gap: 8px; }
+.search-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .search-input { flex: 1; padding: 0 12px; height: 38px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 14px; font-family: inherit; color: var(--text); outline: none; transition: border-color 0.15s; }
 .search-input:focus { border-color: var(--ocean); box-shadow: 0 0 0 3px rgba(24,95,165,0.1); }
+.search-input-lg { height: 48px; font-size: 16px; font-weight: 500; }
 
 /* Buttons */
 .btn { height: 38px; padding: 0 16px; border: 1px solid var(--ocean); border-radius: var(--radius); background: var(--ocean); color: white; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
@@ -55,6 +57,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .score-num { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; }
 .score-denom { font-size: 11px; margin-top: 1px; opacity: 0.7; }
 .score-info h2.score-label { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
+.verdict { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; line-height: 1.1; color: var(--text); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.verdict-sub { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-muted); }
 .score-tips { font-size: 13px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
 
 /* AI card */
@@ -85,6 +89,11 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 
 /* Two col */
 .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+
+/* Paired sections (tide events + chart, water conditions + clarity) */
+.tide-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 1.25rem; margin-bottom: 1.5rem; align-items: start; }
+.water-cols { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.25rem; margin-bottom: 1.5rem; align-items: start; }
+.tide-cols > .section, .water-cols > .section { margin-bottom: 0; }
 
 /* Card */
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1.1rem; }
@@ -134,7 +143,9 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
   .stat-grid-3 { grid-template-columns: repeat(2, 1fr); }
   .species-grid { grid-template-columns: repeat(2, 1fr); }
   .two-col { grid-template-columns: 1fr; }
-  .search-row { flex-wrap: wrap; }
+  .tide-cols, .water-cols { grid-template-columns: 1fr; gap: 1.5rem; }
+  .search-primary { flex-wrap: wrap; }
+  .search-primary .search-input-lg { flex: 1 1 100%; }
   .header-right .updated-txt { display: none; }
 }
 
@@ -194,6 +205,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 /* Species lures & bait advisor */
 .species-lures { font-size: 12px; color: var(--ocean); line-height: 1.45; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
 .bait-advice { font-size: 14px; color: var(--text); line-height: 1.7; white-space: pre-line; }
+.bait-advice-wrap { margin-top: 12px; }
+.bait-advice + .bait-advice { margin-top: 10px; }
 
 /* Logo & share */
 .logo-img { width: 34px; height: 34px; display: block; }
@@ -216,7 +229,7 @@ body { overflow-x: hidden; }
   .btn { min-height: 44px; }
   .btn-icon { width: 40px; height: 40px; }
   .btn.btn-sm { min-height: 34px; }
-  .search-row { gap: 6px; }
+  .search-primary { gap: 6px; }
 }
 
 /* Catch log */

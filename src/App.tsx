@@ -183,6 +183,7 @@ export default function App() {
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
+  const verdict = score >= 7.5 ? 'Go' : score >= 3.5 ? 'Worth a shot' : 'Tough bite';
   const waterClarity = calcWaterClarity(conditions, isInland);
   const species = getSpeciesForLocation(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
@@ -642,21 +643,23 @@ export default function App() {
 
       <main className="main">
         <section className="section">
-          <div className="search-row">
+          <div className="search-primary">
             <input
-              className="search-input"
+              className="search-input search-input-lg"
               list="loc-suggestions"
               value={searchInput}
               onChange={e => handleSearchInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch()}
-              placeholder="City, zip code, or GPS coordinates"
+              placeholder="Search any city, zip, lake, or GPS coordinates"
               aria-label="Location search"
             />
             <datalist id="loc-suggestions">
               {suggestions.map(s => <option key={s.label} value={s.label} />)}
             </datalist>
-            <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location"><MapPin size={15} /></button>
             <button className="btn" onClick={handleSearch}>Search</button>
+            <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location"><MapPin size={15} /></button>
+          </div>
+          <div className="search-actions">
             <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
             <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
             {isNative() && <button className="btn btn-secondary" onClick={remindMe} title="Remind me at dawn"><Bell size={14} style={{ verticalAlign: '-2px' }} /> Remind me</button>}
@@ -694,13 +697,15 @@ export default function App() {
         </section>
 
         <section className="score-section">
-          <div className="score-bar">
+          <div className="score-bar" style={loading ? undefined : { borderLeft: `4px solid ${scoreText}` }}>
             <div className="score-circle" style={{ background: scoreBg, color: scoreText }}>
               <span className="score-num">{loading ? '--' : score.toFixed(1)}</span>
               <span className="score-denom">/ 10</span>
             </div>
             <div className="score-info">
-              <h2 className="score-label">{loading ? 'Loading conditions...' : scoreLabel}</h2>
+              <h2 className="verdict" style={loading ? undefined : { color: scoreText }}>
+                {loading ? 'Loading conditions\u2026' : <>{verdict}<span className="verdict-sub">{scoreLabel}</span></>}
+              </h2>
               <p className="score-tips">
                 {loading ? `Fetching live data for ${locationLabel}` : scoreNarrative.length ? scoreNarrative.join(' ') : 'Based on current conditions.'}
                 {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature agree across NOAA weather stations and the Open-Meteo forecast model">✓ NOAA + Open-Meteo</span>}
@@ -776,6 +781,7 @@ export default function App() {
         </section>
 
         {!isInland && (
+          <div className="tide-cols">
           <section className="section">
             <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
             <div className="card">
@@ -807,9 +813,6 @@ export default function App() {
               </div>
             )}
           </section>
-        )}
-
-        {!isInland && (
           <section className="section">
             <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
             <div className="chart-wrap">
@@ -822,6 +825,7 @@ export default function App() {
                   </div>}
             </div>
           </section>
+          </div>
         )}
 
         {isInland && (
@@ -856,29 +860,42 @@ export default function App() {
           </section>
         )}
 
-        {!isInland && (
+        {!isInland ? (
+          <div className="water-cols">
+            <section className="section">
+              <h3 className="section-label">Water conditions{timeContext}</h3>
+              <div className="stat-grid-4">
+                <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
+                <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
+                <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
+                <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
+              </div>
+            </section>
+            <section className="section">
+              <h3 className="section-label">Water clarity{timeContext}</h3>
+              <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
+                <Eye size={20} className="clarity-icon" />
+                <div className="clarity-text">
+                  <div className="clarity-level">{waterClarity.level}</div>
+                  <div className="clarity-reason">{waterClarity.reason}</div>
+                  <div className="clarity-hint">{waterClarity.lureHint}</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        ) : (
           <section className="section">
-            <h3 className="section-label">Water conditions{timeContext}</h3>
-            <div className="stat-grid-4">
-              <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
-              <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
-              <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
-              <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
+            <h3 className="section-label">Water clarity{timeContext}</h3>
+            <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
+              <Eye size={20} className="clarity-icon" />
+              <div className="clarity-text">
+                <div className="clarity-level">{waterClarity.level}</div>
+                <div className="clarity-reason">{waterClarity.reason}</div>
+                <div className="clarity-hint">{waterClarity.lureHint}</div>
+              </div>
             </div>
           </section>
         )}
-
-        <section className="section">
-          <h3 className="section-label">Water clarity{timeContext}</h3>
-          <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
-            <Eye size={20} className="clarity-icon" />
-            <div className="clarity-text">
-              <div className="clarity-level">{waterClarity.level}</div>
-              <div className="clarity-reason">{waterClarity.reason}</div>
-              <div className="clarity-hint">{waterClarity.lureHint}</div>
-            </div>
-          </div>
-        </section>
 
         <section className="section">
           <h3 className="section-label">Sun & moon</h3>

@@ -22,5 +22,397 @@
     ],
     "model": "seed (hand-written sample)",
     "updated": "2026-06-15T00:00:00.000Z"
+  },
+  "margate-city-nj": {
+    "paragraphs": [
+      "Margate sits on Absecon Island between the ocean surf and the productive back bays behind it, and that split is the whole story here. Summer is prime for fluke (summer flounder) drifting the bay channels and around the bridges, with kingfish and the occasional weakfish in the suds. The fall run is the headline event, when striped bass and bluefish chase bunker and mullet down the beach from October into early winter. Spring brings the first stripers back along with bay-run weakfish.",
+      "In the surf, fish the cuts and troughs between sandbars on moving water — bucktails and swim shads when bass and blues are around, fresh clam or bunker on a fishfinder rig for a bottom bite. In the back bays, drift the channel edges and bridge shadows for fluke with a bucktail-and-teaser or squid-and-minnow combo. The tide is the dial that matters most: the bite usually fires on moving water an hour either side of the turn, with dawn and dusk the standout windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "atlantic-city-nj": {
+    "paragraphs": [
+      "Atlantic City fishes Absecon Inlet, the back bays, and an open surf line, which gives it a long season and a deep species list. Striped bass own the inlet and surf in spring and again during the fall run, when bass and bluefish blitz bait along the beach. Summer fills the inlet and bay channels with fluke, while black sea bass and tautog hold on the inlet rocks and nearby structure into the cooler months. Kingfish and weakfish round out the warm-water suds.",
+      "The inlet is the high-percentage spot: fish the moving current along the rock edges and current seams with bucktails, swim shads, or live bait for stripers, and drift bucktails for fluke through the channels. Tog and sea bass want crab and clam tight to structure. In the surf, work the cuts on a moving tide with metal when blues show and bait on a fishfinder rig otherwise. Strong, moving water around the turn — especially at first and last light — consistently produces the best bite."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "ventnor-city-nj": {
+    "paragraphs": [
+      "Ventnor shares Absecon Island's beachfront with Margate and Atlantic City, fishing the surf, the jetties, and the back bays. The jetties and groins give structure that the open beach lacks, holding striped bass and tautog when other stretches go quiet. Summer is fluke season in the bays and along the beach, with kingfish in the wash; the fall run brings bass and bluefish blitzing bait down the sand, and spring sees the first stripers and bay weakfish return.",
+      "Work the jetty pockets and the rip lines off the rock tips on moving water — bucktails and swim shads for bass, crab and clam tight to the rocks for tog. Along the open beach, fish the cuts and troughs with bait on a fishfinder rig, switching to metal when bluefish are crashing on top. In the bays, drift the channel edges for fluke. Time your sessions to the tide change and low light; moving water an hour either side of the turn is when it happens."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "longport-nj": {
+    "paragraphs": [
+      "Longport anchors the south end of Absecon Island at Great Egg Harbor Inlet, and that inlet is the draw — strong current, deep water, and a steady parade of bait moving in and out. Striped bass stack in the inlet during the spring and fall runs, fluke fill it and the adjacent channels through summer, and tautog and black sea bass hold on the rocks and structure into the cold months. Bluefish push through with the bait, especially in fall.",
+      "Fish the inlet on moving water: bucktails, swim shads, and live bait swung through the current seams take stripers, while a bucktail-tipped drift works fluke along the channel edges. Tog and sea bass want crab and clam fished tight to the jetty rocks and bottom structure. The surf along the south beach produces on a moving tide with bait or metal. As everywhere on this island, the tide change drives the bite — concentrate your effort around the turn and at first and last light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "ocean-city-nj": {
+    "paragraphs": [
+      "Ocean City fishes Great Egg Harbor Bay behind it and a long open surf in front, a combination that supports a strong all-season fishery. Summer is fluke time across the bay channels, around the bridges, and along the beachfront, with kingfish and weakfish in the suds. The fall run lights up the surf as striped bass and bluefish chase bunker and mullet south, and spring brings stripers and bay weakfish back into the bay and inlet.",
+      "In the bay, drift the deeper channel edges and bridge shadows with bucktails or squid-and-minnow for fluke, paying attention to where the current sweeps bait. In the surf, fish the cuts between sandbars on a moving tide — fresh clam or bunker for a bottom bite, metal and swim shads when blues and bass blitz. The bite tracks the tide closely here; plan around moving water an hour either side of the turn, with dawn and dusk the prime windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "somers-point-nj": {
+    "paragraphs": [
+      "Somers Point sits at the head of Great Egg Harbor Bay where the rips form over the bay's channels and shoals, and that moving water is what makes it fish. Summer is prime for fluke drifting the channels and around the bridges, with weakfish a classic local target on the rips at dusk. Striped bass work the bay and the rips during the spring and fall runs, and bluefish push through chasing bait when the water warms and again as it cools.",
+      "Drift the channel edges and the rips with bucktails and squid-and-minnow combos for fluke, working the seams where current and structure meet. For weakfish and bass, fish the rip lines on a moving tide with bucktails, swim shads, or soft plastics, especially at first and last light. The rips fire on moving water and go slack at the turn, so time your drifts to the current — the strongest bite usually comes mid-tide when the water is really moving."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "sea-isle-city-nj": {
+    "paragraphs": [
+      "Sea Isle City fishes Ludlam Bay behind it and an open beachfront in front, a quieter stretch of the South Jersey shore with a solid mixed-bag fishery. Summer is fluke season across the bay's channels and along the beach, with kingfish in the suds and weakfish on the bay rips. Striped bass and bluefish work the surf during the spring and fall runs, with the fall blitz the standout as bait pours down the beach.",
+      "In the bay, drift the channel edges and rips with bucktails or a squid-and-minnow combo for fluke and work soft plastics at dusk for weakfish. Along the beach, fish the cuts and troughs on a moving tide — bait on a fishfinder rig for the bottom, metal and swim shads when bass and blues are crashing. As on the rest of this coast, the tide is the key: concentrate on moving water an hour either side of the turn, with low light the best of all."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "avalon-nj": {
+    "paragraphs": [
+      "Avalon fishes Townsends Inlet to the north and the back sounds behind the island, giving it both strong inlet current and sheltered marsh water. The inlet is the centerpiece — striped bass stack there on the spring and fall runs, fluke fill it and the sound channels through summer, and tautog hold on the rocks into the cold months. Bluefish push through with the bait, and weakfish work the back sounds at dusk in the warm season.",
+      "Fish the inlet on moving water with bucktails, swim shads, or live bait for stripers, and drift bucktails along the channel edges for fluke. Tog want crab and clam fished tight to the inlet rocks. In the back sounds, drift the deeper holes and channel edges for fluke and work soft plastics for weakfish in low light. The inlet bite is all about current — the strongest action comes on a moving tide an hour either side of the turn, especially at dawn and dusk."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "stone-harbor-nj": {
+    "paragraphs": [
+      "Stone Harbor fishes Hereford Inlet and the maze of back sounds and marsh channels behind it, classic South Jersey backwater country. The sheltered sounds are excellent for fluke through summer and hold weakfish that work the channel edges and drains at dusk. Striped bass move through the inlet and sounds on the spring and fall runs, and bluefish push in chasing bait. The marsh channels also give up snapper blues and the occasional bonus fish in the warm months.",
+      "Drift the sound channels and the deeper holes near the inlet with bucktails or squid-and-minnow combos for fluke, fishing the edges where current sweeps bait. For weakfish and bass, work soft plastics and swim shads along the channel edges and marsh drains on a moving tide, especially in low light. The back water fishes best on a strong moving tide — focus on the drains and channel mouths as the water pushes through, an hour either side of the turn."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "wildwood-nj": {
+    "paragraphs": [
+      "Wildwood fishes Hereford Inlet, the back bays, and a wide, gently sloping beach, a versatile stretch with options on any tide. Summer is fluke season in the inlet and bay channels, with kingfish and the occasional weakfish in the surf. The fall run brings striped bass and bluefish down the beach chasing bait, and spring sees the first stripers and bay weakfish return. Tautog hold on the inlet rocks and jetties into the cooler months.",
+      "Drift the inlet and bay channel edges with bucktails or squid-and-minnow for fluke, working the current seams. Along the broad beach, find the cuts and troughs and fish them on a moving tide — bait on a fishfinder rig for the bottom, metal and swim shads when blues and bass are blitzing. Tog want crab and clam tight to the rocks. The shallow beach fishes best on a rising or full tide; everywhere here, target moving water around the turn and at first and last light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "cape-may-nj": {
+    "paragraphs": [
+      "Cape May sits where the Atlantic meets Delaware Bay, with the rips and jetties giving it some of the best structure on the Jersey shore. The rips off the point hold striped bass and bluefish, especially during the spring and fall runs when bait funnels around the cape. Summer is strong for fluke in the bay channels, the rips, and along the jetties, with weakfish a classic dusk target. Tautog and black sea bass work the jetties and rocks into the cold months.",
+      "Fish the rips on moving water — bucktails, swim shads, and live bait swung through the current seams take bass and blues, while drifting bucktails along the edges works fluke. The jetties hold tog and sea bass on crab and clam, and stripers tight to the rocks at low light. The rips fire on a hard moving tide and go quiet at slack, so time your sessions to the current; mid-tide with real water movement, at dawn or dusk, is the prime window."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "tuckerton-nj": {
+    "paragraphs": [
+      "Tuckerton fishes Great Bay and Little Egg Harbor, an expansive, sheltered backwater system fed by Little Egg Inlet, and it's prime South Jersey bay country. Summer is excellent for fluke across the bay channels, sedge edges, and around the inlet, with weakfish and kingfish mixed in. Striped bass move through the bay and inlet on the spring and fall runs, and bluefish push in chasing bait. The marsh drains and channel mouths give up steady action when the tide is right.",
+      "Drift the bay channels and the deeper holes near the inlet with bucktails or squid-and-minnow combos for fluke, fishing the edges where current sweeps bait off the flats. For weakfish and bass, work soft plastics and swim shads along the channel edges and marsh drains in low light. This is a tide-driven fishery — the bite turns on with a strong moving current, so target the drains, channel mouths, and inlet edges an hour either side of the turn."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "beach-haven-nj": {
+    "paragraphs": [
+      "Beach Haven anchors the south end of Long Beach Island near Little Egg Inlet, fishing both the inlet and the LBI surf. The inlet is a magnet — striped bass stack there on the spring and fall runs, fluke fill it and the bay channels through summer, and bluefish push through with the bait. The LBI surf comes alive during the fall run as bass and blues blitz bait down the beach, with kingfish and the occasional weakfish in the warm-water suds.",
+      "Fish the inlet on moving water with bucktails, swim shads, or live bait for stripers, and drift bucktails along the channel edges for fluke. In the surf, work the cuts and troughs on a moving tide — bait on a fishfinder rig for the bottom, metal and swim shads when blues and bass are crashing on top. The inlet and surf both key on current and low light; the strongest bite comes on moving water an hour either side of the turn, at dawn and dusk."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "barnegat-light-nj": {
+    "paragraphs": [
+      "Barnegat Light sits at the north tip of Long Beach Island on Barnegat Inlet, one of the most productive inlets on the Jersey coast. The inlet's strong current and rock jetties draw striped bass on the spring and fall runs, hold fluke through summer, and stack tautog and black sea bass on the rocks into the cold months. Bluefish blitz through with the bait, and the surf nearby lights up during the fall run as bass and blues chase mullet and bunker.",
+      "Fish the inlet and the jetty edges on moving water — bucktails, swim shads, and live bait swung through the current take stripers, and bucktails drifted along the channel edges work fluke. Tog and sea bass want crab and clam fished tight to the rocks. In the surf, fish the cuts on a moving tide with bait or metal. The inlet is all about current: the bite fires on a hard moving tide and dies at slack, so time it to the turn and low light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "forked-river-nj": {
+    "paragraphs": [
+      "Forked River fishes Barnegat Bay and the warm-water outflow at Oyster Creek, a back-bay fishery sheltered from the open ocean. Summer is fluke season across the bay channels and flats, with weakfish and snapper blues mixed in and the occasional kingfish. Striped bass work the bay and the creek mouths on the spring and fall runs, and the warm-water discharge can hold fish and concentrate bait into the colder months, keeping the bite going when the open bay slows.",
+      "Drift the bay channels and the deeper holes with bucktails or squid-and-minnow combos for fluke, working the edges of the flats where current sweeps bait. For weakfish and bass, fish soft plastics and swim shads along the channel edges and creek mouths in low light. The shallow bay fishes best on a moving tide that pulls water across the flats — target the channels and drains an hour either side of the turn, with dawn and dusk the standout windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "toms-river-nj": {
+    "paragraphs": [
+      "Toms River fishes upper Barnegat Bay and the Toms River that feeds it, a sheltered estuary that mixes salt and brackish water. Summer is fluke season across the bay channels and flats, with weakfish, snapper blues, and the occasional white perch or striped bass in the river itself. Striped bass move through the bay and up into the river on the spring and fall runs, and the brackish reaches hold fish that hunt the channel edges and creek mouths through the cooler months.",
+      "Drift the bay channels and deeper holes with bucktails or squid-and-minnow for fluke, working the flat edges where current carries bait. In the river and creek mouths, fish soft plastics and swim shads for stripers and weakfish along the channel edges, especially in low light. This shallow estuary keys on moving water — the bite turns on as the tide pulls across the flats and through the channels, so target the turn and the first and last hours of light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "point-pleasant-beach-nj": {
+    "paragraphs": [
+      "Point Pleasant Beach fishes Manasquan Inlet and an open surf line at the top of the Jersey shore, a stretch with strong current and a long season. The inlet draws striped bass on the spring and fall runs and holds fluke and bluefish through the warm months, with tautog and black sea bass on the rocks into the cold. The surf comes alive during the fall run as bass and blues blitz bunker and mullet down the beach, with kingfish in the summer suds.",
+      "Fish the inlet on moving water — bucktails, swim shads, and live bait swung through the current seams take stripers, and bucktails drifted along the channel edges work fluke. Tog and sea bass want crab and clam tight to the rocks. In the surf, fish the cuts on a moving tide with bait on a fishfinder rig, switching to metal when blues are crashing on top. The inlet bite is current-driven, so concentrate on the turn and at first and last light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "manasquan-nj": {
+    "paragraphs": [
+      "Manasquan fishes Manasquan Inlet and the river behind it, sharing the strong inlet current with Point Pleasant across the way. Striped bass stack in the inlet on the spring and fall runs, fluke fill it and the river channels through summer, and tautog and black sea bass hold on the rocks into the cold months. Bluefish push through with the bait, and the river itself gives up stripers and the occasional weakfish in its deeper holes and channel edges.",
+      "Fish the inlet and jetty edges on moving water with bucktails, swim shads, or live bait for stripers, and drift bucktails along the channel for fluke. Tog want crab and clam tight to the rocks. In the river, work soft plastics and swim shads through the deeper holes and along channel edges in low light. The inlet fishes on current — the bite fires on a hard moving tide and quits at slack, so time your sessions to the turn and the first and last hours of daylight."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "belmar-nj": {
+    "paragraphs": [
+      "Belmar fishes Shark River Inlet and an open beach, with the inlet and its bridges giving structure that the surf lacks. Striped bass move through the inlet and along the beach on the spring and fall runs, fluke fill the inlet and Shark River channels through summer, and bluefish blitz through chasing bait. The surf lights up during the fall run as bass and blues chase mullet and bunker down the sand, with kingfish in the warm-water suds.",
+      "Fish the inlet and around the bridges on moving water — bucktails, swim shads, and soft plastics for bass, and bucktails drifted along the channel edges for fluke. In the surf, work the cuts and troughs on a moving tide with bait on a fishfinder rig, switching to metal and swim shads when blues and bass blitz on top. The inlet and river key on current; the bite is best on a moving tide an hour either side of the turn, especially at dawn and dusk."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "asbury-park-nj": {
+    "paragraphs": [
+      "Asbury Park fishes a beachfront broken up by rock jetties, and that structure is the key on an otherwise open stretch of the North Jersey shore. The jetties hold striped bass and tautog and give bait something to relate to, concentrating fish that would scatter along open sand. The fall run is the headline, when bass and bluefish blitz bunker and mullet down the beach; spring brings the first stripers, and summer fills the suds with fluke and kingfish.",
+      "Work the jetty pockets and the rips off the rock tips on moving water — bucktails, swim shads, and live bait for bass, and crab or clam fished tight to the rocks for tog. Along the open beach, fish the cuts and troughs with bait on a fishfinder rig, switching to metal when blues are crashing. The jetties fish best on a moving tide that sets up rips off the tips, so concentrate your effort around the turn and at first and last light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "atlantic-highlands-nj": {
+    "paragraphs": [
+      "Atlantic Highlands fishes Sandy Hook Bay and Raritan Bay, sheltered water at the gateway to New York Harbor that holds fish when the open ocean is rough. Striped bass are the marquee target, stacking in the bays during the spring run on bunker and again in fall, with bluefish blitzing through. Summer brings fluke to the bay channels and flats, with the occasional weakfish, and the bays stay fishable in conditions that shut down the beachfront.",
+      "Fish the bay channels and the rips with bucktails, swim shads, and soft plastics for stripers, and live-line bunker where the bait is thick. Drift bucktails or squid-and-minnow along the channel edges for fluke. The sheltered water fishes well on a moving tide that pulls bait through the channels and over the flats — target the rips and channel edges an hour either side of the turn, with dawn and dusk the prime windows for the bass bite."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "highlands-nj": {
+    "paragraphs": [
+      "Highlands fishes Sandy Hook, the rips, and the bay where the Shrewsbury and Navesink meet Raritan Bay, prime striped bass country at the doorstep of New York Harbor. Spring brings a strong run of bass feeding on bunker in the bay and rips, and the fall run repeats it as fish push south. Summer fills the bay channels and flats with fluke, and bluefish blitz through chasing bait, with the sheltered water fishing well when the ocean is blown out.",
+      "Fish the rips off the hook and the bay channels with bucktails, swim shads, and soft plastics for stripers, live-lining bunker where the bait schools up. Drift bucktails along the channel edges for fluke. The rips fire on a hard moving tide and go slack at the turn, so time your drifts to the current. The bass bite is best on moving water at dawn and dusk; when bunker are thick, that's where the biggest fish will be."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "trenton-nj": {
+    "paragraphs": [
+      "Trenton sits at the fall line of the Delaware River, where tidal water below meets free-flowing river above, and that mix gives it a genuinely diverse fishery. Smallmouth bass thrive in the rocky, current-swept water, channel catfish prowl the deeper holes, and the river holds striped bass that run up from the tidal reaches in spring, along with white perch, walleye, and panfish. Spring and fall are the strongest seasons as fish move and feed actively in moderate water temperatures.",
+      "Work the rocky current seams, eddies, and drop-offs for smallmouth with tubes, soft plastics, and crankbaits, fishing the slack water beside fast current where bass ambush bait. Catfish hold in the deeper holes — fish cut bait on the bottom. For stripers, target the deeper runs in spring with swim shads and bucktails. Water temperature and flow are the dials: a stable, moderate flow with warming water turns the bite on, while high muddy water after rain pushes fish to slower, softer edges."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "lambertville-nj": {
+    "paragraphs": [
+      "Lambertville fishes a scenic stretch of the Delaware River and its feeder creeks, free-flowing water above the tidal influence that's classic smallmouth bass country. Smallmouth are the headline, holding on rocky ledges, riffles, and current breaks and feeding hardest from late spring through fall. The river also gives up channel catfish in the deeper holes, walleye in the faster runs, and panfish and the occasional musky for anglers working the right structure.",
+      "Fish the rocky current seams, eddies behind boulders, and the heads and tails of riffles for smallmouth — tubes, grubs, crankbaits, and topwater all produce, with the slack water beside fast current the prime ambush zone. Catfish want cut bait on the bottom in the deep holes. The river fishes on flow and temperature: a stable, moderate flow with warm water has fish active in the current, while high water after rain pushes them to softer edges and slows the bite."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "frenchtown-nj": {
+    "paragraphs": [
+      "Frenchtown fishes the upper Delaware River, a clean, free-flowing stretch that's some of the best smallmouth bass water in the region. Smallmouth dominate, holding in the riffles, ledges, and current breaks and feeding aggressively from late spring through fall. The upper river also holds walleye in the faster runs and deeper pools, channel catfish in the holes, and panfish along the slower edges, with the occasional musky for those targeting them.",
+      "Work the riffles, rocky ledges, and eddies behind current breaks for smallmouth with tubes, grubs, crankbaits, and topwater early and late — the seam where fast water meets slow is where bass wait to ambush. Walleye hold in deeper runs; work jigs and crankbaits through them at low light. The upper river is flow- and temperature-driven: stable, moderate flow with warm water means active fish in the current, while high muddy water after rain pushes them to soft edges."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "lebanon-nj-round-valley": {
+    "paragraphs": [
+      "Round Valley Reservoir is a deep, clear New Jersey impoundment known for cold-water gamefish — it holds lake trout and rainbow trout along with strong smallmouth and largemouth bass populations. Trout fishing is best in the colder months and early season when fish hold higher in the water column; as summer warms the surface, trout slide deep to the cool layer while bass turn on in the shallows and along the rocky structure. Fall brings another active feeding window before winter.",
+      "For trout, fish deep once the water stratifies — troll or jig the thermocline and follow the bait down as summer pushes fish into the cold layer. Smallmouth relate to rocky points, drop-offs, and humps; work tubes, drop-shots, and crankbaits along that structure. Largemouth hold in the shallower cover and warm-water edges. Water temperature is the master dial here: it sets how deep the trout suspend and when the bass move shallow to feed, so let the temperature guide your depth."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "lake-hopatcong-nj": {
+    "paragraphs": [
+      "Lake Hopatcong is New Jersey's largest lake and a genuine multi-species fishery — strong populations of largemouth and smallmouth bass, walleye, hybrid striped bass, channel catfish, and panfish, with a winter ice fishery for many of the same species. Bass turn on as the shallows warm through spring and stay active all summer, walleye and hybrids feed deep and at low light, and fall brings a strong feeding window before the lake cools and the ice fishery takes over.",
+      "Largemouth hold in the weed beds, docks, and shallow cover — work soft plastics, jigs, and topwater early and late. Smallmouth relate to rocky points and drop-offs; tubes and drop-shots produce. Walleye and hybrids hold deeper and along structure, feeding hardest at dawn, dusk, and after dark on jigs, crankbaits, and live bait. Water temperature and light drive it: warming water pulls bass shallow, while the deep-water species feed best in low light and on the cooler, more stable days."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "greenwood-lake-nj": {
+    "paragraphs": [
+      "Greenwood Lake straddles the New Jersey–New York line and offers a strong warm-water fishery — largemouth and smallmouth bass, walleye, pickerel, hybrid striped bass, and panfish, with an ice fishery in winter. Bass turn on as the shallows warm through spring and stay active into fall, holding in the weeds, docks, and rocky structure. Walleye and hybrids feed deep and in low light, and chain pickerel prowl the weed lines aggressively through much of the season.",
+      "Largemouth and pickerel hold in the weed beds and along the edges — work soft plastics, spinnerbaits, and topwater for bass, and flashy lures or live bait along the salad for pickerel. Smallmouth relate to rocky points and drop-offs with tubes and drop-shots. Walleye and hybrids feed deeper at dawn, dusk, and after dark on jigs and crankbaits. Water temperature sets the pace: warming water pulls fish shallow and active, while the deep species bite best in low light and stable conditions."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "hackettstown-nj": {
+    "paragraphs": [
+      "Hackettstown fishes the Musconetcong River, a cold, clear trout stream that's a New Jersey classic, along with stocked and holdover trout in its runs and pools. Trout are the headline, feeding hardest in the cooler months and through spring when flows are good and water temperatures stay low; the river also holds smallmouth bass in the warmer lower stretches and panfish along the slower edges. Summer heat slows the trout bite, which rebounds in fall as the water cools.",
+      "Work the riffles, runs, and pool heads for trout — drift nymphs and small streamers through the seams, or fish small spinners and spoons through the holding water. Approach carefully in the clear, low water and fish the broken surface where trout feel safe. Smallmouth hold in the rockier lower-river current. The river is all about flow and temperature: cool water and a good moderate flow have trout active and feeding, while warm summer water and low flow push them to the coolest, most oxygenated spots."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "montauk-ny": {
+    "paragraphs": [
+      "Montauk is the legendary tip of Long Island, where powerful rips form over the rocks off the point and funnel bait into a world-class fishery. Striped bass and bluefish are the foundation, blitzing the rips and the surf, with the fall run drawing anglers from everywhere as bass, blues, and false albacore tear through bait. Summer fills the deeper water and structure with fluke and black sea bass, and the albie run in late summer and fall is a spectacle.",
+      "Fish the rips on moving water — bucktails, swim shads, and live bait swung through the current seams take bass and blues, while small, fast metals and epoxy jigs are the ticket for blitzing albies. From the surf, work the rocks and cuts with bucktails and metal on a moving tide. Drift bucktails for fluke over the deeper structure. The rips fire hard on moving water and quit at slack, so time everything to the current; dawn, dusk, and the tide change are prime."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "gloucester-ma": {
+    "paragraphs": [
+      "Gloucester fishes Cape Ann and Massachusetts Bay, rugged New England water where the inshore striped bass and bluefish fishery meets a productive groundfishery offshore. Striped bass arrive in spring and feed through fall, blitzing bait along the rocky shorelines and around the bay's structure, with bluefish pushing through in the warmer months. Beyond the inshore, the bay and nearby banks hold haddock and cod, a cold-water bottom fishery that runs through the cooler season.",
+      "For stripers and blues, fish the rocky points, current rips, and bait schools with swim shads, soft plastics, and live bait, and throw metal when blues are blitzing on top — low light and moving water are best. For groundfish, drop jigs and bait to the bottom over hard structure and banks. Water temperature and bait drive the inshore bite: warming water and migrating bait pull stripers and blues onto the structure, with the strongest action on a moving tide at dawn and dusk."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "chatham-ma": {
+    "paragraphs": [
+      "Chatham fishes the Cape Cod flats and the powerful rips that form over the shoals off its elbow, prime striped bass and bluefish country. Stripers arrive in spring and feed through fall, prowling the flats and stacking in the rips where current and shoals concentrate bait; the fall run is a highlight as bass and blues blitz before heading south. Summer fills the deeper channels and structure with fluke and black sea bass, and bluefish blitz through chasing bait.",
+      "On the flats, sight-cast and work soft plastics and flies to cruising stripers on a moving tide; in the rips, swing bucktails, swim shads, and live bait through the current seams for bass and blues. Drift bucktails for fluke over the deeper structure, and fish bait or jigs on the bottom for sea bass. The rips and flats both key on current — the bite fires on moving water and slacks off at the turn, so time it to the tide and the low-light windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "block-island-ri": {
+    "paragraphs": [
+      "Block Island sits offshore of the Rhode Island coast, ringed by rips and reefs that make it one of the Northeast's premier striped bass destinations. Big bass prowl the island's rips and rocky structure through the season, feeding hardest at dawn, dusk, and after dark, with bluefish blitzing through chasing bait. Summer fills the deeper water with fluke, and the late-summer and fall false albacore run brings fast, exciting light-tackle fishing around the points and rips.",
+      "Fish the rips and reef edges on moving water — swing bucktails, swim shads, and live eels through the current seams for bass, especially after dark when the biggest fish feed. Throw small, fast metals for blitzing albies and blues. Drift bucktails for fluke over the deeper structure. The island's rips are all about current; they fire on a hard moving tide and go quiet at slack, so plan your sessions around the tide change and the low-light windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "ocean-city-md": {
+    "paragraphs": [
+      "Ocean City, Maryland fishes its inlet, an open surf, and the back bays behind it, a versatile mid-Atlantic fishery. The inlet is the centerpiece — striped bass run through it in spring and fall, flounder fill it and the bay channels through summer, and tautog stack on the inlet rocks and nearby structure into the cold months. Bluefish blitz through chasing bait, and the surf produces kingfish in summer and a strong bass and blues bite during the fall run.",
+      "Fish the inlet on moving water with bucktails, swim shads, and live bait for stripers, and drift bucktails or a squid-and-minnow combo along the channel edges for flounder. Tog want crab and clam fished tight to the rocks. In the surf, fish the cuts on a moving tide with bait on a fishfinder rig, switching to metal when blues blitz. The inlet bite is current-driven — the strongest action comes on a hard moving tide an hour either side of the turn, at dawn and dusk."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "virginia-beach-va": {
+    "paragraphs": [
+      "Virginia Beach fishes the mouth of the Chesapeake Bay and an open surf, a crossroads where bay and ocean fish mingle. Striped bass (rockfish) are the marquee target, running strong in the cooler months around the bay structure and channels, with a spring and fall bite along the surf. Summer brings flounder to the channels and structure, red drum to the surf and shoals, and cobia cruising the nearshore water — a genuinely diverse warm-season fishery.",
+      "For rockfish, fish the bay channels, shoals, and structure with swim shads, bucktails, and live bait, working the current edges; trolling and jigging the deeper water produces in the cold months. Flounder come on drifted bucktails and squid-and-minnow along the channel edges. Sight-cast or bait the shoals for red drum and cobia in summer. The bay mouth keys on moving water — the strongest bite comes on a hard tide an hour either side of the turn, with low light prime for the rockfish."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "nags-head-nc": {
+    "paragraphs": [
+      "Nags Head fishes the Outer Banks surf and the sounds behind the barrier islands, where the warm Gulf Stream's influence meets cooler northern water and produces a remarkable species mix. Red drum and striped bass work the surf, with the fall run a highlight as bait pours down the beach. Bluefish blitz through chasing it, and flounder fill the sound channels and inlets through the warm months. The sounds also hold speckled trout and the occasional bonus fish.",
+      "In the surf, fish the cuts and sloughs on a moving tide — fresh bait on a fishfinder rig for drum, metal and swim shads when blues and stripers blitz. In the sounds, drift the channel edges and around the inlets with bucktails or soft plastics for flounder and work soft plastics for speckled trout in the shallows and creek mouths. The surf and sounds both fish best on moving water; concentrate on the tide change and the first and last hours of light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "cape-hatteras-nc": {
+    "paragraphs": [
+      "Cape Hatteras is where the Outer Banks juts farthest into the Atlantic and the Gulf Stream swings close to shore, creating legendary surf fishing and a long, varied season. The famous cape point holds red drum — including big bull reds in the fall run — along with bluefish, striped bass in the cooler months, and a spectacular false albacore run that brings fast light-tackle fishing. King mackerel and other pelagics push close to the beach in the warm season.",
+      "Fish the cape point and the sloughs on a moving tide — heavy fishfinder rigs with fresh bait for the big drum, metal and plugs when blues and albies are blitzing on top. The current around the point is powerful and ever-shifting, so read the cuts and the color changes where bait stacks up. The bite tracks the tide and the bait closely; moving water at the point, especially around dawn, dusk, and the tide change, is when the cape fishes best."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "morehead-city-nc": {
+    "paragraphs": [
+      "Morehead City fishes Bogue Sound and the nearshore reefs along North Carolina's Crystal Coast, a productive crossroads of inshore and nearshore fishing. The sound and its marshes hold red drum, speckled trout, and flounder through much of the year, with drum and trout feeding hardest in the cooler shoulder seasons. The nearshore reefs and wrecks give up black sea bass, sheepshead, and seasonal pelagics like Spanish and king mackerel that push close to the beach when the water warms.",
+      "In the sound, work the marsh edges, oyster bars, and channel drops with soft plastics and topwater for trout and redfish, and drift the deeper channels with bucktails or live bait for flounder. On the nearshore reefs, drop bait and jigs to the structure for sea bass and sheepshead, and troll or cast for mackerel when they're around. Tide and water temperature drive the inshore bite — fish the moving water around oyster structure and creek mouths at low light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "charleston-sc": {
+    "paragraphs": [
+      "Charleston fishes its harbor, a vast network of tidal creeks, and the nearshore reefs, classic Lowcountry water with year-round opportunity. Red drum are the foundation, schooling in the creeks and on the flats and feeding through every season; spotted seatrout fill the creeks and grass edges, flounder hold around the structure and channel mouths, and sheepshead stack on the dock pilings, jetties, and reefs. The fishery shifts with the tide as much as the season in this big-tidal-range estuary.",
+      "Work the oyster bars, grass edges, and creek mouths with soft plastics, topwater, and live bait for redfish and trout, timing the flats for flooding tides when reds tail in the grass. Flounder come on bucktails and live bait drifted along the channel edges. Sheepshead want fiddler crabs fished tight to pilings and structure. The big tides drive everything — fish the moving water as it floods and drains the creeks and flats, with the low-light windows the most productive."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "hilton-head-island-sc": {
+    "paragraphs": [
+      "Hilton Head fishes the sounds and the maze of tidal creeks that thread its salt marsh, prime Lowcountry inshore water. Red drum are the year-round headliner, schooling in the creeks and tailing on the flooded flats, with spotted seatrout filling the creeks and grass edges and flounder holding around the channel mouths and structure. Sheepshead stack on the dock pilings and hard structure, and the big tidal swings constantly reshape where and how the fish feed.",
+      "Fish the oyster bars, grass lines, and creek mouths with soft plastics, topwater, and live shrimp for redfish and trout, working the flooded grass on the high tide when reds tail for crabs. Drift the channel edges with bucktails or live bait for flounder, and fish fiddler crabs tight to pilings for sheepshead. The large tidal range is the key dial — the bite turns on with the moving water that floods and drains the marsh, especially around the tide change and at low light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "savannah-ga": {
+    "paragraphs": [
+      "Savannah fishes the tidal rivers and sounds where the salt marsh meets the Georgia coast, a big-tide estuary with strong inshore fishing. Red drum are the foundation, schooling in the creeks and on the flats through every season, with spotted seatrout filling the grass edges and creek mouths and flounder holding around the structure and channels. Sheepshead stack on the pilings and hard structure, and the large tidal range drives where the fish feed as much as the calendar does.",
+      "Work the oyster bars, grass edges, and creek mouths with soft plastics, topwater, and live bait for redfish and trout, fishing the flooded grass on high water when reds tail. Drift the channel edges with bucktails or live bait for flounder, and fish fiddler crabs tight to pilings for sheepshead. The big tides are the master dial — the bite fires on the moving water that floods and drains the marsh, with the tide change and low-light windows the most productive."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "jacksonville-fl": {
+    "paragraphs": [
+      "Jacksonville fishes the mouth of the St. Johns River and the open surf, where a big tidal river meets the Atlantic and supports a diverse fishery. Red drum and speckled trout work the river, creeks, and flats year-round, with bull reds stacking around the jetties and river mouth in fall. Flounder hold along the structure and channel edges, and the surf and nearshore water give up whiting, bluefish, and seasonal Spanish mackerel and tarpon when the water warms.",
+      "Work the jetties, dock lines, and creek mouths with soft plastics, jigs, and live bait for redfish and trout, fishing the moving water where current sweeps bait past structure. Big bull reds around the jetties want cut or live bait on the bottom in fall. Flounder come on bucktails drifted along the channel edges. Tide drives the river fishery — the bite is best on the strong moving water of this big-tide system, especially around the turn and at first and last light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "st-augustine-fl": {
+    "paragraphs": [
+      "St. Augustine fishes its inlet, the Intracoastal Waterway, and an open surf, a northeast Florida crossroads with strong year-round inshore fishing. Red drum and speckled trout are the staples, working the flats, creeks, and ICW through every season, with bull reds gathering around the inlet in fall. Flounder hold along the structure and channel edges, sheepshead stack on the bridges and dock pilings, and the surf and nearshore water give up whiting, pompano, and seasonal pelagics.",
+      "Work the flats, creek mouths, and ICW structure with soft plastics, topwater, and live bait for redfish and trout, timing the moving water around the inlet and bridges. Big reds want cut or live bait on the bottom near the inlet in fall, and flounder come on drifted bucktails along the channel edges. In the surf, fish bait on a fishfinder rig for pompano and whiting. The inlet and ICW key on current — fish the moving tide and the low-light windows."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "stuart-fl": {
+    "paragraphs": [
+      "Stuart fishes the St. Lucie Inlet, the surrounding estuary, and the offshore water beyond, earning its 'Sailfish Capital' reputation while offering exceptional inshore and nearshore fishing too. Snook stack around the inlet, bridges, and structure, especially through the warm months, with tarpon rolling in the inlet and along the beaches in their migration. Offshore, sailfish run strong in the cooler season and snapper hold on the reefs and wrecks year-round, making this a true multi-zone fishery.",
+      "Around the inlet and bridges, fish live bait, swimbaits, and jigs for snook on the moving tide, working the current seams and shadow lines after dark. Target rolling tarpon in the inlet and along the beach with live bait and large soft plastics. Offshore, troll or kite-fish live bait for sailfish and drop to the reefs and wrecks for snapper. The inlet bite keys on current and light — snook and tarpon feed hardest on the moving tide, especially at dawn, dusk, and after dark."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "boca-grande-fl": {
+    "paragraphs": [
+      "Boca Grande fishes the famous pass and Charlotte Harbor behind it, a southwest Florida legend best known as one of the world's premier tarpon destinations. Giant tarpon stack in the pass and along the beaches in their late-spring and summer migration, drawing anglers from around the globe. Snook hold around the pass, beaches, and mangrove structure through the warm months, redfish school on the harbor flats and oyster bars, and grouper and snapper hold on the nearshore structure.",
+      "In the pass, fish live bait and heavy jigs deep in the current for migrating tarpon, timing the strong tidal flow. Work the beaches and mangrove edges with live bait, swimbaits, and topwater for snook, and fish the harbor flats and oyster bars with soft plastics and live bait for redfish, especially on the flooding tide. The pass is all about current — the tarpon bite peaks on the strong moving tides, while snook and reds feed best on moving water at low light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "naples-fl": {
+    "paragraphs": [
+      "Naples fishes the passes and nearshore reefs of southwest Florida's Gulf coast, a sheltered, productive fishery year-round. Snook hold around the passes, beaches, and mangrove structure through the warm months, redfish school on the grass flats and oyster bars, and speckled trout fill the deeper grass and potholes. The nearshore reefs and wrecks give up snapper, grouper, and sheepshead, and tarpon roll through the passes and along the beaches in the warmer season.",
+      "Work the passes, beaches, and mangrove edges with live bait, swimbaits, and topwater for snook on the moving tide. Fish the grass flats and oyster bars with soft plastics and live shrimp for redfish and trout, focusing on the potholes and bar edges. Drop bait and jigs to the nearshore reefs for snapper and grouper. The passes and flats key on current — snook feed hardest on the moving water at low light, while reds and trout track the tide across the flats."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "islamorada-fl": {
+    "paragraphs": [
+      "Islamorada sits in the heart of the Florida Keys, where the shallow flats meet the reef and the deep Atlantic, a sport-fishing capital with world-class variety. The flats hold bonefish and permit that cruise the shallows feeding on crabs and shrimp, tarpon migrate through the channels and along the edges in spring and early summer, and the reef and offshore water give up snapper, grouper, and dolphin (mahi-mahi). Few places pack this many premier targets into one fishery.",
+      "On the flats, sight-cast flies, shrimp, or crabs to bonefish and permit, fishing the moving water that pushes them onto the shallows. Target migrating tarpon in the channels and along the edges with live bait and large soft plastics, timing the strong tides. Offshore, troll for mahi around weed lines and drop to the reef for snapper and grouper. The flats and channels are tide-driven — fish the moving water that floods the shallows and pushes bait through the cuts, especially in low light."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "key-west-fl": {
+    "paragraphs": [
+      "Key West fishes the reef, the wrecks, and the surrounding flats at the end of the Florida Keys, a year-round sport-fishing destination with extraordinary variety. The flats hold permit and the channels and edges draw migrating tarpon in spring and summer, while the reef and wrecks teem with snapper and grouper through every season. The mix of shallow flats, hard reef structure, and deep water close to shore packs an unusual range of fishing into a small area.",
+      "On the flats, sight-cast crabs and flies to permit on the moving water that floods the shallows. Target tarpon in the channels and around the edges with live bait and big soft plastics, timing the strong tides. On the reef and wrecks, drop live bait and jigs to the structure for snapper and grouper, fishing the current edges where bait stacks up. Tide and current drive it all — the flats fish on moving water, and the reef bite is best when the current is running."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "miami-fl": {
+    "paragraphs": [
+      "Miami fishes Biscayne Bay and the close-in Gulf Stream, a rare combination of sheltered flats and blue water within sight of the city. The bay's flats and channels hold bonefish, permit, snook, and tarpon, with tarpon rolling through the channels, bridges, and beaches in their spring and summer migration. Just offshore, the Gulf Stream swings close enough that sailfish, dolphin (mahi-mahi), and tuna are a short run out, making this a true inshore-and-offshore fishery.",
+      "On the bay flats, sight-cast to bonefish and permit on the moving water, and work the channels, bridges, and beaches with live bait and soft plastics for tarpon and snook, especially after dark along the lit edges. Offshore, troll and kite-fish live bait along the Gulf Stream edge for sailfish and mahi. The bay keys on current and light — tarpon and snook feed hardest on the moving tide at dawn, dusk, and after dark, while the offshore bite follows the bait and the current edges."
+    ],
+    "model": "claude (in-session, grounded)",
+    "updated": "2026-06-18T15:01:09.373Z"
   }
 }
