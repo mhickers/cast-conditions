@@ -18,7 +18,7 @@ import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutl
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
@@ -135,6 +135,7 @@ export default function App() {
   });
   const [spotMsg, setSpotMsg] = useState('');
   const [stationChecked, setStationChecked] = useState(false);
+  const [openSpecies, setOpenSpecies] = useState<Set<number>>(() => new Set());
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewIsNow = useRef(true);
   const loadSeq = useRef(0);
@@ -724,33 +725,6 @@ export default function App() {
           </div>
         </section>
 
-        {weekScores.length > 0 && (
-          <section className="section">
-            <h3 className="section-label">7-Day Outlook — When Should I Go?</h3>
-            <p className="muted" style={{ marginTop: -2, marginBottom: 10 }}>
-              Each day is a quick midday forecast for planning ahead. The big score up top is for your selected time and also folds in live water temp and tide, so the two can differ. Tap a day to see its full breakdown.
-            </p>
-            <div className="week-strip">
-              {weekScores.map(d => {
-                const dt = new Date(d.date + 'T12:00:00');
-                const active = d.date === selectedDate;
-                return (
-                  <button
-                    key={d.date}
-                    className={`week-card${active ? ' week-active' : ''}`}
-                    onClick={() => handleDateChange(d.date)}
-                    title={`View ${dt.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}`}
-                  >
-                    <span className="week-day">{dt.toLocaleDateString([], { weekday: 'short' })}</span>
-                    <span className="week-date">{dt.getDate()}</span>
-                    <span className="week-score" style={{ background: timelineColor(d.score) }}>{d.score.toFixed(1)}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
         {hourlyScores.length > 0 && (
           <section className="section">
             <h3 className="section-label">
@@ -775,13 +749,6 @@ export default function App() {
         )}
 
         <section className="section">
-          <div className="ai-card">
-            <div className="ai-header">✦ AI fishing guide</div>
-            <p className="ai-text">{aiSummary}</p>
-          </div>
-        </section>
-
-        <section className="section">
           <h3 className="section-label">Atmosphere{timeContext}</h3>
           <div className="stat-grid-4">
             <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
@@ -790,62 +757,6 @@ export default function App() {
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
         </section>
-
-        <section className="section">
-          <h3 className="section-label">Water clarity{timeContext}</h3>
-          <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
-            <Eye size={20} className="clarity-icon" />
-            <div className="clarity-text">
-              <div className="clarity-level">{waterClarity.level}</div>
-              <div className="clarity-reason">{waterClarity.reason}</div>
-              <div className="clarity-hint">{waterClarity.lureHint}</div>
-            </div>
-          </div>
-        </section>
-
-        {!isInland && (
-          <section className="section">
-            <h3 className="section-label">Water conditions{timeContext}</h3>
-            <div className="stat-grid-4">
-              <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
-              <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
-              <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
-              <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
-            </div>
-          </section>
-        )}
-
-        {isInland && (
-          <section className="section">
-            <h3 className="section-label">River &amp; lake conditions{timeContext}</h3>
-            {riverStation ? (
-              <>
-                <div className="stat-grid-3">
-                  <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
-                  <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
-                  <StatCard icon={<ArrowUpDown size={18} />} value={riverStation.gageFt != null ? riverStation.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
-                </div>
-                <div className="station-row">
-                  <span className="station-note">USGS gauge:</span>
-                  <select
-                    className="search-input station-select"
-                    value={riverStation.siteId}
-                    onChange={e => changeRiverGauge(e.target.value)}
-                    aria-label="Choose river gauge"
-                  >
-                    {rivers.map(r => (
-                      <option key={r.siteId} value={r.siteId}>{r.siteName} ({r.distanceMi} mi)</option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            ) : (
-              <div className="muted" style={{ padding: '1rem 0' }}>
-                {riverLoading ? 'Loading river data...' : 'No USGS stream gauge found near this spot.'}
-              </div>
-            )}
-          </section>
-        )}
 
         <section className="section">
           <h3 className="section-label">{isToday ? '24-hour forecast' : `Hourly forecast — ${dateShort}`}</h3>
@@ -893,6 +804,62 @@ export default function App() {
             )}
           </section>
         )}
+
+        {isInland && (
+          <section className="section">
+            <h3 className="section-label">River &amp; lake conditions{timeContext}</h3>
+            {riverStation ? (
+              <>
+                <div className="stat-grid-3">
+                  <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
+                  <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
+                  <StatCard icon={<ArrowUpDown size={18} />} value={riverStation.gageFt != null ? riverStation.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
+                </div>
+                <div className="station-row">
+                  <span className="station-note">USGS gauge:</span>
+                  <select
+                    className="search-input station-select"
+                    value={riverStation.siteId}
+                    onChange={e => changeRiverGauge(e.target.value)}
+                    aria-label="Choose river gauge"
+                  >
+                    {rivers.map(r => (
+                      <option key={r.siteId} value={r.siteId}>{r.siteName} ({r.distanceMi} mi)</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <div className="muted" style={{ padding: '1rem 0' }}>
+                {riverLoading ? 'Loading river data...' : 'No USGS stream gauge found near this spot.'}
+              </div>
+            )}
+          </section>
+        )}
+
+        {!isInland && (
+          <section className="section">
+            <h3 className="section-label">Water conditions{timeContext}</h3>
+            <div className="stat-grid-4">
+              <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
+              <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
+              <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
+              <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
+            </div>
+          </section>
+        )}
+
+        <section className="section">
+          <h3 className="section-label">Water clarity{timeContext}</h3>
+          <div className={`clarity-card clarity-${waterClarity.level.toLowerCase()}`}>
+            <Eye size={20} className="clarity-icon" />
+            <div className="clarity-text">
+              <div className="clarity-level">{waterClarity.level}</div>
+              <div className="clarity-reason">{waterClarity.reason}</div>
+              <div className="clarity-hint">{waterClarity.lureHint}</div>
+            </div>
+          </div>
+        </section>
 
         <div className="two-col">
           {!isInland && (
@@ -950,23 +917,45 @@ export default function App() {
         </div>
 
         <section className="section">
+          <div className="ai-card">
+            <div className="ai-header">✦ AI fishing guide</div>
+            <p className="ai-text">{aiSummary}</p>
+          </div>
+        </section>
+
+        <section className="section">
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
           {!stationChecked && <p className="muted" style={{ padding: '4px 0' }}>Loading species for this location...</p>}
           <div className="species-grid" style={!stationChecked ? { display: 'none' } : undefined}>
             {[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 6).map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
+              const open = openSpecies.has(i);
               return (
-                <div key={i} className="species-card">
-                  <div className="species-header">
+                <div key={i} className={`species-card${open ? ' species-open' : ''}`}>
+                  <button
+                    type="button"
+                    className="species-header"
+                    aria-expanded={open}
+                    onClick={() => setOpenSpecies(prev => {
+                      const next = new Set(prev);
+                      if (next.has(i)) next.delete(i); else next.add(i);
+                      return next;
+                    })}
+                  >
                     <span className="species-icon"><SpeciesIcon name={sp.name} size={30} /></span>
                     <span className="species-name">{sp.name}</span>
                     <span className="bite-label" style={{ color }}>{sp.biteLabel}</span>
-                  </div>
+                    <ChevronDown size={16} className="species-chevron" />
+                  </button>
                   <div className="bite-bar-wrap">
                     <div className="bite-bar" style={{ width: `${sp.biteScore}%`, background: color }} />
                   </div>
-                  <p className="species-tip">{sp.tip}</p>
-                  <p className="species-lures"><strong>Lures:</strong> {sp.lures}</p>
+                  {open && (
+                    <div className="species-detail">
+                      <p className="species-tip">{sp.tip}</p>
+                      <p className="species-lures"><strong>Lures:</strong> {sp.lures}</p>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -982,6 +971,33 @@ export default function App() {
           isInland={isInland}
           waterClarity={waterClarity.level}
         />
+
+        {weekScores.length > 0 && (
+          <section className="section">
+            <h3 className="section-label">7-Day Outlook — When Should I Go?</h3>
+            <p className="muted" style={{ marginTop: -2, marginBottom: 10 }}>
+              Each day is a quick midday forecast for planning ahead. The big score up top is for your selected time and also folds in live water temp and tide, so the two can differ. Tap a day to see its full breakdown.
+            </p>
+            <div className="week-strip">
+              {weekScores.map(d => {
+                const dt = new Date(d.date + 'T12:00:00');
+                const active = d.date === selectedDate;
+                return (
+                  <button
+                    key={d.date}
+                    className={`week-card${active ? ' week-active' : ''}`}
+                    onClick={() => handleDateChange(d.date)}
+                    title={`View ${dt.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}`}
+                  >
+                    <span className="week-day">{dt.toLocaleDateString([], { weekday: 'short' })}</span>
+                    <span className="week-date">{dt.getDate()}</span>
+                    <span className="week-score" style={{ background: timelineColor(d.score) }}>{d.score.toFixed(1)}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section className="section">
           <h3 className="section-label">Saved spots <span className="log-private-tag">private — saved on this device</span></h3>
