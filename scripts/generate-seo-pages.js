@@ -628,10 +628,12 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
       headline: `${town.name} Fishing Report`,
       description: report.paragraphs[0].slice(0, 200),
       articleBody: report.paragraphs.join('\n\n'),
+      image: [`${SITE}/og.png`],
       url,
+      mainEntityOfPage: url,
       ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
-      author: { '@type': 'Organization', name: 'Fish Condish' },
-      publisher: { '@type': 'Organization', name: 'Fish Condish' },
+      author: { '@type': 'Organization', name: 'Fish Condish', url: SITE },
+      publisher: { '@type': 'Organization', name: 'Fish Condish', logo: { '@type': 'ImageObject', url: `${SITE}/logo512.png` } },
     });
   }
   // Escape "<" so a stray "</script>" inside any string can't break out of the tag.
