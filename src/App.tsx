@@ -777,15 +777,19 @@ export default function App() {
 
         {!isInland && (
           <section className="section">
-            <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
-            <div className="chart-wrap">
-              {dayCurve.length > 0
-                ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart" />
-                : <div className="muted" style={{ padding: '2rem 0' }}>
-                    {stationChecked && !tideStation
-                      ? 'No NOAA tide station within 100 miles — this looks like an inland spot, so tide data isn\u2019t available here.'
-                      : tideLoading ? 'Loading tide data...' : 'Tide data unavailable'}
-                  </div>}
+            <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
+            <div className="card">
+              {dayEvents.length > 0 ? dayEvents.slice(0, 4).map((p, i) => {
+                const isH = p.type === 'H';
+                const t = new Date(p.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return (
+                  <div key={i} className="tide-row">
+                    <span className="tide-type">{isH ? '▲' : '▼'} {isH ? 'High' : 'Low'}</span>
+                    <span className="tide-time">{t}</span>
+                    <span className="tide-ht">{parseFloat(p.v).toFixed(1)} ft</span>
+                  </div>
+                );
+              }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : 'Loading...'}</span>}
             </div>
             {tideStation && (
               <div className="station-row">
@@ -802,6 +806,21 @@ export default function App() {
                 </select>
               </div>
             )}
+          </section>
+        )}
+
+        {!isInland && (
+          <section className="section">
+            <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
+            <div className="chart-wrap">
+              {dayCurve.length > 0
+                ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart" />
+                : <div className="muted" style={{ padding: '2rem 0' }}>
+                    {stationChecked && !tideStation
+                      ? 'No NOAA tide station within 100 miles — this looks like an inland spot, so tide data isn\u2019t available here.'
+                      : tideLoading ? 'Loading tide data...' : 'Tide data unavailable'}
+                  </div>}
+            </div>
           </section>
         )}
 
@@ -861,60 +880,40 @@ export default function App() {
           </div>
         </section>
 
-        <div className="two-col">
-          {!isInland && (
-            <section className="section">
-              <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
-              <div className="card">
-                {dayEvents.length > 0 ? dayEvents.slice(0, 4).map((p, i) => {
-                  const isH = p.type === 'H';
-                  const t = new Date(p.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                  return (
-                    <div key={i} className="tide-row">
-                      <span className="tide-type">{isH ? '▲' : '▼'} {isH ? 'High' : 'Low'}</span>
-                      <span className="tide-time">{t}</span>
-                      <span className="tide-ht">{parseFloat(p.v).toFixed(1)} ft</span>
-                    </div>
-                  );
-                }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : 'Loading...'}</span>}
-              </div>
-            </section>
-          )}
-          <section className="section" style={isInland ? { gridColumn: '1 / -1' } : undefined}>
-            <h3 className="section-label">Sun & moon</h3>
-            <div className="card">
-              <div className="sun-row">
-                <div className="sun-item">
-                  <span className="sun-icon"><Sunrise size={22} /></span>
-                  <div>
-                    <div className="sun-time">{conditions.sunrise ? new Date(conditions.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
-                    <div className="sun-label">Sunrise</div>
-                  </div>
-                </div>
-                <div className="sun-item">
-                  <span className="sun-icon"><Sunset size={22} /></span>
-                  <div>
-                    <div className="sun-time">{conditions.sunset ? new Date(conditions.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
-                    <div className="sun-label">Sunset</div>
-                  </div>
-                </div>
-              </div>
-              <div className="moon-card" style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 12 }}>
-                <MoonSVG phase={moon.phase} />
+        <section className="section">
+          <h3 className="section-label">Sun & moon</h3>
+          <div className="card">
+            <div className="sun-row">
+              <div className="sun-item">
+                <span className="sun-icon"><Sunrise size={22} /></span>
                 <div>
-                  <div className="moon-name">{moon.name}</div>
-                  <div className="moon-desc">{moon.desc}</div>
-                  <div className="moon-illum">{moon.illum}% illuminated</div>
+                  <div className="sun-time">{conditions.sunrise ? new Date(conditions.sunrise).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
+                  <div className="sun-label">Sunrise</div>
                 </div>
               </div>
-              <div className="solunar-block">
-                <div className="solunar-title">Solunar feeding periods (approx.)</div>
-                <div className="solunar-row"><strong>Major:</strong> {solunar.majors.map(m => m.join('–')).join(' · ')}</div>
-                <div className="solunar-row"><strong>Minor:</strong> {solunar.minors.map(m => m.join('–')).join(' · ')}</div>
+              <div className="sun-item">
+                <span className="sun-icon"><Sunset size={22} /></span>
+                <div>
+                  <div className="sun-time">{conditions.sunset ? new Date(conditions.sunset).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}</div>
+                  <div className="sun-label">Sunset</div>
+                </div>
               </div>
             </div>
-          </section>
-        </div>
+            <div className="moon-card" style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 12 }}>
+              <MoonSVG phase={moon.phase} />
+              <div>
+                <div className="moon-name">{moon.name}</div>
+                <div className="moon-desc">{moon.desc}</div>
+                <div className="moon-illum">{moon.illum}% illuminated</div>
+              </div>
+            </div>
+            <div className="solunar-block">
+              <div className="solunar-title">Solunar feeding periods (approx.)</div>
+              <div className="solunar-row"><strong>Major:</strong> {solunar.majors.map(m => m.join('–')).join(' · ')}</div>
+              <div className="solunar-row"><strong>Minor:</strong> {solunar.minors.map(m => m.join('–')).join(' · ')}</div>
+            </div>
+          </div>
+        </section>
 
         <section className="section">
           <div className="ai-card">
