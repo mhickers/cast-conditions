@@ -145,7 +145,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
   .two-col { grid-template-columns: 1fr; }
   .tide-cols, .water-cols { grid-template-columns: 1fr; gap: 1.5rem; }
   .search-primary { flex-wrap: wrap; }
-  .search-primary .search-input-lg { flex: 1 1 100%; }
+  .search-primary .search-input-lg { flex: 1 1 60%; min-width: 0; }
   .header-right .updated-txt { display: none; }
 }
 
@@ -164,8 +164,10 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 
 @media (max-width: 640px) {
   .stat-grid-5 { grid-template-columns: repeat(2, 1fr); }
-  .date-row { gap: 8px; }
-  .date-input, .time-input { flex: 1 1 100%; width: 100%; min-width: 0; max-width: 100%; }
+  .date-row { gap: 8px 10px; }
+  .date-input { flex: 0 1 auto; width: auto; min-width: 120px; max-width: 100%; }
+  .time-input { flex: 0 1 auto; width: auto; min-width: 92px; max-width: 100%; }
+  .date-actions { flex: 1 1 100%; margin-top: 2px; }
 }
 
 /* Sun & moon */
