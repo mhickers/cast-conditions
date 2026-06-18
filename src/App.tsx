@@ -183,7 +183,6 @@ export default function App() {
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
   const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
-  const verdict = score >= 7.5 ? 'Go' : score >= 3.5 ? 'Worth a shot' : 'Tough bite';
   const waterClarity = calcWaterClarity(conditions, isInland);
   const species = getSpeciesForLocation(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
@@ -697,15 +696,13 @@ export default function App() {
         </section>
 
         <section className="score-section">
-          <div className="score-bar" style={loading ? undefined : { borderLeft: `4px solid ${scoreText}` }}>
+          <div className="score-bar">
             <div className="score-circle" style={{ background: scoreBg, color: scoreText }}>
               <span className="score-num">{loading ? '--' : score.toFixed(1)}</span>
               <span className="score-denom">/ 10</span>
             </div>
             <div className="score-info">
-              <h2 className="verdict" style={loading ? undefined : { color: scoreText }}>
-                {loading ? 'Loading conditions\u2026' : <>{verdict}<span className="verdict-sub">{scoreLabel}</span></>}
-              </h2>
+              <h2 className="score-label">{loading ? 'Loading conditions...' : scoreLabel}</h2>
               <p className="score-tips">
                 {loading ? `Fetching live data for ${locationLabel}` : scoreNarrative.length ? scoreNarrative.join(' ') : 'Based on current conditions.'}
                 {!loading && conditions.verified && <span className="verified-badge" title="Wind and temperature agree across NOAA weather stations and the Open-Meteo forecast model">✓ NOAA + Open-Meteo</span>}
@@ -916,18 +913,20 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="moon-card" style={{ borderTop: '1px solid var(--border)', paddingTop: 12, marginTop: 12 }}>
-              <MoonSVG phase={moon.phase} />
-              <div>
-                <div className="moon-name">{moon.name}</div>
-                <div className="moon-desc">{moon.desc}</div>
-                <div className="moon-illum">{moon.illum}% illuminated</div>
+            <div className="moon-solunar">
+              <div className="moon-card">
+                <MoonSVG phase={moon.phase} />
+                <div>
+                  <div className="moon-name">{moon.name}</div>
+                  <div className="moon-desc">{moon.desc}</div>
+                  <div className="moon-illum">{moon.illum}% illuminated</div>
+                </div>
               </div>
-            </div>
-            <div className="solunar-block">
-              <div className="solunar-title">Solunar feeding periods (approx.)</div>
-              <div className="solunar-row"><strong>Major:</strong> {solunar.majors.map(m => m.join('–')).join(' · ')}</div>
-              <div className="solunar-row"><strong>Minor:</strong> {solunar.minors.map(m => m.join('–')).join(' · ')}</div>
+              <div className="solunar-block">
+                <div className="solunar-title">Solunar feeding periods (approx.)</div>
+                <div className="solunar-row"><strong>Major:</strong> {solunar.majors.map(m => m.join('–')).join(' · ')}</div>
+                <div className="solunar-row"><strong>Minor:</strong> {solunar.minors.map(m => m.join('–')).join(' · ')}</div>
+              </div>
             </div>
           </div>
         </section>

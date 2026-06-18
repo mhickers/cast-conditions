@@ -57,8 +57,6 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .score-num { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; }
 .score-denom { font-size: 11px; margin-top: 1px; opacity: 0.7; }
 .score-info h2.score-label { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); }
-.verdict { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; line-height: 1.1; color: var(--text); display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.verdict-sub { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-muted); }
 .score-tips { font-size: 13px; color: var(--text-muted); margin-top: 3px; line-height: 1.5; }
 
 /* AI card */
@@ -194,6 +192,11 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .timeline-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 
 /* Solunar */
+.moon-solunar { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+@media (min-width: 641px) {
+  .moon-solunar { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .moon-solunar .solunar-block { border-top: none; padding-top: 0; margin-top: 0; }
+}
 .solunar-block { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
 .solunar-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px; }
 .solunar-row { font-size: 13px; color: var(--text); margin-bottom: 3px; }
