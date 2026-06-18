@@ -37,6 +37,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 /* Search */
 .search-primary { display: flex; gap: 8px; }
 .search-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.date-actions { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+@media (min-width: 641px) { .date-actions { margin-left: auto; } }
 .search-input { flex: 1; padding: 0 12px; height: 38px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); font-size: 14px; font-family: inherit; color: var(--text); outline: none; transition: border-color 0.15s; }
 .search-input:focus { border-color: var(--ocean); box-shadow: 0 0 0 3px rgba(24,95,165,0.1); }
 .search-input-lg { height: 48px; font-size: 16px; font-weight: 500; }

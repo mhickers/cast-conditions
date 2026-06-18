@@ -15,7 +15,7 @@
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"Gunnison, CO Fishing Report & Conditions — Fish Condish","description":"Live fishing conditions for Gunnison, CO: fishing score, best times to fish, river flow, water temp, weather, and a species bite forecast. Free, updated in real time.","url":"https://fishcondish.com/fishing/gunnison-co/","isPartOf":{"@type":"WebSite","name":"Fish Condish","url":"https://fishcondish.com"}}
+{"@context":"https://schema.org","@graph":[{"@type":"WebPage","name":"Gunnison, CO Fishing Report & Conditions — Fish Condish","description":"Live fishing conditions for Gunnison, CO: fishing score, best times to fish, river flow, water temp, weather, and a species bite forecast. Free, updated in real time.","url":"https://fishcondish.com/fishing/gunnison-co/","isPartOf":{"@type":"WebSite","name":"Fish Condish","url":"https://fishcondish.com"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://fishcondish.com/"},{"@type":"ListItem","position":2,"name":"Gunnison, CO Fishing","item":"https://fishcondish.com/fishing/gunnison-co/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What fish can you catch at Gunnison, CO?","acceptedAnswer":{"@type":"Answer","text":"The species bite forecast for Gunnison, CO covers what's likely feeding there, including wild trout — and updates with the live conditions."}},{"@type":"Question","name":"What's the best time of day to fish Gunnison, CO?","acceptedAnswer":{"@type":"Answer","text":"Dawn and dusk are usually the most productive windows on the Gunnison River, particularly when the barometric pressure is steady or falling. Fish Condish grades every hour of the day so you can pick the best one."}},{"@type":"Question","name":"When is the best season to fish Gunnison, CO?","acceptedAnswer":{"@type":"Answer","text":"Spring and fall are typically strongest on the Gunnison River as water temperatures sit in the productive range, with summer fishing best early and late in the day. It varies year to year, so check the live conditions before you head out."}},{"@type":"Question","name":"How do I know if it's a good day to fish Gunnison, CO?","acceptedAnswer":{"@type":"Answer","text":"Fish Condish combines wind, water level, water temperature, pressure trend, and moon phase into a single 1–10 fishing score for Gunnison, CO, updated in real time — a quick go/no-go read before you make the trip."}}]}]}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -38,6 +38,12 @@ li{margin:4px 0}
 .report{background:#fff;border:1px solid #d9e4ef;border-left:4px solid var(--ocean);border-radius:10px;padding:16px 20px;margin:20px 0}
 .report h2{margin:0 0 6px;font-size:19px}
 .report p{font-size:16px;margin:8px 0}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:6px}
+.crumbs a{color:var(--ocean);text-decoration:none}
+.faq{margin:8px 0 4px}
+.faq-item{border-top:1px solid #e2e8f0;padding:12px 0}
+.faq-item h3{font-size:16px;color:var(--navy);font-family:'Inter',system-ui,sans-serif;margin-bottom:4px}
+.faq-item p{margin:0;font-size:15px}
 footer{text-align:center;font-size:13px;color:var(--muted);padding:24px;font-family:'Inter',system-ui,sans-serif}
 footer a{color:var(--ocean)}
 </style>
@@ -45,6 +51,7 @@ footer a{color:var(--ocean)}
 <body>
 <header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
 <main>
+<nav class="crumbs"><a href="/">Home</a> › <span>Gunnison, CO Fishing</span></nav>
 <h1>Gunnison, CO Fishing Report &amp; Live Conditions</h1>
 <p>Planning to fish the Gunnison River? Fish Condish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for Gunnison, CO right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
 <a class="cta" href="/?lat=38.5458&lon=-106.9253&label=Gunnison%2C%20CO">See live Gunnison, CO conditions →</a>
@@ -61,6 +68,13 @@ footer a{color:var(--ocean)}
 <p>Water conditions for Gunnison, CO come straight from the nearest USGS gauge — flow, gage height, and water temperature where it's reported — with a picker to switch between nearby monitoring sites on the Gunnison River.</p>
 <p>It's free, works on your phone, and installs like an app. Local anglers also share recent catches right in the feed.</p>
 <a class="cta" href="/?lat=38.5458&lon=-106.9253&label=Gunnison%2C%20CO">Check the Gunnison, CO fishing score →</a>
+<h2>Gunnison, CO fishing FAQ</h2>
+<div class="faq">
+<div class="faq-item"><h3>What fish can you catch at Gunnison, CO?</h3><p>The species bite forecast for Gunnison, CO covers what's likely feeding there, including wild trout — and updates with the live conditions.</p></div>
+<div class="faq-item"><h3>What's the best time of day to fish Gunnison, CO?</h3><p>Dawn and dusk are usually the most productive windows on the Gunnison River, particularly when the barometric pressure is steady or falling. Fish Condish grades every hour of the day so you can pick the best one.</p></div>
+<div class="faq-item"><h3>When is the best season to fish Gunnison, CO?</h3><p>Spring and fall are typically strongest on the Gunnison River as water temperatures sit in the productive range, with summer fishing best early and late in the day. It varies year to year, so check the live conditions before you head out.</p></div>
+<div class="faq-item"><h3>How do I know if it's a good day to fish Gunnison, CO?</h3><p>Fish Condish combines wind, water level, water temperature, pressure trend, and moon phase into a single 1–10 fishing score for Gunnison, CO, updated in real time — a quick go/no-go read before you make the trip.</p></div>
+</div>
 <h2>Nearby spots</h2>
 <div class="nearby">
 <a href="/fishing/salida-co/">Salida, CO</a>

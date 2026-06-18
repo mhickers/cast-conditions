@@ -658,11 +658,6 @@ export default function App() {
             <button className="btn" onClick={handleSearch}>Search</button>
             <button className="btn btn-secondary" onClick={useMyLocation} title="Use my location"><MapPin size={15} /></button>
           </div>
-          <div className="search-actions">
-            <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
-            <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
-            {isNative() && <button className="btn btn-secondary" onClick={remindMe} title="Remind me at dawn"><Bell size={14} style={{ verticalAlign: '-2px' }} /> Remind me</button>}
-          </div>
           {shareMsg && <div className="share-msg">{shareMsg}</div>}
           {spotMsg && <div className="share-msg">{spotMsg}</div>}
           {searchError && <div className="search-error">{searchError}</div>}
@@ -692,6 +687,11 @@ export default function App() {
             {!isNow && (
               <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedDate(todayStr); setSelectedTime('now'); loadData(lon, lat, locationLabel, todayStr, 'now'); }}>← Back to now</button>
             )}
+            <span className="date-actions">
+              <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
+              <button className="btn btn-secondary" onClick={shareConditions}><Share2 size={14} style={{ verticalAlign: '-2px' }} /> Share</button>
+              {isNative() && <button className="btn btn-secondary" onClick={remindMe} title="Remind me at dawn"><Bell size={14} style={{ verticalAlign: '-2px' }} /> Remind me</button>}
+            </span>
           </div>
         </section>
 

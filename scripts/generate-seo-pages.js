@@ -592,6 +592,51 @@ function pageHtml(town, allTowns) {
     ? `<section class="report"><h2>${esc(town.name)} fishing report</h2>${report.paragraphs.map(p => `<p>${esc(p)}</p>`).join('')}</section>`
     : '';
 
+  // --- FAQ: grounded, evergreen Q&A (no invented regs, dates, or access points) ---
+  const coastal = town.type === 'coastal';
+  const bestTimeA = coastal
+    ? `Dawn and dusk are usually the strongest windows at ${town.name}, especially when they line up with moving water around a tide change. Fish Condish grades every hour of the day so you can pick the best one.`
+    : `Dawn and dusk are usually the most productive windows on ${town.water}, particularly when the barometric pressure is steady or falling. Fish Condish grades every hour of the day so you can pick the best one.`;
+  const seasonA = coastal
+    ? `Spring and fall typically bring the most active fishing along ${town.water} as fish migrate and feed heavily, with summer steady for warm-water species. It varies year to year, so check the live score before you head out.`
+    : `Spring and fall are typically strongest on ${town.water} as water temperatures sit in the productive range, with summer fishing best early and late in the day. It varies year to year, so check the live conditions before you head out.`;
+  const faqs = [
+    { q: `What fish can you catch at ${town.name}?`,
+      a: `The species bite forecast for ${town.name} covers what's likely feeding there, including ${species} — and updates with the live conditions.` },
+    { q: `What's the best time of day to fish ${town.name}?`, a: bestTimeA },
+    { q: `When is the best season to fish ${town.name}?`, a: seasonA },
+    { q: `How do I know if it's a good day to fish ${town.name}?`,
+      a: `Fish Condish combines wind, ${coastal ? 'tide movement' : 'water level'}, water temperature, pressure trend, and moon phase into a single 1\u201310 fishing score for ${town.name}, updated in real time — a quick go/no-go read before you make the trip.` },
+  ];
+  const faqSection = `<h2>${esc(town.name)} fishing FAQ</h2>
+<div class="faq">
+${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join('\n')}
+</div>`;
+
+  // --- structured data (WebPage + Breadcrumb + FAQ + Article), one @graph ---
+  const graph = [
+    { '@type': 'WebPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: `${town.name} Fishing`, item: url },
+    ] },
+    { '@type': 'FAQPage', mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+  ];
+  if (report && Array.isArray(report.paragraphs) && report.paragraphs.length) {
+    graph.push({
+      '@type': 'Article',
+      headline: `${town.name} Fishing Report`,
+      description: report.paragraphs[0].slice(0, 200),
+      articleBody: report.paragraphs.join('\n\n'),
+      url,
+      ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
+      author: { '@type': 'Organization', name: 'Fish Condish' },
+      publisher: { '@type': 'Organization', name: 'Fish Condish' },
+    });
+  }
+  // Escape "<" so a stray "</script>" inside any string can't break out of the tag.
+  const schemaJson = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -609,14 +654,7 @@ function pageHtml(town, allTowns) {
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
 <script type="application/ld+json">
-${JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: title,
-  description: desc,
-  url,
-  isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE },
-})}
+${schemaJson}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -639,6 +677,12 @@ li{margin:4px 0}
 .report{background:#fff;border:1px solid #d9e4ef;border-left:4px solid var(--ocean);border-radius:10px;padding:16px 20px;margin:20px 0}
 .report h2{margin:0 0 6px;font-size:19px}
 .report p{font-size:16px;margin:8px 0}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:6px}
+.crumbs a{color:var(--ocean);text-decoration:none}
+.faq{margin:8px 0 4px}
+.faq-item{border-top:1px solid #e2e8f0;padding:12px 0}
+.faq-item h3{font-size:16px;color:var(--navy);font-family:'Inter',system-ui,sans-serif;margin-bottom:4px}
+.faq-item p{margin:0;font-size:15px}
 footer{text-align:center;font-size:13px;color:var(--muted);padding:24px;font-family:'Inter',system-ui,sans-serif}
 footer a{color:var(--ocean)}
 </style>
@@ -646,6 +690,7 @@ footer a{color:var(--ocean)}
 <body>
 <header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
 <main>
+<nav class="crumbs"><a href="/">Home</a> › <span>${esc(town.name)} Fishing</span></nav>
 <h1>${esc(town.name)} Fishing Report &amp; Live Conditions</h1>
 <p>Planning to fish ${esc(town.water)}? Fish Condish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
 <a class="cta" href="${appLink}">See live ${esc(town.name)} conditions →</a>
@@ -664,6 +709,7 @@ ${reportSection}
   : `Water conditions for ${esc(town.name)} come straight from the nearest USGS gauge — flow, gage height, and water temperature where it's reported — with a picker to switch between nearby monitoring sites on ${esc(town.water)}.`}</p>
 <p>It's free, works on your phone, and installs like an app. Local anglers also share recent catches right in the feed.</p>
 <a class="cta" href="${appLink}">Check the ${esc(town.name)} fishing score →</a>
+${faqSection}
 <h2>Nearby spots</h2>
 <div class="nearby">
 ${nearby.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(t.name)}</a>`).join('\n')}
