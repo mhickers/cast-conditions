@@ -1,5 +1,6 @@
-// Species database with regional coverage
-// Regions: northeast, midatlantic, southeast, gulf, pacific, pacific_northwest, alaska, hawaii
+// Species database with regional coverage.
+// Coastal regions: northeast, midatlantic, southeast, gulf, pacific, pacific_northwest, alaska, hawaii
+// Inland regions: inland_north, inland_west, inland_pacific, inland_southwest, inland_southcentral, inland_southeast
 
 export interface SpeciesInfo {
   name: string;
@@ -12,7 +13,7 @@ export interface SpeciesInfo {
 }
 
 export const ALL_SPECIES: SpeciesInfo[] = [
-  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','inland_north','inland_south'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
+  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
   { name: 'Bluefish',        icon: '🌊', regions: ['northeast','midatlantic','southeast'],              tempMin: 58, tempMax: 82, lures: 'Metal spoons, poppers with wire leaders; cut bait', tip: 'Aggressive surface feeders. Active in choppy conditions. Topwater lures work well.' },
   { name: 'Flounder',        icon: '🐟', regions: ['northeast','midatlantic','southeast','gulf'],       tempMin: 55, tempMax: 80, lures: 'Gulp swimming mullet on bucktails; minnow-and-squid rigs', tip: 'Prefer calmer water. Fish bottom near sandy channels on incoming tide.' },
   { name: 'Weakfish',        icon: '🌙', regions: ['midatlantic'],                                     tempMin: 58, tempMax: 78, lures: 'Pink soft plastics, small jigs; live grass shrimp', tip: 'Night feeders — work tidal creeks and flats after dark on moving water.' },
@@ -37,20 +38,20 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'Tuna (bluefin)',  icon: '🔵', regions: ['northeast','midatlantic'],                        tempMin: 55, tempMax: 72, lures: 'Chunked butterfish; trolled spreader bars and jigs', tip: 'Offshore canyon fishing. Chunking butterfish or trolling skirted lures.' },
   { name: 'Pollock',         icon: '❄️', regions: ['northeast','alaska'],                             tempMin: 38, tempMax: 58, lures: 'Diamond jigs with teaser flies worked fast', tip: 'Deep water species. Diamond jigs worked fast near the bottom.' },
   { name: 'Cod',             icon: '🐠', regions: ['northeast'],                                      tempMin: 38, tempMax: 58, lures: 'Fresh clams; jigs with curly tails near bottom', tip: 'Deep, cold water near rocky structure. Clam, squid, or jigs on bottom.' },
-  { name: 'Largemouth bass', icon: '🐸', regions: ['inland_north','inland_south','inland_west'], tempMin: 58, tempMax: 85, lures: 'Texas-rigged worms, spinnerbaits; frogs over weeds', tip: 'Target cover — docks, weed edges, laydowns. Slow down in cold water, topwater at dawn in summer.' },
-  { name: 'Smallmouth bass', icon: '🟤', regions: ['inland_north','inland_west','inland_south'],                  tempMin: 55, tempMax: 75, lures: 'Ned rigs, tubes, small crankbaits on rock', tip: 'Rocky points and current breaks. Tubes, ned rigs, and crankbaits near gravel and boulders.' },
-  { name: 'Walleye',          icon: '👁️', regions: ['inland_north','inland_south','inland_west'],                               tempMin: 45, tempMax: 70, lures: 'Jig and minnow, crawler harnesses, deep crankbaits', tip: 'Low-light feeders. Jig and minnow near bottom at dawn, dusk, or on overcast days.' },
-  { name: 'Northern pike',    icon: '🐊', regions: ['inland_north'],                               tempMin: 40, tempMax: 65, lures: 'Large spoons and spinnerbaits on a steel leader', tip: 'Ambush predators in weedy bays. Large spoons, spinnerbaits, and steel leaders a must.' },
+  { name: 'Largemouth bass', icon: '🐸', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'], tempMin: 58, tempMax: 85, lures: 'Texas-rigged worms, spinnerbaits; frogs over weeds', tip: 'Target cover — docks, weed edges, laydowns. Slow down in cold water, topwater at dawn in summer.' },
+  { name: 'Smallmouth bass', icon: '🟤', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_pacific'],                  tempMin: 55, tempMax: 75, lures: 'Ned rigs, tubes, small crankbaits on rock', tip: 'Rocky points and current breaks. Tubes, ned rigs, and crankbaits near gravel and boulders.' },
+  { name: 'Walleye',          icon: '👁️', regions: ['inland_north','inland_west','inland_southcentral','inland_pacific'],                               tempMin: 45, tempMax: 70, lures: 'Jig and minnow, crawler harnesses, deep crankbaits', tip: 'Low-light feeders. Jig and minnow near bottom at dawn, dusk, or on overcast days.' },
+  { name: 'Northern pike',    icon: '🐊', regions: ['inland_north','inland_west'],                               tempMin: 40, tempMax: 65, lures: 'Large spoons and spinnerbaits on a steel leader', tip: 'Ambush predators in weedy bays. Large spoons, spinnerbaits, and steel leaders a must.' },
   { name: 'Muskie',           icon: '🦖', regions: ['inland_north'],                               tempMin: 50, tempMax: 72, lures: 'Big bucktails, glide baits; figure-8 every cast', tip: 'The fish of 10,000 casts. Big bucktails and glide baits over weed edges; figure-8 at the boat.' },
-  { name: 'Rainbow trout',    icon: '🌈', regions: ['inland_west','inland_north','inland_south'],                 tempMin: 42, tempMax: 65, lures: 'Small spinners, PowerBait; nymphs and dries to match the hatch', tip: 'Cold, oxygenated water. Drift nymphs in riffles or troll small spoons in stocked lakes.' },
-  { name: 'Brown trout',      icon: '🟫', regions: ['inland_west','inland_north','inland_south'],                 tempMin: 44, tempMax: 68, lures: 'Streamers and nymphs; spinners at dawn and dusk', tip: 'Wary and selective. Streamers at dawn and dusk; match the hatch on pressured water.' },
-  { name: 'Lake trout',       icon: '🏔️', regions: ['inland_north'],                              tempMin: 38, tempMax: 55, lures: 'Heavy jigs or spoons trolled deep', tip: 'Deep, cold water in summer — jig near bottom. Shallower in spring and fall turnover.' },
-  { name: 'Channel catfish',  icon: '🐱', regions: ['inland_south','inland_north','inland_west'],                tempMin: 65, tempMax: 90, lures: 'Cut bait, chicken liver, or stink bait on bottom', tip: 'Night feeders on scent. Cut bait or chicken liver on bottom near holes and channel bends.' },
-  { name: 'Crappie',          icon: '⚪', regions: ['inland_north','inland_south','inland_west'],  tempMin: 55, tempMax: 75, lures: 'Small jigs or minnows under a float near brush', tip: 'School around brush piles and bridge pilings. Small jigs under a float; spring is prime.' },
-  { name: 'Bluegill',         icon: '🔵', regions: ['inland_north','inland_south','inland_west'],  tempMin: 60, tempMax: 85, lures: 'Worms, crickets, or tiny jigs near shoreline cover', tip: 'Spawning beds in late spring. Crickets, worms, or tiny jigs near shoreline cover.' },
-  { name: 'Yellow perch',     icon: '🟡', regions: ['inland_north','inland_south'],                               tempMin: 45, tempMax: 70, lures: 'Small minnows and ice jigs tipped with worm', tip: 'Schooling fish — find one, find fifty. Small minnows or jigs near weed beds and drop-offs.' },
-  { name: 'Hybrid striper',   icon: '⚡', regions: ['inland_south','inland_north','inland_west'],                               tempMin: 55, tempMax: 78, lures: 'Live shad, swimbaits; topwater when they bust', tip: 'Chase shad schools in open reservoir water. Watch for surface busts at dawn.' },
-  { name: 'White bass',       icon: '⬜', regions: ['inland_south','inland_north'],                tempMin: 55, tempMax: 80, lures: 'Small white jigs and inline spinners in current', tip: 'Spring river runs are legendary. Small white jigs and spinners in current.' },
+  { name: 'Rainbow trout',    icon: '🌈', regions: ['inland_west','inland_north','inland_southwest','inland_pacific'],                 tempMin: 42, tempMax: 65, lures: 'Small spinners, PowerBait; nymphs and dries to match the hatch', tip: 'Cold, oxygenated water. Drift nymphs in riffles or troll small spoons in stocked lakes.' },
+  { name: 'Brown trout',      icon: '🟫', regions: ['inland_west','inland_north','inland_southwest','inland_pacific'],                 tempMin: 44, tempMax: 68, lures: 'Streamers and nymphs; spinners at dawn and dusk', tip: 'Wary and selective. Streamers at dawn and dusk; match the hatch on pressured water.' },
+  { name: 'Lake trout',       icon: '🏔️', regions: ['inland_north','inland_west','inland_pacific'],                              tempMin: 38, tempMax: 55, lures: 'Heavy jigs or spoons trolled deep', tip: 'Deep, cold water in summer — jig near bottom. Shallower in spring and fall turnover.' },
+  { name: 'Channel catfish',  icon: '🐱', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                tempMin: 65, tempMax: 90, lures: 'Cut bait, chicken liver, or stink bait on bottom', tip: 'Night feeders on scent. Cut bait or chicken liver on bottom near holes and channel bends.' },
+  { name: 'Crappie',          icon: '⚪', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],  tempMin: 55, tempMax: 75, lures: 'Small jigs or minnows under a float near brush', tip: 'School around brush piles and bridge pilings. Small jigs under a float; spring is prime.' },
+  { name: 'Bluegill',         icon: '🔵', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],  tempMin: 60, tempMax: 85, lures: 'Worms, crickets, or tiny jigs near shoreline cover', tip: 'Spawning beds in late spring. Crickets, worms, or tiny jigs near shoreline cover.' },
+  { name: 'Yellow perch',     icon: '🟡', regions: ['inland_north','inland_west'],                               tempMin: 45, tempMax: 70, lures: 'Small minnows and ice jigs tipped with worm', tip: 'Schooling fish — find one, find fifty. Small minnows or jigs near weed beds and drop-offs.' },
+  { name: 'Hybrid striper',   icon: '⚡', regions: ['inland_north','inland_west','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                               tempMin: 55, tempMax: 78, lures: 'Live shad, swimbaits; topwater when they bust', tip: 'Chase shad schools in open reservoir water. Watch for surface busts at dawn.' },
+  { name: 'White bass',       icon: '⬜', regions: ['inland_north','inland_southcentral','inland_southeast','inland_southwest','inland_pacific'],                tempMin: 55, tempMax: 80, lures: 'Small white jigs and inline spinners in current', tip: 'Spring river runs are legendary. Small white jigs and spinners in current.' },
   { name: 'Tautog',          icon: '🪨', regions: ['northeast','midatlantic'],                       tempMin: 45, tempMax: 65, lures: 'Green crabs, white-leggers, and Asian crabs on jigs or hi-lo rigs', tip: 'Hug structure — wrecks, rocks, and jetties. Fish the slack around tide changes.' },
   { name: 'Sheepshead',      icon: '🐑', regions: ['midatlantic','southeast','gulf'],                 tempMin: 60, tempMax: 80, lures: 'Fiddler crabs, sand fleas, and barnacle bits on small strong hooks', tip: 'Tight to pilings, bridges, and jetties. Set the hook early — they steal bait fast.' },
   { name: 'Scup (porgy)',    icon: '🐟', regions: ['northeast','midatlantic'],                        tempMin: 55, tempMax: 75, lures: 'Squid strips, clams, and bloodworms on small hi-lo rigs', tip: 'Bottom feeders over rocky and reefy ground. Light tackle and small hooks.' },
@@ -65,11 +66,24 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'Spot',            icon: '🐟', regions: ['midatlantic','southeast'],                        tempMin: 60, tempMax: 80, lures: 'Bloodworms and Fishbites on tiny hooks', tip: 'Schooling panfish of the bays — light rigs and small baits near the bottom.' },
 ];
 
-// Map lat/lon to an inland (freshwater) fishing region
+// Map lat/lon to an inland (freshwater) fishing region.
+// Geographic-only, so it's approximate (a trout river and a bass lake at the
+// same coordinates resolve the same), but it keeps obviously-wrong species out
+// of a region — no trout in Florida, no walleye in the desert, etc.
 export function getInlandRegion(lat: number, lon: number): string {
-  if (lon < -105) return 'inland_west';
-  if (lat >= 40) return 'inland_north';
-  return 'inland_south';
+  // West of the Rockies / High Plains line
+  if (lon < -104) {
+    // Pacific slope warm/mixed waters (CA Delta + reservoirs, SW Oregon):
+    // striped bass, black bass, trout, catfish all coexist here.
+    if (lon < -119 && lat < 42) return 'inland_pacific';
+    return lat < 38 ? 'inland_southwest' : 'inland_west';
+  }
+  // Great Plains / South-Central (Rockies to roughly the Mississippi)
+  if (lon < -90) {
+    return lat < 40 ? 'inland_southcentral' : 'inland_north';
+  }
+  // East of -90
+  return lat >= 40 ? 'inland_north' : 'inland_southeast';
 }
 
 // Map lat/lon to a coastal fishing region
