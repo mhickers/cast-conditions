@@ -569,6 +569,18 @@ export default function App() {
     return { start: bestStart, end: bestStart + 3, avg: bestAvg };
   }, [hourlyScores]);
 
+  // Hourly rain-chance chart (Open-Meteo precipitation_probability, already fetched)
+  const precipHours = useMemo(() =>
+    hourly?.precipitation_probability
+      ? hourly.precipitation_probability.slice(0, 24).map(v => v ?? 0)
+      : [],
+    [hourly]);
+  const precipPeak = useMemo(() => {
+    let max = 0, hour = 0;
+    precipHours.forEach((p, h) => { if (p > max) { max = p; hour = h; } });
+    return { max: Math.round(max), hour };
+  }, [precipHours]);
+
   const timelineColor = (s: number) =>
     s >= 8 ? '#168A63' : s >= 7 ? '#1D9E75' : s >= 6 ? '#2C9ED4' : s >= 5 ? '#378ADD'
     : s >= 4 ? '#EF9F27' : s >= 3 ? '#E07B2E' : '#E24B4A';
@@ -759,6 +771,34 @@ export default function App() {
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
         </section>
+
+        {precipHours.length > 0 && (
+          <section className="section">
+            <h3 className="section-label">
+              Rain chance — {isToday ? 'today' : dateShort}
+              {precipPeak.max >= 15 && <span className="best-window-tag">Peak: {precipPeak.max}% around {fmtHour(precipPeak.hour)}</span>}
+            </h3>
+            {precipPeak.max >= 15 ? (
+              <>
+                <div className="precip-row" role="img" aria-label="Hourly chance of rain">
+                  {precipHours.map((p, hh) => (
+                    <div
+                      key={hh}
+                      className="precip-seg"
+                      style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }}
+                      title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`}
+                    />
+                  ))}
+                </div>
+                <div className="timeline-labels">
+                  <span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span>
+                </div>
+              </>
+            ) : (
+              <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
+            )}
+          </section>
+        )}
 
         <section className="section">
           <h3 className="section-label">{isToday ? '24-hour forecast' : `Hourly forecast — ${dateShort}`}</h3>
