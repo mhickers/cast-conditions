@@ -199,6 +199,36 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .precip-seg:hover { opacity: 1 !important; }
 .precip-clear { margin: 0; font-size: 14px; }
 
+/* Atmosphere detail dropdowns (wind, rain) */
+.detail-toggle { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; }
+.detail-toggle:hover { border-color: var(--ocean); }
+.detail-title { flex: 0 0 auto; }
+.detail-hint { flex: 1; font-size: 12px; font-weight: 400; color: var(--text-muted); }
+.detail-chevron { flex: 0 0 auto; transition: transform 0.2s; }
+.detail-chevron.open { transform: rotate(180deg); }
+.detail-body { padding: 12px 2px 4px; }
+.detail-msg { margin: 0; font-size: 14px; }
+.wind-consensus { font-size: 14px; margin-bottom: 8px; }
+.wind-consensus strong { font-family: 'Space Grotesk', sans-serif; }
+.wind-conf-high strong { color: #168A63; }
+.wind-conf-medium strong { color: #E07B2E; }
+.wind-conf-low strong { color: #E24B4A; }
+.wind-chart { width: 100%; height: 110px; display: block; overflow: visible; }
+.wind-band { fill: var(--ocean); opacity: 0.16; stroke: none; }
+.wind-mean-line { fill: none; stroke: var(--ocean); stroke-width: 2; stroke-linejoin: round; }
+.wind-gust-line { fill: none; stroke: var(--text-muted); stroke-width: 1.25; stroke-dasharray: 3 3; opacity: 0.8; }
+.wind-model-line { fill: none; stroke-width: 1; opacity: 0.65; }
+.wind-arrows { display: flex; justify-content: space-between; margin-top: 4px; padding: 0 2px; }
+.wind-arrow { font-size: 14px; line-height: 1; color: var(--ocean); cursor: default; }
+.wind-legend { display: flex; align-items: center; gap: 14px; font-size: 11px; color: var(--text-muted); margin-top: 8px; flex-wrap: wrap; }
+.wind-legend i { display: inline-block; width: 14px; height: 0; vertical-align: middle; margin-right: 4px; }
+.wind-legend .lg-mean { border-top: 2px solid var(--ocean); }
+.wind-legend .lg-gust { border-top: 2px dashed var(--text-muted); }
+.wind-legend .lg-band { height: 8px; background: var(--ocean); opacity: 0.16; border-radius: 2px; }
+.wind-models-toggle { margin-left: auto; background: none; border: none; color: var(--ocean); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.wind-model-legend { display: flex; gap: 14px; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+.wind-model-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
+
 /* Solunar */
 .moon-solunar { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
 @media (min-width: 641px) {

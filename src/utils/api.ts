@@ -161,6 +161,39 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
   };
 }
 
+export interface WindModelSeries {
+  time: string[];
+  models: { id: string; label: string; speed: (number | null)[]; gust: (number | null)[]; dir: (number | null)[] }[];
+}
+
+// Fetch hourly wind from three independent models in one Open-Meteo call.
+// Open-Meteo suffixes each variable with the model id when models= is passed.
+// Any model that returns no data is dropped, so consensus still works on 2.
+export async function fetchWindModels(lat: number, lon: number, dateStr: string): Promise<WindModelSeries | null> {
+  const today = isToday(dateStr);
+  const endDate = today ? nextDay(dateStr) : dateStr;
+  const dateParams = `&start_date=${dateStr}&end_date=${endDate}`;
+  const defs = [
+    { id: 'gfs_seamless', label: 'GFS' },
+    { id: 'ecmwf_ifs025', label: 'ECMWF' },
+    { id: 'icon_seamless', label: 'ICON' },
+  ];
+  const modelParam = defs.map(m => m.id).join(',');
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m&wind_speed_unit=mph&timezone=auto&models=${modelParam}${dateParams}`;
+  const j = await fetchJson(wx(url));
+  if (!j || j.error || !j.hourly) return null;
+  const h = j.hourly;
+  const models = defs.map(m => ({
+    id: m.id,
+    label: m.label,
+    speed: h[`wind_speed_10m_${m.id}`] ?? [],
+    gust: h[`wind_gusts_10m_${m.id}`] ?? [],
+    dir: h[`wind_direction_10m_${m.id}`] ?? [],
+  })).filter(m => Array.isArray(m.speed) && m.speed.some((v: number | null) => v != null));
+  if (!models.length) return null;
+  return { time: h.time ?? [], models };
+}
+
 export async function fetchWaterTemp(stationId: string): Promise<number | null> {
   try {
     const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`);

@@ -14,7 +14,8 @@ import {
 } from 'chart.js';
 import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass, calcWaterClarity } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, weatherCodeToCondition, localToday } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
+import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
@@ -127,6 +128,11 @@ export default function App() {
   const [riverLoading, setRiverLoading] = useState(false);
   const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [windOpen, setWindOpen] = useState(false);
+  const [precipOpen, setPrecipOpen] = useState(false);
+  const [showWindModels, setShowWindModels] = useState(false);
+  const [windModels, setWindModels] = useState<WindModelSeries | null>(null);
+  const [windLoading, setWindLoading] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
     try {
       return localStorage.getItem('theme')
@@ -321,6 +327,19 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem('theme', theme); } catch {}
   }, [theme]);
+
+  // Wind models are lazy-loaded: only fetched when the Wind detail dropdown is
+  // opened, and cleared whenever the location or date changes so it refetches.
+  useEffect(() => { setWindModels(null); }, [lat, lon, selectedDate]);
+  useEffect(() => {
+    if (windOpen && !windModels && !windLoading) {
+      setWindLoading(true);
+      fetchWindModels(lat, lon, selectedDate)
+        .then(setWindModels)
+        .catch(() => setWindModels(null))
+        .finally(() => setWindLoading(false));
+    }
+  }, [windOpen, windModels, windLoading, lat, lon, selectedDate]);
 
   const rememberLocation = (la: number, lo: number, lbl: string) => {
     try { localStorage.setItem(LAST_LOC_KEY, JSON.stringify({ lat: la, lon: lo, label: lbl })); } catch {}
@@ -581,6 +600,40 @@ export default function App() {
     return { max: Math.round(max), hour };
   }, [precipHours]);
 
+  // Wind model consensus: per-hour min/mean/max across models, plus an
+  // agreement read (tight spread = models agree = higher confidence).
+  const windChart = useMemo(() => {
+    if (!windModels || !windModels.models.length) return null;
+    const N = Math.min(24, ...windModels.models.map(m => m.speed.length));
+    if (N < 6) return null;
+    const hours: Array<{ h: number; min: number; max: number; mean: number; gust: number | null; dir: number | null } | null> = [];
+    let spreadSum = 0, spreadCount = 0;
+    for (let h = 0; h < N; h++) {
+      const speeds = windModels.models.map(m => m.speed[h]).filter((v): v is number => v != null);
+      if (!speeds.length) { hours.push(null); continue; }
+      const gusts = windModels.models.map(m => m.gust[h]).filter((v): v is number => v != null);
+      const dirs = windModels.models.map(m => m.dir[h]).filter((v): v is number => v != null);
+      const min = Math.min(...speeds), max = Math.max(...speeds);
+      const mean = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+      let dir: number | null = null;
+      if (dirs.length) {
+        const sx = dirs.reduce((a, d) => a + Math.sin(d * Math.PI / 180), 0);
+        const cy = dirs.reduce((a, d) => a + Math.cos(d * Math.PI / 180), 0);
+        dir = (Math.atan2(sx, cy) * 180 / Math.PI + 360) % 360;
+      }
+      hours.push({ h, min, max, mean, gust: gusts.length ? Math.max(...gusts) : null, dir });
+      spreadSum += (max - min); spreadCount++;
+    }
+    const valid = hours.filter((x): x is NonNullable<typeof x> => x != null);
+    if (!valid.length) return null;
+    const avgSpread = spreadCount ? spreadSum / spreadCount : 0;
+    const conf: 'high' | 'medium' | 'low' = avgSpread <= 4 ? 'high' : avgSpread <= 8 ? 'medium' : 'low';
+    const overallMin = Math.round(Math.min(...valid.map(v => v.min)));
+    const overallMax = Math.round(Math.max(...valid.map(v => v.max)));
+    const yMax = Math.max(10, Math.ceil(Math.max(...valid.map(v => v.gust ?? v.max)) / 5) * 5);
+    return { hours, conf, overallMin, overallMax, yMax, modelCount: windModels.models.length, labels: windModels.models.map(m => m.label) };
+  }, [windModels]);
+
   const timelineColor = (s: number) =>
     s >= 8 ? '#168A63' : s >= 7 ? '#1D9E75' : s >= 6 ? '#2C9ED4' : s >= 5 ? '#378ADD'
     : s >= 4 ? '#EF9F27' : s >= 3 ? '#E07B2E' : '#E24B4A';
@@ -770,35 +823,90 @@ export default function App() {
             <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
-        </section>
 
-        {precipHours.length > 0 && (
-          <section className="section">
-            <h3 className="section-label">
-              Rain chance — {isToday ? 'today' : dateShort}
-              {precipPeak.max >= 15 && <span className="best-window-tag">Peak: {precipPeak.max}% around {fmtHour(precipPeak.hour)}</span>}
-            </h3>
-            {precipPeak.max >= 15 ? (
-              <>
-                <div className="precip-row" role="img" aria-label="Hourly chance of rain">
-                  {precipHours.map((p, hh) => (
-                    <div
-                      key={hh}
-                      className="precip-seg"
-                      style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }}
-                      title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`}
-                    />
-                  ))}
-                </div>
-                <div className="timeline-labels">
-                  <span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span>
-                </div>
-              </>
-            ) : (
-              <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
+          <button className="detail-toggle" onClick={() => setWindOpen(o => !o)} aria-expanded={windOpen}>
+            <Wind size={15} />
+            <span className="detail-title">Wind detail</span>
+            <span className="detail-hint">hourly + 3-model consensus</span>
+            <ChevronDown size={16} className={`detail-chevron${windOpen ? ' open' : ''}`} />
+          </button>
+          {windOpen && (
+            <div className="detail-body">
+              {windLoading && !windChart && <p className="muted detail-msg">Loading wind models…</p>}
+              {!windLoading && !windChart && <p className="muted detail-msg">Wind model data isn't available for this spot right now.</p>}
+              {windChart && (() => {
+                const pts = windChart.hours;
+                const N = pts.length;
+                const xx = (i: number) => N > 1 ? (i / (N - 1)) * 100 : 0;
+                const yy = (v: number) => 38 - (Math.min(v, windChart.yMax) / windChart.yMax) * 36;
+                const meanPts = pts.map((p, i) => p ? `${xx(i).toFixed(1)},${yy(p.mean).toFixed(1)}` : '').filter(Boolean).join(' ');
+                const gustPts = pts.map((p, i) => (p && p.gust != null) ? `${xx(i).toFixed(1)},${yy(p.gust).toFixed(1)}` : '').filter(Boolean).join(' ');
+                const bandTop = pts.map((p, i) => p ? `${xx(i).toFixed(1)},${yy(p.max).toFixed(1)}` : '').filter(Boolean);
+                const bandBot = pts.map((p, i) => p ? `${xx(i).toFixed(1)},${yy(p.min).toFixed(1)}` : '').filter(Boolean).reverse();
+                const bandPath = bandTop.length ? `M${bandTop.join(' L')} L${bandBot.join(' L')} Z` : '';
+                const modelColors = ['#185FA5', '#1D9E75', '#E07B2E'];
+                const compass = (d: number) => ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(d / 45) % 8];
+                const confText = windChart.conf === 'high' ? 'Models agree' : windChart.conf === 'medium' ? 'Models mostly agree' : 'Models disagree';
+                const arrowIdx = pts.map((p, i) => (p && i % 3 === 0) ? i : -1).filter(i => i >= 0);
+                return (
+                  <>
+                    <div className={`wind-consensus wind-conf-${windChart.conf}`}>
+                      <strong>{confText}</strong> · {windChart.overallMin}–{windChart.overallMax} mph{windChart.conf === 'low' ? ' · lower confidence' : ''}
+                    </div>
+                    <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
+                      {bandPath && <path d={bandPath} className="wind-band" />}
+                      {showWindModels && windModels && windModels.models.map((m, mi) => (
+                        <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
+                          points={m.speed.slice(0, N).map((v, i) => v != null ? `${xx(i).toFixed(1)},${yy(v).toFixed(1)}` : '').filter(Boolean).join(' ')} />
+                      ))}
+                      <polyline className="wind-gust-line" vectorEffect="non-scaling-stroke" points={gustPts} />
+                      <polyline className="wind-mean-line" vectorEffect="non-scaling-stroke" points={meanPts} />
+                    </svg>
+                    <div className="wind-arrows" aria-hidden="true">
+                      {arrowIdx.map(i => {
+                        const p = pts[i]!;
+                        return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${Math.round(p.mean)} mph${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
+                      })}
+                    </div>
+                    <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                    <div className="wind-legend">
+                      <span><i className="lg-mean" /> avg</span>
+                      <span><i className="lg-gust" /> gusts</span>
+                      <span><i className="lg-band" /> model range</span>
+                      <button className="wind-models-toggle" onClick={() => setShowWindModels(s => !s)}>{showWindModels ? 'Hide models' : `Show ${windChart.modelCount} models`}</button>
+                    </div>
+                    {showWindModels && <div className="wind-model-legend">{windChart.labels.map((l, i) => <span key={l}><i style={{ background: modelColors[i % 3] }} /> {l}</span>)}</div>}
+                  </>
+                );
+              })()}
+            </div>
+          )}
+
+          {precipHours.length > 0 && (<>
+            <button className="detail-toggle" onClick={() => setPrecipOpen(o => !o)} aria-expanded={precipOpen}>
+              <Droplet size={15} />
+              <span className="detail-title">Rain chance</span>
+              <span className="detail-hint">{precipPeak.max >= 15 ? `peaks ${precipPeak.max}% around ${fmtHour(precipPeak.hour)}` : precipPeak.max < 5 ? 'none expected' : `low, ~${precipPeak.max}%`}</span>
+              <ChevronDown size={16} className={`detail-chevron${precipOpen ? ' open' : ''}`} />
+            </button>
+            {precipOpen && (
+              <div className="detail-body">
+                {precipPeak.max >= 15 ? (
+                  <>
+                    <div className="precip-row" role="img" aria-label="Hourly chance of rain">
+                      {precipHours.map((p, hh) => (
+                        <div key={hh} className="precip-seg" style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }} title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`} />
+                      ))}
+                    </div>
+                    <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                  </>
+                ) : (
+                  <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
+                )}
+              </div>
             )}
-          </section>
-        )}
+          </>)}
+        </section>
 
         <section className="section">
           <h3 className="section-label">{isToday ? '24-hour forecast' : `Hourly forecast — ${dateShort}`}</h3>
