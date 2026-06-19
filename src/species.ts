@@ -159,19 +159,20 @@ export function buildScoreNarrative(
   isInland: boolean = false,
   score?: number
 ): string[] {
-  const region = isInland ? getInlandRegion(lat, lon) : getRegion(lat, lon);
-  const regional = ALL_SPECIES.filter(s => s.regions.includes(region));
   const wt = waterTempF;
 
   const positives: string[] = [];
   const negatives: string[] = [];
 
-  // Water temp vs species
+  // Water temp — described generically. We deliberately do NOT name species
+  // here: the regional model is coarse, and naming the wrong fish for a
+  // location erodes trust faster than anything else on the page.
   if (wt != null) {
-    const inRange = regional.filter(s => wt >= s.tempMin && wt <= s.tempMax).slice(0, 2);
-    if (inRange.length >= 2) positives.push(`ideal water temp for ${inRange[0].name.toLowerCase()} and ${inRange[1].name.toLowerCase()}`);
-    else if (inRange.length === 1) positives.push(`ideal water temp for ${inRange[0].name.toLowerCase()}`);
-    else negatives.push(`water temp is outside the comfort zone for most local species`);
+    if (wt >= 55 && wt <= 75) positives.push('water temperature is in a generally productive range');
+    else if (wt >= 50 && wt < 55) positives.push('water is a little cool but still fishable');
+    else if (wt > 75 && wt <= 82) positives.push('water is on the warm side, so fish may hold deeper or feed best at first and last light');
+    else if (wt < 50) negatives.push('cold water is likely to slow the bite');
+    else negatives.push('very warm water can push fish deep and slow the bite');
   }
 
   // Wind
