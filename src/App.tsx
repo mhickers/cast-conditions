@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import About from './About';
-import CatchFeed from './CatchFeed';
-import CatchSubmit from './CatchSubmit';
 import Admin from './Admin';
 import Feedback from './Feedback';
 import AlertSignup from './AlertSignup';
@@ -112,7 +110,6 @@ export default function App() {
   });
   const [spotName, setSpotName] = useState('');
   const [showAbout, setShowAbout] = useState(false);
-  const [showSubmit, setShowSubmit] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => {
     const t = localToday();
     const max = (() => { const d = new Date(); d.setDate(d.getDate() + 7); return localToday(d); })();
@@ -600,6 +597,13 @@ export default function App() {
     return { max: Math.round(max), hour };
   }, [precipHours]);
 
+  // Day's high/low from the hourly temps (indices 0-23 = the selected day).
+  const dayTemps = useMemo(() => {
+    const t = (hourly?.temperature_2m ?? []).slice(0, 24).filter((v): v is number => v != null);
+    if (!t.length) return null;
+    return { hi: Math.round(Math.max(...t)), lo: Math.round(Math.min(...t)) };
+  }, [hourly]);
+
   // Wind model consensus: per-hour min/mean/max across models, plus an
   // agreement read (tight spread = models agree = higher confidence).
   const windChart = useMemo(() => {
@@ -689,7 +693,6 @@ export default function App() {
   return (
     <div className="app">
       {showAbout && <About onClose={() => setShowAbout(false)} />}
-      {showSubmit && <CatchSubmit onClose={() => setShowSubmit(false)} />}
       <header className="header">
         <div className="header-inner">
           <div className="logo">
@@ -820,7 +823,7 @@ export default function App() {
           <div className="stat-grid-4">
             <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
             <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit={conditions.windDir ? `mph · ${conditions.windDir}` : 'mph'} label="Wind" sub={conditions.windGustMph != null ? `gusts to ${Math.round(conditions.windGustMph)} mph` : undefined} />
-            <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" />
+            <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" sub={dayTemps ? `H ${dayTemps.hi}° · L ${dayTemps.lo}°` : undefined} />
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
 
@@ -853,22 +856,27 @@ export default function App() {
                     <div className={`wind-consensus wind-conf-${windChart.conf}`}>
                       <strong>{confText}</strong> · {windChart.overallMin}–{windChart.overallMax} mph{windChart.conf === 'low' ? ' · lower confidence' : ''}
                     </div>
-                    <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
-                      {bandPath && <path d={bandPath} className="wind-band" />}
-                      {showWindModels && windModels && windModels.models.map((m, mi) => (
-                        <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
-                          points={m.speed.slice(0, N).map((v, i) => v != null ? `${xx(i).toFixed(1)},${yy(v).toFixed(1)}` : '').filter(Boolean).join(' ')} />
-                      ))}
-                      <polyline className="wind-gust-line" vectorEffect="non-scaling-stroke" points={gustPts} />
-                      <polyline className="wind-mean-line" vectorEffect="non-scaling-stroke" points={meanPts} />
-                    </svg>
-                    <div className="wind-arrows" aria-hidden="true">
-                      {arrowIdx.map(i => {
-                        const p = pts[i]!;
-                        return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${Math.round(p.mean)} mph${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
-                      })}
+                    <div className="chart-block">
+                      <div className="chart-yaxis"><span>{windChart.yMax} mph</span><span>{Math.round(windChart.yMax / 2)}</span><span>0</span></div>
+                      <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
+                        {bandPath && <path d={bandPath} className="wind-band" />}
+                        {showWindModels && windModels && windModels.models.map((m, mi) => (
+                          <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
+                            points={m.speed.slice(0, N).map((v, i) => v != null ? `${xx(i).toFixed(1)},${yy(v).toFixed(1)}` : '').filter(Boolean).join(' ')} />
+                        ))}
+                        <polyline className="wind-gust-line" vectorEffect="non-scaling-stroke" points={gustPts} />
+                        <polyline className="wind-mean-line" vectorEffect="non-scaling-stroke" points={meanPts} />
+                      </svg>
+                      <div className="chart-below">
+                        <div className="wind-arrows" aria-hidden="true">
+                          {arrowIdx.map(i => {
+                            const p = pts[i]!;
+                            return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${Math.round(p.mean)} mph${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
+                          })}
+                        </div>
+                        <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                      </div>
                     </div>
-                    <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
                     <div className="wind-legend">
                       <span><i className="lg-mean" /> avg</span>
                       <span><i className="lg-gust" /> gusts</span>
@@ -893,12 +901,17 @@ export default function App() {
               <div className="detail-body">
                 {precipPeak.max >= 15 ? (
                   <>
-                    <div className="precip-row" role="img" aria-label="Hourly chance of rain">
-                      {precipHours.map((p, hh) => (
-                        <div key={hh} className="precip-seg" style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }} title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`} />
-                      ))}
+                    <div className="chart-block">
+                      <div className="chart-yaxis"><span>100%</span><span>50%</span><span>0%</span></div>
+                      <div className="precip-row" role="img" aria-label="Hourly chance of rain">
+                        {precipHours.map((p, hh) => (
+                          <div key={hh} className="precip-seg" style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }} title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`} />
+                        ))}
+                      </div>
+                      <div className="chart-below">
+                        <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                      </div>
                     </div>
-                    <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
                   </>
                 ) : (
                   <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
@@ -1190,8 +1203,6 @@ export default function App() {
         />
 
         <AlertSignup locationLabel={locationLabel} lat={lat} lon={lon} />
-
-        <CatchFeed onSubmitClick={() => setShowSubmit(true)} />
 
         <Feedback />
 

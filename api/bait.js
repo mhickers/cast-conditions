@@ -51,7 +51,7 @@ Requested species: ${species}.
 
 First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species.split(',')[0]} ${location.split(',')[0]}".
 
-If a requested species is out of season or closed to harvest here on this date, add one short note saying so (and to check local regulations) — but still give the full bait and lure advice anyway, since people fish catch-and-release and plan ahead.`;
+Never state specific size limits, slot limits, bag limits, or season open/close dates for any species — these change often, vary by state, and a wrong number (like an outdated striped bass slot) misleads anglers. If harvest rules might matter, simply remind the reader to check current local regulations before keeping fish. Give the full bait and lure advice regardless, since people fish catch-and-release and plan ahead.`;
 
   const detailedPrompt = `${grounding}
 
