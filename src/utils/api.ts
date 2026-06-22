@@ -297,7 +297,7 @@ STRICT RULES:
       await new Promise(r => setTimeout(r, 1000));
     }
   }
-  return `AI summary unavailable (${lastError}) — the conditions data above is still live and accurate.`;
+  return 'AI summary temporarily unavailable — the conditions data above is still live and accurate.';
 }
 
 // Generic AI advice call (used by the bait & lure advisor)

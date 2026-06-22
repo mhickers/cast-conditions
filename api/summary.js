@@ -49,7 +49,8 @@ module.exports = async (req, res) => {
 
     const data = await r.json();
     if (!r.ok) {
-      return res.status(502).json({ error: data?.error?.message || 'Upstream error' });
+      console.error('summary: Anthropic API error', r.status, data?.error?.message || data);
+      return res.status(502).json({ error: 'AI summary temporarily unavailable' });
     }
 
     const text = (data.content || [])
