@@ -548,6 +548,60 @@ const TOWNS = [
   { name: 'Kaneohe Bay, HI', lat: 21.45, lon: -157.8, type: 'coastal', water: 'the flats, the reef, and the channels' },
   { name: 'Choctawhatchee Bay, FL', lat: 30.4, lon: -86.4, type: 'coastal', water: 'the bay, the passes, and the flats' },
   { name: 'Perdido Bay, FL', lat: 30.35, lon: -87.4, type: 'coastal', water: 'the bay, the pass, and the flats' },
+  // ===== Expansion 3: 50 rivers, bays, and inlets (state/region coverage) =====
+  // --- Rivers (inland) ---
+  { name: 'Deposit, NY', lat: 42.0626, lon: -75.4271, type: 'inland', water: 'the West Branch of the Delaware', species: 'wild brown trout and rainbow trout' },
+  { name: 'Harrisburg, PA', lat: 40.2732, lon: -76.8867, type: 'inland', water: 'the Susquehanna River', species: 'smallmouth bass, walleye, catfish, and muskie' },
+  { name: 'Lewistown, PA', lat: 40.5992, lon: -77.5714, type: 'inland', water: 'the Juniata River', species: 'smallmouth bass and walleye' },
+  { name: 'Cornwall, CT', lat: 41.8404, lon: -73.3690, type: 'inland', water: 'the Housatonic River', species: 'trout and smallmouth bass' },
+  { name: 'Front Royal, VA', lat: 38.9182, lon: -78.1944, type: 'inland', water: 'the Shenandoah River', species: 'smallmouth bass and musky' },
+  { name: 'Harpers Ferry, WV', lat: 39.3254, lon: -77.7386, type: 'inland', water: 'the Shenandoah and Potomac rivers', species: 'smallmouth bass, walleye, and musky' },
+  { name: 'Asheville, NC', lat: 35.5951, lon: -82.5515, type: 'inland', water: 'the French Broad River', species: 'smallmouth bass, trout, and musky' },
+  { name: 'Bryson City, NC', lat: 35.4309, lon: -83.4471, type: 'inland', water: 'the Tuckasegee and Nantahala rivers', species: 'trout and smallmouth bass' },
+  { name: 'Helen, GA', lat: 34.7012, lon: -83.7251, type: 'inland', water: 'the Chattahoochee River', species: 'rainbow trout, brown trout, and brook trout' },
+  { name: 'Mountain Home, AR', lat: 36.3353, lon: -92.3852, type: 'inland', water: 'the White and North Fork rivers', species: 'brown trout, rainbow trout, and walleye' },
+  { name: 'Twin Bridges, MT', lat: 45.5419, lon: -112.3339, type: 'inland', water: 'the Beaverhead, Ruby, and Big Hole rivers', species: 'brown trout and rainbow trout' },
+  { name: 'Riggins, ID', lat: 45.4193, lon: -116.3157, type: 'inland', water: 'the Salmon River', species: 'steelhead, chinook salmon, and smallmouth bass' },
+  { name: 'Roseburg, OR', lat: 43.2165, lon: -123.3417, type: 'inland', water: 'the North Umpqua River', species: 'steelhead, salmon, and trout' },
+  { name: 'Forks, WA', lat: 47.9504, lon: -124.3855, type: 'inland', water: 'the Hoh, Sol Duc, and Bogachiel rivers', species: 'steelhead and salmon' },
+  { name: 'Lewiston, NY', lat: 43.1729, lon: -79.0461, type: 'inland', water: 'the lower Niagara River', species: 'steelhead, brown trout, smallmouth bass, and lake trout' },
+  // --- Bays, inlets, sounds, and lagoons (coastal) ---
+  { name: 'Seaside Park, NJ', lat: 39.9248, lon: -74.0782, type: 'coastal', water: 'Barnegat Bay and the surf', species: 'striped bass, bluefish, fluke, and weakfish' },
+  { name: 'Cape Charles, VA', lat: 37.2682, lon: -76.0174, type: 'coastal', water: 'the lower Chesapeake Bay', species: 'red drum, black drum, cobia, and speckled trout' },
+  { name: 'Rock Hall, MD', lat: 39.1390, lon: -76.2386, type: 'coastal', water: 'the upper Chesapeake Bay', species: 'striped bass (rockfish), white perch, and catfish' },
+  { name: 'Hatteras, NC', lat: 35.2096, lon: -75.6907, type: 'coastal', water: 'Pamlico Sound and the inlet', species: 'red drum, speckled trout, flounder, and bluefish' },
+  { name: 'Beaufort, NC', lat: 34.7177, lon: -76.6638, type: 'coastal', water: 'Beaufort Inlet and the marshes', species: 'red drum, flounder, speckled trout, and false albacore' },
+  { name: 'St. Marys, GA', lat: 30.7305, lon: -81.5465, type: 'coastal', water: 'Cumberland Sound and the tidal rivers', species: 'red drum, speckled trout, and flounder' },
+  { name: 'New Smyrna Beach, FL', lat: 29.0258, lon: -80.9270, type: 'coastal', water: 'Mosquito Lagoon and the Indian River', species: 'redfish, speckled trout, black drum, and snook' },
+  { name: 'Sebastian, FL', lat: 27.8156, lon: -80.4706, type: 'coastal', water: 'Sebastian Inlet and the Indian River Lagoon', species: 'snook, redfish, speckled trout, and tarpon' },
+  { name: 'Chokoloskee, FL', lat: 25.8112, lon: -81.3623, type: 'coastal', water: 'the Ten Thousand Islands', species: 'snook, redfish, tarpon, and snapper' },
+  { name: 'Aransas Pass, TX', lat: 27.9095, lon: -97.1499, type: 'coastal', water: 'Redfish Bay and the pass', species: 'redfish, speckled trout, and flounder' },
+  { name: 'Sabine Pass, TX', lat: 29.7286, lon: -93.8946, type: 'coastal', water: 'Sabine Lake and the pass', species: 'speckled trout, redfish, and flounder' },
+  { name: 'Hopedale, LA', lat: 29.8285, lon: -89.6618, type: 'coastal', water: 'the Biloxi Marsh', species: 'redfish, speckled trout, and black drum' },
+  { name: 'Tomales Bay, CA', lat: 38.1413, lon: -122.8722, type: 'coastal', water: 'the bay and Point Reyes', species: 'halibut, striped bass, and surfperch' },
+  { name: 'Tokeland, WA', lat: 46.7073, lon: -123.9690, type: 'coastal', water: 'Willapa Bay', species: 'sturgeon, salmon, and surfperch' },
+  { name: 'Lees Ferry, AZ', lat: 36.8649, lon: -111.5878, type: 'inland', water: 'the Colorado River below Glen Canyon', species: 'rainbow trout' },
+  { name: 'Heber Springs, AR', lat: 35.492, lon: -92.0316, type: 'inland', water: 'the Little Red River', species: 'brown trout and rainbow trout' },
+  { name: 'Basalt, CO', lat: 39.3686, lon: -107.0317, type: 'inland', water: 'the Roaring Fork and Fryingpan rivers', species: 'rainbow trout and brown trout' },
+  { name: 'Buena Vista, CO', lat: 38.8422, lon: -106.1311, type: 'inland', water: 'the Arkansas River', species: 'brown trout and rainbow trout' },
+  { name: 'Salmon, ID', lat: 45.1755, lon: -113.8961, type: 'inland', water: 'the Salmon River', species: 'cutthroat trout and steelhead' },
+  { name: 'Orofino, ID', lat: 46.479, lon: -116.2553, type: 'inland', water: 'the Clearwater River', species: 'steelhead and chinook salmon' },
+  { name: 'Dutch John, UT', lat: 40.9293, lon: -109.4007, type: 'inland', water: 'the Green River below Flaming Gorge', species: 'rainbow trout and brown trout' },
+  { name: 'Klamath, CA', lat: 41.526, lon: -124.0382, type: 'inland', water: 'the Klamath River', species: 'salmon and steelhead' },
+  { name: 'Redding, CA', lat: 40.5865, lon: -122.3917, type: 'inland', water: 'the upper Sacramento River', species: 'rainbow trout and king salmon' },
+  { name: 'Wellsboro, PA', lat: 41.749, lon: -77.3025, type: 'inland', water: 'Pine Creek and the canyon', species: 'trout and smallmouth bass' },
+  { name: 'Hawley, PA', lat: 41.4762, lon: -75.1804, type: 'inland', water: 'the Lackawaxen and Delaware', species: 'trout, smallmouth bass, and walleye' },
+  { name: 'Galax, VA', lat: 36.6612, lon: -80.9239, type: 'inland', water: 'the New River', species: 'smallmouth bass and musky' },
+  { name: 'Damascus, VA', lat: 36.6334, lon: -81.7857, type: 'inland', water: 'the Whitetop Laurel and Holston', species: 'wild trout' },
+  { name: 'Blue Ridge, GA', lat: 34.8645, lon: -84.3241, type: 'inland', water: 'the Toccoa River', species: 'rainbow trout and brown trout' },
+  { name: 'Key Largo, FL', lat: 25.0865, lon: -80.4473, type: 'coastal', water: 'the Upper Keys reef and backcountry', species: 'tarpon, snook, redfish, and snapper' },
+  { name: 'Edisto Beach, SC', lat: 32.496, lon: -80.3056, type: 'coastal', water: 'the sounds and tidal creeks', species: 'redfish, speckled trout, and flounder' },
+  { name: 'Darien, GA', lat: 31.3702, lon: -81.4343, type: 'coastal', water: 'Altamaha Sound and the marsh', species: 'redfish, speckled trout, and tripletail' },
+  { name: 'Swansboro, NC', lat: 34.6885, lon: -77.1192, type: 'coastal', water: 'Bogue Inlet and the White Oak River', species: 'red drum, speckled trout, and flounder' },
+  { name: 'Sneads Ferry, NC', lat: 34.5499, lon: -77.3908, type: 'coastal', water: 'New River Inlet and the marsh', species: 'red drum, speckled trout, and flounder' },
+  { name: 'Wanchese, NC', lat: 35.8438, lon: -75.6388, type: 'coastal', water: 'Roanoke and Croatan sounds', species: 'red drum, speckled trout, and striped bass' },
+  { name: 'Reedville, VA', lat: 37.8348, lon: -76.2855, type: 'coastal', water: 'the lower Chesapeake and Great Wicomico', species: 'striped bass (rockfish), red drum, and speckled trout' },
+
 ];
 
 const COASTAL_SPECIES = 'striped bass, fluke (summer flounder), bluefish, black sea bass, tautog, weakfish, and kingfish';
@@ -569,8 +623,22 @@ const distMi = (a, b, c, d) => {
   return 2 * R * Math.asin(Math.sqrt(x));
 };
 
+const US_STATES = {
+  AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',
+  DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',
+  KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',
+  MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',
+  NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',
+  OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',
+  TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',
+};
+const stateAbbrOf = (town) => (town.name.split(',').pop() || '').trim();
+
 function pageHtml(town, allTowns) {
   const slug = slugify(town.name);
+  const _ab = stateAbbrOf(town);
+  const _stName = US_STATES[_ab] || null;
+  const _stPath = _stName ? `/fishing/${slugify(_stName)}/` : null;
   const url = `${SITE}/fishing/${slug}/`;
   const appLink = `/?lat=${town.lat.toFixed(4)}&lon=${town.lon.toFixed(4)}&label=${encodeURIComponent(town.name)}`;
   const species = town.species || (town.type === 'coastal' ? COASTAL_SPECIES : INLAND_SPECIES);
@@ -618,7 +686,8 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
     { '@type': 'WebPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE } },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
-      { '@type': 'ListItem', position: 2, name: `${town.name} Fishing`, item: url },
+      ...(_stName ? [{ '@type': 'ListItem', position: 2, name: `${_stName} Fishing`, item: `${SITE}${_stPath}` }] : []),
+      { '@type': 'ListItem', position: _stName ? 3 : 2, name: `${town.name} Fishing`, item: url },
     ] },
     { '@type': 'FAQPage', mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
   ];
@@ -692,7 +761,7 @@ footer a{color:var(--ocean)}
 <body>
 <header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
 <main>
-<nav class="crumbs"><a href="/">Home</a> › <span>${esc(town.name)} Fishing</span></nav>
+<nav class="crumbs"><a href="/">Home</a> › ${_stName ? `<a href="${_stPath}">${esc(_stName)}</a> › ` : ''}<span>${esc(town.name)} Fishing</span></nav>
 <h1>${esc(town.name)} Fishing Report &amp; Live Conditions</h1>
 <p>Planning to fish ${esc(town.water)}? Fish Condish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
 <a class="cta" href="${appLink}">See live ${esc(town.name)} conditions →</a>
@@ -709,7 +778,7 @@ ${reportSection}
 <p>${town.type === 'coastal'
   ? `Tides and water temperature for ${esc(town.name)} come straight from the nearest NOAA station, with a smooth tide curve, today's highs and lows, and a station picker if you fish a different part of ${esc(town.water)}.`
   : `Water conditions for ${esc(town.name)} come straight from the nearest USGS gauge — flow, gage height, and water temperature where it's reported — with a picker to switch between nearby monitoring sites on ${esc(town.water)}.`}</p>
-<p>It's free, works on your phone, and installs like an app. Local anglers also share recent catches right in the feed.</p>
+<p>It's free, works on your phone, and installs like an app.</p>
 <a class="cta" href="${appLink}">Check the ${esc(town.name)} fishing score →</a>
 ${faqSection}
 <h2>Nearby spots</h2>
@@ -723,6 +792,143 @@ ${nearby.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(t.name)}</a>`).j
 }
 
 // ---- generate (only when run directly, not when required by the AI script) ----
+
+// ===== State + region hub pages =====
+// Marquee multi-spot regions, matched by member spot (slug-compared so naming
+// differences like apostrophes don't matter). Only built if >= 2 members exist.
+const MARQUEE_REGIONS = [
+  { name: 'South Jersey Shore', slug: 'south-jersey-shore',
+    blurb: 'the back bays, inlets, and surf from Barnegat Bay down to Cape May',
+    members: ['Margate City, NJ','Atlantic City, NJ','Ventnor City, NJ','Longport, NJ','Brigantine, NJ','Ocean City, NJ','Somers Point, NJ','Sea Isle City, NJ','Avalon, NJ','Stone Harbor, NJ','Wildwood, NJ','Cape May, NJ','Tuckerton, NJ','Beach Haven, NJ','Barnegat Light, NJ','Seaside Park, NJ','Bay Head, NJ'] },
+  { name: 'Long Island', slug: 'long-island',
+    blurb: 'the surf, bays, and rips from Montauk to the western Sound',
+    members: ['Montauk, NY','Greenport, NY','Sheepshead Bay, NY','Freeport, NY','Captree, NY'] },
+  { name: 'Cape Cod and the Islands', slug: 'cape-cod-and-islands',
+    blurb: 'the rips, flats, and beaches of the Cape, the Vineyard, and Nantucket',
+    members: ['Chatham, MA','Provincetown, MA','Marthas Vineyard, MA','Martha\u2019s Vineyard, MA','Nantucket, MA','Plymouth, MA','New Bedford, MA'] },
+  { name: 'Outer Banks', slug: 'outer-banks',
+    blurb: 'the surf, inlets, and sounds of the North Carolina barrier islands',
+    members: ['Nags Head, NC','Cape Hatteras, NC','Hatteras, NC','Ocracoke, NC'] },
+  { name: 'Florida Keys', slug: 'florida-keys',
+    blurb: 'the flats, channels, and bluewater from Key Largo to Key West',
+    members: ['Islamorada, FL','Key West, FL','Key Largo, FL','Marathon, FL'] },
+  { name: 'Chesapeake Bay', slug: 'chesapeake-bay',
+    blurb: 'the rivers, flats, and channels of the Chesapeake in Maryland and Virginia',
+    members: ['Solomons, MD','Rock Hall, MD','Cape Charles, VA'] },
+  { name: 'Florida Gulf Coast', slug: 'florida-gulf-coast',
+    blurb: 'the bays, passes, and grass flats of Floridas Gulf side',
+    members: ['Tampa, FL','Naples, FL','Cedar Key, FL','Steinhatchee, FL','Apalachicola, FL','Destin, FL','Pensacola, FL'] },
+].map(r => ({ ...r, path: `/fishing/region/${r.slug}/`, memberSlugs: new Set(r.members.map(slugify)) }));
+
+function buildHubs(towns) {
+  const hubs = [];
+  // Region hubs first, so state hubs can cross-link to them
+  const regions = MARQUEE_REGIONS
+    .map(r => ({ ...r, spots: towns.filter(t => r.memberSlugs.has(slugify(t.name))) }))
+    .filter(r => r.spots.length >= 2);
+
+  // Per-state hubs
+  const byState = {};
+  for (const t of towns) {
+    const ab = stateAbbrOf(t);
+    if (!US_STATES[ab]) continue;
+    (byState[ab] = byState[ab] || []).push(t);
+  }
+  for (const ab of Object.keys(byState).sort()) {
+    const stateName = US_STATES[ab];
+    const spots = byState[ab].slice().sort((a, b) => a.name.localeCompare(b.name));
+    const stRegions = regions.filter(r => r.spots.some(sp => stateAbbrOf(sp) === ab));
+    hubs.push({
+      kind: 'state', name: stateName, path: `/fishing/${slugify(stateName)}/`, spots, regions: stRegions,
+      intro: `Find live fishing conditions across ${stateName} — the coast, the bays, and inland rivers and lakes. Pick a spot below for its real-time fishing score, the best times to fish today, and a species-by-species bite forecast.`,
+    });
+  }
+  for (const r of regions) {
+    hubs.push({
+      kind: 'region', name: r.name, path: r.path,
+      spots: r.spots.slice().sort((a, b) => a.name.localeCompare(b.name)), regions: [],
+      intro: `Live, data-driven fishing conditions for ${r.blurb}. Pick a spot below for its real-time fishing score, best times, tides or river flow, water temp, and a species bite forecast.`,
+    });
+  }
+  return hubs;
+}
+
+function hubHtml(hub) {
+  const url = `${SITE}${hub.path}`;
+  const title = `${hub.name} Fishing Reports & Live Conditions — Fish Condish`;
+  const desc = `Live fishing conditions for ${hub.spots.length} spots across ${hub.name}: fishing scores, best times to fish, tides or river flow, water temp, and species bite forecasts. Free and updated in real time.`;
+  const cityName = (n) => n.replace(/, [A-Z]{2}$/, '');
+  const spotLinks = hub.spots.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(cityName(t.name))}</a>`).join('\n');
+  const regionLinks = (hub.regions || []).map(r => `<a href="${r.path}">${esc(r.name)}</a>`).join('\n');
+  const graph = [
+    { '@type': 'CollectionPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE } },
+    { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: `${hub.name} Fishing`, item: url },
+    ] },
+    { '@type': 'ItemList', itemListElement: hub.spots.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: `${t.name} Fishing`, url: `${SITE}/fishing/${slugify(t.name)}/` })) },
+  ];
+  const schemaJson = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}"/>
+<link rel="canonical" href="${url}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="${esc(title)}"/>
+<meta property="og:description" content="${esc(desc)}"/>
+<meta property="og:url" content="${url}"/>
+<meta property="og:image" content="${SITE}/og.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="theme-color" content="#0C2340"/>
+<link rel="icon" href="/favicon.ico"/>
+<script type="application/ld+json">
+${schemaJson}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0C2340;--ocean:#1E5F9E;--sky:#DCEBF7;--cream:#F5F0E8;--text:#22303C;--muted:#5B6B7A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--text);line-height:1.6}
+header{background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;gap:10px}
+header img{width:34px;height:34px}
+header a{color:#fff;text-decoration:none;font-size:20px;font-weight:700;font-family:'Space Grotesk',system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:30px;color:var(--navy);font-family:'Space Grotesk',system-ui,sans-serif;line-height:1.25;margin-bottom:10px}
+h2{font-size:20px;color:var(--navy);font-family:'Space Grotesk',system-ui,sans-serif;margin:28px 0 8px}
+p{margin:10px 0;font-size:16px}
+.cta{display:inline-block;background:var(--ocean);color:#fff;text-decoration:none;font-weight:bold;padding:13px 26px;border-radius:10px;margin:18px 0;font-family:'Inter',system-ui,sans-serif}
+.cta:hover{background:#174a7c}
+.nearby{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.nearby a{background:var(--sky);color:var(--navy);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;font-family:'Inter',system-ui,sans-serif}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:6px}
+.crumbs a{color:var(--ocean);text-decoration:none}
+footer{text-align:center;font-size:13px;color:var(--muted);padding:24px;font-family:'Inter',system-ui,sans-serif}
+footer a{color:var(--ocean)}
+</style>
+</head>
+<body>
+<header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
+<main>
+<nav class="crumbs"><a href="/">Home</a> › <span>${esc(hub.name)} Fishing</span></nav>
+<h1>${esc(hub.name)} Fishing Reports &amp; Live Conditions</h1>
+<p>${esc(hub.intro)}</p>
+<a class="cta" href="/">Open the live dashboard →</a>
+<h2>Spots in ${esc(hub.name)}</h2>
+<div class="nearby">
+${spotLinks}
+</div>
+${regionLinks ? `<h2>Popular regions</h2>\n<div class="nearby">\n${regionLinks}\n</div>` : ''}
+<p>Every spot links to a live page with a 1–10 fishing score, an hourly best-times timeline, ${hub.kind === 'region' ? 'tides or river flow' : 'tides and water temperature or river flow'}, pressure trend, moon phase, and a species bite forecast — all free and updated in real time.</p>
+</main>
+<footer>© ${new Date().getFullYear()} Fish Condish · <a href="/">Open the live dashboard</a></footer>
+</body>
+</html>`;
+}
+
 if (require.main === module) {
   const outRoot = path.join(__dirname, '..', 'public', 'fishing');
   fs.rmSync(outRoot, { recursive: true, force: true });
@@ -734,9 +940,18 @@ if (require.main === module) {
     fs.writeFileSync(path.join(dir, 'index.html'), pageHtml(town, TOWNS));
   }
 
-  // sitemap.xml (homepage + all town pages)
+  // State + region hub pages
+  const hubs = buildHubs(TOWNS);
+  for (const hub of hubs) {
+    const rel = hub.path.replace(/^\/fishing\//, '').replace(/\/$/, '');
+    const dir = path.join(outRoot, rel);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), hubHtml(hub));
+  }
+
+  // sitemap.xml (homepage + hubs + all town pages)
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [`${SITE}/`, ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`)];
+  const urls = [`${SITE}/`, ...hubs.map(h => `${SITE}${h.path}`), ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`)];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
@@ -745,7 +960,7 @@ ${urls.map(u => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join(
   fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), sitemap);
 
   const withReports = TOWNS.filter(t => AI_REPORTS[slugify(t.name)]).length;
-  console.log(`Generated ${TOWNS.length} SEO pages in public/fishing/ + sitemap.xml (${withReports} with AI reports)`);
+  console.log(`Generated ${TOWNS.length} spot pages + ${hubs.length} hub pages in public/fishing/ + sitemap.xml (${withReports} with AI reports)`);
 }
 
 module.exports = { TOWNS, slugify };
