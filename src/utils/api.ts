@@ -1,4 +1,4 @@
-import type { Conditions, HourlyForecast, TideData, RiverData } from '../types';
+import type { Conditions, HourlyForecast, TideData, RiverData, RiverDetail } from '../types';
 import { degToCompass, calcFishingScore } from './fishing';
 
 // "Today" in the user's local timezone (toISOString alone gives UTC,
@@ -85,7 +85,7 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
 
   let [wJson, mJson] = await Promise.all([
     fetchJson(wx(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}${currentParams}&${hourlyParams}${dateParams}`)),
-    fetchJson(wx(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}${today ? '&current=wave_height,wave_period' : ''}&hourly=wave_height,wave_period&length_unit=imperial&timezone=auto${dateParams}`)),
+    fetchJson(wx(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}${today ? '&current=wave_height,wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction' : ''}&hourly=wave_height,wave_period,sea_surface_temperature,ocean_current_velocity,ocean_current_direction&length_unit=imperial&timezone=auto${dateParams}`)),
   ]);
 
   // If the full request failed, retry once with a simpler request shape
@@ -117,6 +117,9 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
       pressureMb: Math.round(c.surface_pressure),
       waveFt: mc?.wave_height != null ? parseFloat(mc.wave_height.toFixed(1)) : undefined,
       wavePeriod: mc?.wave_period != null ? Math.round(mc.wave_period) : undefined,
+      sstF: mc?.sea_surface_temperature != null ? Math.round((mc.sea_surface_temperature * 9 / 5 + 32) * 10) / 10 : undefined,
+      currentKn: mc?.ocean_current_velocity != null ? Math.round(mc.ocean_current_velocity * 0.539957 * 10) / 10 : undefined,
+      currentDir: mc?.ocean_current_direction != null ? degToCompass(mc.ocean_current_direction) : undefined,
       conditionLabel: wc.label,
       conditionIcon: wc.icon,
       precipChance: h?.precipitation_probability ? Math.max(...h.precipitation_probability.slice(new Date().getHours(), new Date().getHours() + 6)) : null,
@@ -138,6 +141,9 @@ export async function fetchWeather(lat: number, lon: number, dateStr: string, ho
       pressureMb: Math.round(h?.surface_pressure?.[idx] ?? 1013),
       waveFt: waveVal != null ? parseFloat(waveVal.toFixed(1)) : undefined,
       wavePeriod: periodVal != null ? Math.round(periodVal) : undefined,
+      sstF: mh?.sea_surface_temperature?.[idx] != null ? Math.round((mh.sea_surface_temperature[idx] * 9 / 5 + 32) * 10) / 10 : undefined,
+      currentKn: mh?.ocean_current_velocity?.[idx] != null ? Math.round(mh.ocean_current_velocity[idx] * 0.539957 * 10) / 10 : undefined,
+      currentDir: mh?.ocean_current_direction?.[idx] != null ? degToCompass(mh.ocean_current_direction[idx]) : undefined,
       conditionLabel: wc.label,
       conditionIcon: wc.icon,
       precipChance: h?.precipitation_probability ? Math.max(...h.precipitation_probability.slice(Math.max(0, idx - 1), idx + 4)) : null,
@@ -405,4 +411,86 @@ export async function fetchRiverData(lat: number, lon: number): Promise<RiverDat
       waterTempF: tempC != null ? Math.round((tempC * 9 / 5 + 32) * 10) / 10 : null,
     };
   });
+}
+
+// Detail for ONE selected gauge: a recent discharge series (for trend + sparkline)
+// and a historical-median comparison (for an above/below-normal read). Both pieces
+// degrade independently — a stats failure still leaves the trend/sparkline intact.
+export async function fetchRiverDetail(siteId: string): Promise<RiverDetail> {
+  // Recent discharge series (2 days of instantaneous values)
+  let flowSeries: number[] = [];
+  try {
+    const iv = await fetchJson(
+      `https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${siteId}&parameterCd=00060&period=P2D&siteStatus=active`
+    );
+    const vals = iv?.value?.timeSeries?.[0]?.values?.[0]?.value;
+    if (Array.isArray(vals)) {
+      flowSeries = vals
+        .map((p: { value: string }) => parseFloat(p.value))
+        .filter((n: number) => isFinite(n) && n >= 0);
+    }
+  } catch {}
+
+  let flowTrend: RiverDetail['flowTrend'] = null;
+  let flowChangePct: number | null = null;
+  if (flowSeries.length >= 8) {
+    const latest = flowSeries[flowSeries.length - 1];
+    // ~6h back at 15-min cadence ≈ 24 samples; fall back to the series start.
+    const prior = flowSeries[Math.max(0, flowSeries.length - 24)];
+    if (prior > 0) {
+      const pct = ((latest - prior) / prior) * 100;
+      flowChangePct = Math.round(pct);
+      flowTrend = pct > 7 ? 'rising' : pct < -7 ? 'falling' : 'steady';
+    }
+  }
+
+  // Historical median discharge for today's calendar day (daily statistics, RDB format)
+  let medianCfs: number | null = null;
+  let p20: number | null = null;
+  let p80: number | null = null;
+  try {
+    const res = await fetch(
+      `https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=${siteId}&statReportType=daily&statTypeCd=p20,p50,p80&parameterCd=00060`
+    );
+    if (res.ok) {
+      const text = await res.text();
+      const lines = text.split('\n').filter(l => l && !l.startsWith('#'));
+      if (lines.length >= 3) {
+        const header = lines[0].split('\t');
+        const iMonth = header.indexOf('month_nu');
+        const iDay = header.indexOf('day_nu');
+        const i50 = header.indexOf('p50_va');
+        const i20 = header.indexOf('p20_va');
+        const i80 = header.indexOf('p80_va');
+        const now = new Date();
+        const mo = now.getMonth() + 1, day = now.getDate();
+        for (let k = 2; k < lines.length; k++) { // row 0 header, row 1 format spec
+          const cols = lines[k].split('\t');
+          if (parseInt(cols[iMonth], 10) === mo && parseInt(cols[iDay], 10) === day) {
+            const m = parseFloat(cols[i50]); if (isFinite(m)) medianCfs = m;
+            const a = parseFloat(cols[i20]); if (isFinite(a)) p20 = a;
+            const b = parseFloat(cols[i80]); if (isFinite(b)) p80 = b;
+            break;
+          }
+        }
+      }
+    }
+  } catch {}
+
+  let normalLabel: RiverDetail['normalLabel'] = null;
+  const latestFlow = flowSeries.length ? flowSeries[flowSeries.length - 1] : null;
+  if (latestFlow != null && medianCfs != null) {
+    if (p20 != null && p80 != null) {
+      normalLabel = latestFlow < p20 * 0.6 ? 'Low'
+        : latestFlow < p20 ? 'Below normal'
+        : latestFlow > p80 * 1.6 ? 'High'
+        : latestFlow > p80 ? 'Above normal'
+        : 'Normal';
+    } else {
+      const r = latestFlow / medianCfs;
+      normalLabel = r < 0.4 ? 'Low' : r < 0.75 ? 'Below normal' : r > 2.5 ? 'High' : r > 1.5 ? 'Above normal' : 'Normal';
+    }
+  }
+
+  return { flowSeries, flowTrend, flowChangePct, medianCfs, normalLabel };
 }

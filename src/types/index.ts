@@ -6,6 +6,9 @@ export interface Conditions {
   airTempF: number;
   pressureMb: number;
   waterTempF: number | null;
+  sstF?: number | null;
+  currentKn?: number | null;
+  currentDir?: string | null;
   waveFt: number;
   wavePeriod: number;
   tideNow: number | null;
@@ -85,6 +88,14 @@ export interface RiverData {
   flowCfs: number | null;
   gageFt: number | null;
   waterTempF: number | null;
+}
+
+export interface RiverDetail {
+  flowSeries: number[];        // recent discharge (cfs), oldest→newest, for the sparkline
+  flowTrend: 'rising' | 'falling' | 'steady' | null;
+  flowChangePct: number | null; // % change over the trend window
+  medianCfs: number | null;     // historical median for today (USGS daily stats)
+  normalLabel: 'Low' | 'Below normal' | 'Normal' | 'Above normal' | 'High' | null;
 }
 
 export type ClarityLevel = 'Clear' | 'Stained' | 'Muddy';

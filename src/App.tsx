@@ -10,13 +10,13 @@ import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
   LineElement, Tooltip, Filler,
 } from 'chart.js';
-import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData } from './types';
+import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData, RiverDetail } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass, calcWaterClarity } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchRiverDetail, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
 import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
-  Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown,
+  Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown, Navigation,
   Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
@@ -122,6 +122,7 @@ export default function App() {
   const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
   const [rivers, setRivers] = useState<RiverData[]>([]);
   const [riverStation, setRiverStation] = useState<RiverData | null>(null);
+  const [riverDetail, setRiverDetail] = useState<RiverDetail | null>(null);
   const [riverLoading, setRiverLoading] = useState(false);
   const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -324,6 +325,18 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
     try { localStorage.setItem('theme', theme); } catch {}
   }, [theme]);
+
+  // Whenever the selected gauge changes (default pick or manual), pull its
+  // recent-flow series + historical-median read. Cancels if it changes again.
+  useEffect(() => {
+    if (!riverStation) { setRiverDetail(null); return; }
+    let cancelled = false;
+    setRiverDetail(null);
+    fetchRiverDetail(riverStation.siteId)
+      .then(d => { if (!cancelled) setRiverDetail(d); })
+      .catch(() => { if (!cancelled) setRiverDetail(null); });
+    return () => { cancelled = true; };
+  }, [riverStation]);
 
   // Wind models are lazy-loaded: only fetched when the Wind detail dropdown is
   // opened, and cleared whenever the location or date changes so it refetches.
@@ -993,9 +1006,34 @@ export default function App() {
               <>
                 <div className="stat-grid-3">
                   <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
-                  <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)" />
+                  <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)"
+                    sub={riverDetail ? ([
+                      riverDetail.flowTrend ? `${riverDetail.flowTrend === 'rising' ? '▲' : riverDetail.flowTrend === 'falling' ? '▼' : '→'}${riverDetail.flowChangePct != null && riverDetail.flowTrend !== 'steady' ? ` ${riverDetail.flowChangePct > 0 ? '+' : ''}${riverDetail.flowChangePct}%` : ''}` : null,
+                      riverDetail.normalLabel,
+                    ].filter(Boolean).join(' · ') || undefined) : undefined} />
                   <StatCard icon={<ArrowUpDown size={18} />} value={riverStation.gageFt != null ? riverStation.gageFt.toFixed(2) : '--'} unit="ft" label="Gage height" />
                 </div>
+                {riverDetail && riverDetail.flowSeries.length >= 8 && (() => {
+                  const s = riverDetail.flowSeries;
+                  const N = s.length;
+                  const step = Math.max(1, Math.floor(N / 48));
+                  const pts: number[] = [];
+                  for (let i = 0; i < N; i += step) pts.push(s[i]);
+                  if (pts[pts.length - 1] !== s[N - 1]) pts.push(s[N - 1]);
+                  const min = Math.min(...pts), max = Math.max(...pts), range = (max - min) || 1;
+                  const coords = pts.map((v, i) => `${(i / (pts.length - 1) * 100).toFixed(1)},${(28 - ((v - min) / range) * 26).toFixed(1)}`).join(' ');
+                  return (
+                    <div className="flow-spark">
+                      <div className="flow-spark-head">
+                        <span>Flow trend · last 48h</span>
+                        {riverDetail.medianCfs != null && <span className="muted">normal for today ≈ {Math.round(riverDetail.medianCfs).toLocaleString()} cfs</span>}
+                      </div>
+                      <svg className="flow-spark-svg" viewBox="0 0 100 30" preserveAspectRatio="none" role="img" aria-label="Recent river flow trend">
+                        <polyline className="flow-spark-line" vectorEffect="non-scaling-stroke" points={coords} />
+                      </svg>
+                    </div>
+                  );
+                })()}
                 <div className="station-row">
                   <span className="station-note">USGS gauge:</span>
                   <select
@@ -1022,10 +1060,11 @@ export default function App() {
           <div className="water-cols">
             <section className="section">
               <h3 className="section-label">Water conditions{timeContext}</h3>
-              <div className="stat-grid-4">
-                <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} />
+              <div className="stat-grid-auto">
+                <StatCard icon={<Droplets size={18} />} value={(conditions.waterTempF ?? conditions.sstF)?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} sub={conditions.waterTempF == null && conditions.sstF != null ? 'satellite SST' : undefined} />
                 <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
                 <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
+                <StatCard icon={<Navigation size={18} />} value={conditions.currentKn != null ? conditions.currentKn.toFixed(1) : '--'} unit={conditions.currentDir ? `kn · ${conditions.currentDir}` : 'kn'} label="Current" />
                 <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
               </div>
             </section>
