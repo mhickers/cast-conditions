@@ -10,7 +10,8 @@ type FishType =
   | 'gamefish' | 'stripedBass' | 'flatfish' | 'tuna' | 'mahi' | 'tarpon'
   | 'snook' | 'redfish' | 'trout' | 'salmon' | 'pike' | 'catfish' | 'panfish'
   | 'bass' | 'bluefish' | 'walleye' | 'grouper' | 'snapper' | 'shark'
-  | 'sturgeon' | 'carp' | 'eel' | 'drum';
+  | 'sturgeon' | 'carp' | 'eel' | 'drum'
+  | 'pompano' | 'porgy' | 'triggerfish' | 'perch';
 
 function classify(name: string): FishType {
   const n = name.toLowerCase();
@@ -34,7 +35,11 @@ function classify(name: string): FishType {
   if (/bluefish/.test(n)) return 'bluefish';
   if (/snapper|\bcod\b|pollock|haddock/.test(n)) return 'snapper';
   if (/grouper|sea bass|jewfish|goliath|\bhind\b|tautog|blackfish|rockfish|lingcod/.test(n)) return 'grouper';
-  if (/crappie|bluegill|sunfish|\bperch\b|pumpkinseed|panfish|\bbream\b|redear|sheepshead|scup|porgy|spadefish|triggerfish/.test(n)) return 'panfish';
+  if (/triggerfish/.test(n)) return 'triggerfish';
+  if (/sheepshead|\bscup\b|porgy|porgies|spadefish|sea bream/.test(n)) return 'porgy';
+  if (/pompano|permit|crevalle|\bjack\b/.test(n)) return 'pompano';
+  if (/\bperch\b/.test(n)) return 'perch';
+  if (/crappie|bluegill|sunfish|pumpkinseed|panfish|\bbream\b|redear/.test(n)) return 'panfish';
   if (/largemouth|smallmouth|spotted bass|rock bass|peacock|\bbass\b/.test(n)) return 'bass';
   return 'gamefish';
 }
@@ -189,6 +194,35 @@ function shape(t: FishType, cid: string): React.ReactNode {
         <path d="M3 13.6 1.4 14.4 3.2 14.2z" />
         <path d="M3.6 14.2 2 15.2 3.8 14.8z" /><path d="M4.4 14.4 3 15.6 4.6 15z" />
         <path d="M30.5 13 39 8 35.6 13 39 18z" /><Eye x={7.5} y={11.6} />
+      </>);
+    case 'pompano':
+      return (<>
+        <path d="M5.5 13C9 7 14 5 19 5 24 5 28 8.5 30.5 12 30.8 12.5 30.8 13.5 30.5 14 28 17.5 24 21 19 21 14 21 9 19 5.5 13Z" />
+        <path d="M29.5 13C33 10.4 35.5 9 39 7.2 36.8 10.2 36.8 15.8 39 18.8 35.5 17 33 15.6 29.5 13Z" />
+        <path d="M16 5.2q3-1.4 6 0.2l-5 0.8z" /><path d="M16 20.8q3 1.4 6-0.2l-5-0.8z" /><Eye x={9} y={11.4} />
+      </>);
+    case 'porgy':
+      return (<>
+        <defs><clipPath id={cid}><path d="M5 13C5 8 10 4.5 16.5 4.5 23 4.5 28 8 30 12 30.4 12.7 30.4 13.3 30 14 28 18 23 21.5 16.5 21.5 10 21.5 5 18 5 13Z" /></clipPath></defs>
+        <path d="M5 13C5 8 10 4.5 16.5 4.5 23 4.5 28 8 30 12 30.4 12.7 30.4 13.3 30 14 28 18 23 21.5 16.5 21.5 10 21.5 5 18 5 13Z" />
+        <g clipPath={`url(#${cid})`} fill={EYE}><rect x="11" y="4" width="0.7" height="18" /><rect x="15" y="4" width="0.7" height="18" /><rect x="19" y="4" width="0.7" height="18" /><rect x="23" y="4" width="0.7" height="18" /></g>
+        <path d="M11 4.7l1.4-1.6 1 1.5 1.4-1.3 0.9 1.4 1.4-1.1 0.9 1.3z" /><path d="M29.6 13 38 8.4 35.4 13 38 17.6z" /><Eye x={9} y={10.8} />
+      </>);
+    case 'triggerfish':
+      return (<>
+        <path d="M5 13C5 8.5 9 5 15 5 21 5 26 8 28.5 12 28.9 12.7 28.9 13.3 28.5 14 26 18 21 21 15 21 9 21 5 17.5 5 13Z" />
+        <path d="M13 5 13.4 2 14.8 5z" />
+        <path d="M16 5.2C20 4 24 4.4 27 6L27 7C24 6 20 6 17 6.6Z" />
+        <path d="M16 20.8C20 22 24 21.6 27 20L27 19C24 20 20 20 17 19.4Z" />
+        <path d="M28.2 13 35.5 9.5 34.5 13 35.5 16.5z" /><Eye x={8.5} y={10.2} r={0.8} />
+      </>);
+    case 'perch':
+      return (<>
+        <defs><clipPath id={cid}><path d="M3.5 13C7 8.6 12 7.2 18 7.4 23 7.6 28 9 31 12 31.3 12.6 31.3 13.4 31 14 28 17 23 18.4 18 18.6 12 18.8 7 17.4 3.5 13Z" /></clipPath></defs>
+        <path d="M3.5 13C7 8.6 12 7.2 18 7.4 23 7.6 28 9 31 12 31.3 12.6 31.3 13.4 31 14 28 17 23 18.4 18 18.6 12 18.8 7 17.4 3.5 13Z" />
+        <g clipPath={`url(#${cid})`} fill={EYE}><rect x="9" y="7" width="0.8" height="12" /><rect x="13" y="7" width="0.8" height="12" /><rect x="17" y="7" width="0.8" height="12" /><rect x="21" y="7" width="0.8" height="12" /><rect x="25" y="7" width="0.8" height="12" /></g>
+        <path d="M11 7.3l1.4-3 1 2.6 1.4-2.4 1 2.6 1.4-2 0.9 2.2z" /><path d="M22 7.8q2.5-1.4 4.5 0l-4 0.7z" />
+        <path d="M31 13 38.6 9.2 36 13 38.6 16.8z" /><Eye x={7} y={11.4} r={1.1} />
       </>);
     default:
       return (<>
