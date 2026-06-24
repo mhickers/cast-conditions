@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
     !supabaseKey && 'REACT_APP_SUPABASE_ANON_KEY',
   ].filter(Boolean).join(', ');
   console.error(
-    `[Fish Condish] Missing Supabase env var(s): ${missing}. ` +
+    `[FishCondish] Missing Supabase env var(s): ${missing}. ` +
     'Catch feed, submissions, and feedback will not work. ' +
     'Check the Vercel env vars and redeploy.'
   );

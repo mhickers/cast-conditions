@@ -602,6 +602,68 @@ const TOWNS = [
   { name: 'Wanchese, NC', lat: 35.8438, lon: -75.6388, type: 'coastal', water: 'Roanoke and Croatan sounds', species: 'red drum, speckled trout, and striped bass' },
   { name: 'Reedville, VA', lat: 37.8348, lon: -76.2855, type: 'coastal', water: 'the lower Chesapeake and Great Wicomico', species: 'striped bass (rockfish), red drum, and speckled trout' },
 
+
+  // ===== Expansion 4: 50 top Canada destinations =====
+  // --- Ontario ---
+  { name: 'Toronto, ON', lat: 43.6532, lon: -79.3832, type: 'inland', water: 'Lake Ontario', species: 'Chinook and coho salmon, brown trout, and smallmouth bass' },
+  { name: 'Kingston, ON', lat: 44.2312, lon: -76.4860, type: 'inland', water: 'the Thousand Islands and eastern Lake Ontario', species: 'smallmouth bass, walleye, muskie, and northern pike' },
+  { name: 'Ottawa, ON', lat: 45.4215, lon: -75.6972, type: 'inland', water: 'the Ottawa River', species: 'walleye, muskie, and smallmouth bass' },
+  { name: 'Lake Simcoe, ON', lat: 44.4200, lon: -79.3400, type: 'inland', water: 'Lake Simcoe', species: 'lake trout, whitefish, and yellow perch' },
+  { name: 'Lake Nipissing, ON', lat: 46.2900, lon: -79.7500, type: 'inland', water: 'Lake Nipissing', species: 'walleye, northern pike, and muskie' },
+  { name: 'Lake of the Woods, ON', lat: 49.4000, lon: -94.8700, type: 'inland', water: 'Lake of the Woods', species: 'walleye, muskie, and smallmouth bass' },
+  { name: 'Lake St. Clair, ON', lat: 42.4200, lon: -82.6800, type: 'inland', water: 'Lake St. Clair', species: 'muskie, smallmouth bass, and walleye' },
+  { name: 'Thunder Bay, ON', lat: 48.3809, lon: -89.2477, type: 'inland', water: 'Lake Superior', species: 'lake trout, Chinook salmon, and walleye' },
+  { name: 'Bay of Quinte, ON', lat: 44.1500, lon: -77.2500, type: 'inland', water: 'the Bay of Quinte', species: 'walleye, smallmouth bass, and northern pike' },
+  { name: 'Sault Ste. Marie, ON', lat: 46.5136, lon: -84.3358, type: 'inland', water: 'the St. Marys River', species: 'Atlantic salmon, northern pike, and walleye' },
+  { name: 'Nipigon, ON', lat: 49.0130, lon: -88.2630, type: 'inland', water: 'Lake Nipigon and the Nipigon River', species: 'brook trout, lake trout, and walleye' },
+  { name: 'Parry Sound, ON', lat: 45.3470, lon: -80.0390, type: 'inland', water: 'Georgian Bay', species: 'smallmouth bass, muskie, and northern pike' },
+  // --- Quebec ---
+  { name: 'Montreal, QC', lat: 45.5019, lon: -73.5674, type: 'inland', water: 'the St. Lawrence River', species: 'walleye, northern pike, muskie, and smallmouth bass' },
+  { name: 'Quebec City, QC', lat: 46.8139, lon: -71.2080, type: 'inland', water: 'the St. Lawrence River', species: 'striped bass, walleye, and northern pike' },
+  { name: 'Lake Memphremagog, QC', lat: 45.1500, lon: -72.2500, type: 'inland', water: 'Lake Memphremagog', species: 'lake trout, landlocked salmon, and smallmouth bass' },
+  { name: 'Gaspe, QC', lat: 48.8330, lon: -64.4870, type: 'coastal', water: 'the Gaspe coast and salmon rivers', species: 'Atlantic salmon, mackerel, and cod' },
+  { name: 'Saguenay, QC', lat: 48.4280, lon: -71.0680, type: 'coastal', water: 'the Saguenay Fjord', species: 'Atlantic salmon, redfish, and Greenland halibut' },
+  { name: 'Lac Saint-Jean, QC', lat: 48.5800, lon: -72.0000, type: 'inland', water: 'Lac Saint-Jean', species: 'walleye, landlocked salmon, and northern pike' },
+  { name: 'Mont-Tremblant, QC', lat: 46.1185, lon: -74.5962, type: 'inland', water: 'the Laurentian lakes', species: 'lake trout, smallmouth bass, and northern pike' },
+  { name: 'Trois-Rivieres, QC', lat: 46.3430, lon: -72.5420, type: 'inland', water: 'the St. Lawrence River', species: 'walleye, sauger, and northern pike' },
+  // --- British Columbia ---
+  { name: 'Vancouver, BC', lat: 49.2827, lon: -123.1207, type: 'coastal', water: 'the Strait of Georgia', species: 'Chinook and coho salmon, lingcod, and rockfish' },
+  { name: 'Victoria, BC', lat: 48.4284, lon: -123.3656, type: 'coastal', water: 'the Strait of Juan de Fuca', species: 'Chinook salmon, halibut, and lingcod' },
+  { name: 'Campbell River, BC', lat: 50.0331, lon: -125.2733, type: 'coastal', water: 'Discovery Passage', species: 'Chinook salmon, halibut, and lingcod' },
+  { name: 'Tofino, BC', lat: 49.1530, lon: -125.9066, type: 'coastal', water: 'the west coast', species: 'Chinook salmon, halibut, and lingcod' },
+  { name: 'Prince Rupert, BC', lat: 54.3150, lon: -130.3208, type: 'coastal', water: 'the north coast', species: 'Chinook salmon, halibut, and lingcod' },
+  { name: 'Kamloops, BC', lat: 50.6745, lon: -120.3273, type: 'inland', water: 'the Thompson-Nicola lakes', species: 'rainbow trout' },
+  { name: 'Okanagan Lake, BC', lat: 49.8880, lon: -119.4960, type: 'inland', water: 'Okanagan Lake', species: 'kokanee, rainbow trout, and lake trout' },
+  { name: 'Chilliwack, BC', lat: 49.1579, lon: -121.9514, type: 'inland', water: 'the Fraser River', species: 'white sturgeon and salmon' },
+  { name: 'Port Alberni, BC', lat: 49.2339, lon: -124.8055, type: 'coastal', water: 'the Alberni Inlet', species: 'Chinook and sockeye salmon' },
+  { name: 'Nanaimo, BC', lat: 49.1659, lon: -123.9401, type: 'coastal', water: 'the Strait of Georgia', species: 'Chinook salmon, lingcod, and rockfish' },
+  // --- Alberta ---
+  { name: 'Calgary, AB', lat: 51.0447, lon: -114.0719, type: 'inland', water: 'the Bow River', species: 'wild brown and rainbow trout' },
+  { name: 'Lake Minnewanka, AB', lat: 51.2500, lon: -115.4000, type: 'inland', water: 'Lake Minnewanka', species: 'lake trout and rainbow trout' },
+  { name: 'Lesser Slave Lake, AB', lat: 55.4000, lon: -115.4000, type: 'inland', water: 'Lesser Slave Lake', species: 'walleye, northern pike, and yellow perch' },
+  { name: 'Cold Lake, AB', lat: 54.4600, lon: -110.1800, type: 'inland', water: 'Cold Lake', species: 'walleye, lake trout, and northern pike' },
+  { name: 'Edmonton, AB', lat: 53.5461, lon: -113.4938, type: 'inland', water: 'the North Saskatchewan River', species: 'walleye, northern pike, and goldeye' },
+  // --- Manitoba ---
+  { name: 'Lake Winnipeg, MB', lat: 50.4000, lon: -96.8000, type: 'inland', water: 'Lake Winnipeg', species: 'walleye, sauger, and yellow perch' },
+  { name: 'Winnipeg, MB', lat: 49.8951, lon: -97.1384, type: 'inland', water: 'the Red River', species: 'channel catfish and walleye' },
+  { name: 'Lac du Bonnet, MB', lat: 50.2540, lon: -96.0590, type: 'inland', water: 'the Winnipeg River', species: 'walleye, smallmouth bass, and northern pike' },
+  // --- Saskatchewan ---
+  { name: 'Tobin Lake, SK', lat: 53.6000, lon: -103.3000, type: 'inland', water: 'Tobin Lake', species: 'trophy walleye and northern pike' },
+  { name: 'Lake Diefenbaker, SK', lat: 51.0200, lon: -106.8300, type: 'inland', water: 'Lake Diefenbaker', species: 'walleye, northern pike, and rainbow trout' },
+  { name: 'Last Mountain Lake, SK', lat: 51.0500, lon: -105.2500, type: 'inland', water: 'Last Mountain Lake', species: 'walleye, northern pike, and yellow perch' },
+  // --- Nova Scotia ---
+  { name: 'Halifax, NS', lat: 44.6488, lon: -63.5752, type: 'coastal', water: 'the Atlantic coast', species: 'striped bass, mackerel, and pollock' },
+  { name: 'Sydney, NS', lat: 46.1351, lon: -60.1831, type: 'coastal', water: "the Bras d'Or Lake and Cape Breton coast", species: 'striped bass, mackerel, and cod' },
+  { name: 'Digby, NS', lat: 44.6220, lon: -65.7590, type: 'coastal', water: 'the Bay of Fundy', species: 'striped bass, pollock, and mackerel' },
+  // --- New Brunswick ---
+  { name: 'Miramichi, NB', lat: 47.0280, lon: -65.5010, type: 'inland', water: 'the Miramichi River', species: 'Atlantic salmon and brook trout' },
+  { name: 'Saint John, NB', lat: 45.2733, lon: -66.0633, type: 'coastal', water: 'the Saint John River and Bay of Fundy', species: 'striped bass and smallmouth bass' },
+  { name: 'Fredericton, NB', lat: 45.9636, lon: -66.6431, type: 'inland', water: 'the Saint John River', species: 'smallmouth bass, muskellunge, and yellow perch' },
+  // --- Newfoundland & Labrador ---
+  { name: 'St. Johns, NL', lat: 47.5615, lon: -52.7126, type: 'coastal', water: 'the Avalon coast', species: 'cod and mackerel' },
+  { name: 'Happy Valley-Goose Bay, NL', lat: 53.3017, lon: -60.3260, type: 'inland', water: 'the Labrador rivers', species: 'brook trout, Atlantic salmon, and northern pike' },
+  // --- Prince Edward Island ---
+  { name: 'Charlottetown, PE', lat: 46.2382, lon: -63.1311, type: 'coastal', water: 'the north shore and bays', species: 'striped bass, mackerel, and white perch' },
 ];
 
 const COASTAL_SPECIES = 'striped bass, fluke (summer flounder), bluefish, black sea bass, tautog, weakfish, and kingfish';
@@ -631,6 +693,7 @@ const US_STATES = {
   NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',
   OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',
   TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',
+  ON:'Ontario',QC:'Quebec',BC:'British Columbia',AB:'Alberta',MB:'Manitoba',SK:'Saskatchewan',NS:'Nova Scotia',NB:'New Brunswick',NL:'Newfoundland and Labrador',PE:'Prince Edward Island',YT:'Yukon',NT:'Northwest Territories',NU:'Nunavut',
 };
 const stateAbbrOf = (town) => (town.name.split(',').pop() || '').trim();
 
@@ -645,7 +708,7 @@ function pageHtml(town, allTowns) {
   const waterData = town.type === 'coastal'
     ? 'live tides from the nearest NOAA station, water temperature, wave height, and wind'
     : 'real-time flow and water level from the nearest USGS gauge, water temperature, and wind';
-  const title = `${town.name} Fishing Report & Conditions — Fish Condish`;
+  const title = `${town.name} Fishing Report & Conditions — FishCondish`;
   const desc = `Live fishing conditions for ${town.name}: fishing score, best times to fish, ${town.type === 'coastal' ? 'tides, water temp' : 'river flow, water temp'}, weather, and a species bite forecast. Free, updated in real time.`;
 
   // Nearest towns by distance, for sensible internal linking
@@ -663,8 +726,8 @@ function pageHtml(town, allTowns) {
   // --- FAQ: grounded, evergreen Q&A (no invented regs, dates, or access points) ---
   const coastal = town.type === 'coastal';
   const bestTimeA = coastal
-    ? `Dawn and dusk are usually the strongest windows at ${town.name}, especially when they line up with moving water around a tide change. Fish Condish grades every hour of the day so you can pick the best one.`
-    : `Dawn and dusk are usually the most productive windows on ${town.water}, particularly when the barometric pressure is steady or falling. Fish Condish grades every hour of the day so you can pick the best one.`;
+    ? `Dawn and dusk are usually the strongest windows at ${town.name}, especially when they line up with moving water around a tide change. FishCondish grades every hour of the day so you can pick the best one.`
+    : `Dawn and dusk are usually the most productive windows on ${town.water}, particularly when the barometric pressure is steady or falling. FishCondish grades every hour of the day so you can pick the best one.`;
   const seasonA = coastal
     ? `Spring and fall typically bring the most active fishing along ${town.water} as fish migrate and feed heavily, with summer steady for warm-water species. It varies year to year, so check the live score before you head out.`
     : `Spring and fall are typically strongest on ${town.water} as water temperatures sit in the productive range, with summer fishing best early and late in the day. It varies year to year, so check the live conditions before you head out.`;
@@ -674,7 +737,7 @@ function pageHtml(town, allTowns) {
     { q: `What's the best time of day to fish ${town.name}?`, a: bestTimeA },
     { q: `When is the best season to fish ${town.name}?`, a: seasonA },
     { q: `How do I know if it's a good day to fish ${town.name}?`,
-      a: `Fish Condish combines wind, ${coastal ? 'tide movement' : 'water level'}, water temperature, pressure trend, and moon phase into a single 1\u201310 fishing score for ${town.name}, updated in real time — a quick go/no-go read before you make the trip.` },
+      a: `FishCondish combines wind, ${coastal ? 'tide movement' : 'water level'}, water temperature, pressure trend, and moon phase into a single 1\u201310 fishing score for ${town.name}, updated in real time — a quick go/no-go read before you make the trip.` },
   ];
   const faqSection = `<h2>${esc(town.name)} fishing FAQ</h2>
 <div class="faq">
@@ -683,7 +746,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
 
   // --- structured data (WebPage + Breadcrumb + FAQ + Article), one @graph ---
   const graph = [
-    { '@type': 'WebPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE } },
+    { '@type': 'WebPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'FishCondish', url: SITE } },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
       ...(_stName ? [{ '@type': 'ListItem', position: 2, name: `${_stName} Fishing`, item: `${SITE}${_stPath}` }] : []),
@@ -701,8 +764,8 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
       url,
       mainEntityOfPage: url,
       ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
-      author: { '@type': 'Organization', name: 'Fish Condish', url: SITE },
-      publisher: { '@type': 'Organization', name: 'Fish Condish', logo: { '@type': 'ImageObject', url: `${SITE}/logo512.png` } },
+      author: { '@type': 'Organization', name: 'FishCondish', url: SITE },
+      publisher: { '@type': 'Organization', name: 'FishCondish', logo: { '@type': 'ImageObject', url: `${SITE}/logo512.png` } },
     });
   }
   // Escape "<" so a stray "</script>" inside any string can't break out of the tag.
@@ -759,11 +822,11 @@ footer a{color:var(--ocean)}
 </style>
 </head>
 <body>
-<header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
+<header><img src="/logo.svg" alt="FishCondish logo"/><a href="/">FishCondish</a></header>
 <main>
 <nav class="crumbs"><a href="/">Home</a> › ${_stName ? `<a href="${_stPath}">${esc(_stName)}</a> › ` : ''}<span>${esc(town.name)} Fishing</span></nav>
 <h1>${esc(town.name)} Fishing Report &amp; Live Conditions</h1>
-<p>Planning to fish ${esc(town.water)}? Fish Condish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
+<p>Planning to fish ${esc(town.water)}? FishCondish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
 <a class="cta" href="${appLink}">See live ${esc(town.name)} conditions →</a>
 ${reportSection}
 <h2>What you'll get for ${esc(town.name)}</h2>
@@ -786,7 +849,7 @@ ${faqSection}
 ${nearby.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(t.name)}</a>`).join('\n')}
 </div>
 </main>
-<footer>© ${new Date().getFullYear()} Fish Condish · <a href="/">Open the live dashboard</a></footer>
+<footer>© ${new Date().getFullYear()} FishCondish · <a href="/">Open the live dashboard</a></footer>
 </body>
 </html>`;
 }
@@ -855,13 +918,13 @@ function buildHubs(towns) {
 
 function hubHtml(hub) {
   const url = `${SITE}${hub.path}`;
-  const title = `${hub.name} Fishing Reports & Live Conditions — Fish Condish`;
+  const title = `${hub.name} Fishing Reports & Live Conditions — FishCondish`;
   const desc = `Live fishing conditions for ${hub.spots.length} spots across ${hub.name}: fishing scores, best times to fish, tides or river flow, water temp, and species bite forecasts. Free and updated in real time.`;
   const cityName = (n) => n.replace(/, [A-Z]{2}$/, '');
   const spotLinks = hub.spots.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(cityName(t.name))}</a>`).join('\n');
   const regionLinks = (hub.regions || []).map(r => `<a href="${r.path}">${esc(r.name)}</a>`).join('\n');
   const graph = [
-    { '@type': 'CollectionPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'Fish Condish', url: SITE } },
+    { '@type': 'CollectionPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'FishCondish', url: SITE } },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
       { '@type': 'ListItem', position: 2, name: `${hub.name} Fishing`, item: url },
@@ -911,7 +974,7 @@ footer a{color:var(--ocean)}
 </style>
 </head>
 <body>
-<header><img src="/logo.svg" alt="Fish Condish logo"/><a href="/">Fish Condish</a></header>
+<header><img src="/logo.svg" alt="FishCondish logo"/><a href="/">FishCondish</a></header>
 <main>
 <nav class="crumbs"><a href="/">Home</a> › <span>${esc(hub.name)} Fishing</span></nav>
 <h1>${esc(hub.name)} Fishing Reports &amp; Live Conditions</h1>
@@ -924,7 +987,7 @@ ${spotLinks}
 ${regionLinks ? `<h2>Popular regions</h2>\n<div class="nearby">\n${regionLinks}\n</div>` : ''}
 <p>Every spot links to a live page with a 1–10 fishing score, an hourly best-times timeline, ${hub.kind === 'region' ? 'tides or river flow' : 'tides and water temperature or river flow'}, pressure trend, moon phase, and a species bite forecast — all free and updated in real time.</p>
 </main>
-<footer>© ${new Date().getFullYear()} Fish Condish · <a href="/">Open the live dashboard</a></footer>
+<footer>© ${new Date().getFullYear()} FishCondish · <a href="/">Open the live dashboard</a></footer>
 </body>
 </html>`;
 }

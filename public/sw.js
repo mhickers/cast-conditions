@@ -1,8 +1,8 @@
-// Fish Condish service worker v3 — offline app shell only.
+// FishCondish service worker v4 — offline app shell only.
 // v1 intercepted cross-origin API calls (weather/tides), which could break
 // data loading on some setups. v2 caches ONLY same-origin app files and
 // never touches API requests.
-const CACHE = 'fish-condish-v3';
+const CACHE = 'fish-condish-v4';
 
 self.addEventListener('install', () => self.skipWaiting());
 

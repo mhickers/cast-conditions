@@ -13,7 +13,7 @@ export interface SpeciesInfo {
 }
 
 export const ALL_SPECIES: SpeciesInfo[] = [
-  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
+  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','inland_north','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
   { name: 'Bluefish',        icon: '🌊', regions: ['northeast','midatlantic','southeast'],              tempMin: 58, tempMax: 82, lures: 'Metal spoons, poppers with wire leaders; cut bait', tip: 'Aggressive surface feeders. Active in choppy conditions. Topwater lures work well.' },
   { name: 'Flounder',        icon: '🐟', regions: ['northeast','midatlantic','southeast','gulf'],       tempMin: 55, tempMax: 80, lures: 'Gulp swimming mullet on bucktails; minnow-and-squid rigs', tip: 'Prefer calmer water. Fish bottom near sandy channels on incoming tide.' },
   { name: 'Weakfish',        icon: '🌙', regions: ['midatlantic'],                                     tempMin: 58, tempMax: 78, lures: 'Pink soft plastics, small jigs; live grass shrimp', tip: 'Night feeders — work tidal creeks and flats after dark on moving water.' },
@@ -83,7 +83,10 @@ export function getInlandRegion(lat: number, lon: number): string {
     return lat < 40 ? 'inland_southcentral' : 'inland_north';
   }
   // East of -90
-  return lat >= 40 ? 'inland_north' : 'inland_southeast';
+  // East of -90: the mid-Atlantic/Northeast inland (PA, NJ, MD, OH valley, NY)
+  // gets the cool-water set (trout, walleye, smallmouth, pike); the true South
+  // (lat < 39) gets the warm-water set. Philadelphia (~40) lands in the north.
+  return lat >= 39 ? 'inland_north' : 'inland_southeast';
 }
 
 // Map lat/lon to a coastal fishing region

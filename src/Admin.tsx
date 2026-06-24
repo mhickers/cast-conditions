@@ -95,7 +95,7 @@ export default function Admin() {
     return (
       <div className="admin-wrap">
         <div className="admin-login">
-          <h2 className="admin-title">🎣 Fish Condish — Admin</h2>
+          <h2 className="admin-title">🎣 FishCondish — Admin</h2>
           <p className="admin-sub">Enter your admin password to review submissions.</p>
           <input
             className="search-input"
