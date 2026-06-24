@@ -14,16 +14,16 @@ type FishType =
 
 function classify(name: string): FishType {
   const n = name.toLowerCase();
-  if (/shark|\bmako\b|thresher|dogfish/.test(n)) return 'shark';
+  if (/shark|\bmako\b|thresher|dogfish|cobia/.test(n)) return 'shark';
   if (/sturgeon/.test(n)) return 'sturgeon';
   if (/striped bass|striper|white bass|hybrid/.test(n)) return 'stripedBass';
   if (/flounder|fluke|halibut|\bsole\b|plaice|turbot|\bdab\b/.test(n)) return 'flatfish';
-  if (/tuna|albacore|bonito|tunny/.test(n)) return 'tuna';
+  if (/tuna|albacore|bonito|tunny|yellowtail|amberjack/.test(n)) return 'tuna';
   if (/mahi|dorado|dolphinfish/.test(n)) return 'mahi';
   if (/tarpon/.test(n)) return 'tarpon';
   if (/snook/.test(n)) return 'snook';
   if (/red drum|redfish|channel bass/.test(n)) return 'redfish';
-  if (/\bdrum\b|croaker/.test(n)) return 'drum';
+  if (/\bdrum\b|croaker|weakfish|\bspot\b/.test(n)) return 'drum';
   if (/trout/.test(n)) return 'trout';
   if (/salmon|steelhead|chinook|coho|sockeye|kokanee/.test(n)) return 'salmon';
   if (/\beel\b/.test(n)) return 'eel';
@@ -32,8 +32,8 @@ function classify(name: string): FishType {
   if (/\bcarp\b/.test(n)) return 'carp';
   if (/walleye|sauger/.test(n)) return 'walleye';
   if (/bluefish/.test(n)) return 'bluefish';
-  if (/snapper/.test(n)) return 'snapper';
-  if (/grouper|sea bass|jewfish|goliath|\bhind\b/.test(n)) return 'grouper';
+  if (/snapper|\bcod\b|pollock|haddock/.test(n)) return 'snapper';
+  if (/grouper|sea bass|jewfish|goliath|\bhind\b|tautog|blackfish|rockfish|lingcod/.test(n)) return 'grouper';
   if (/crappie|bluegill|sunfish|\bperch\b|pumpkinseed|panfish|\bbream\b|redear|sheepshead|scup|porgy|spadefish|triggerfish/.test(n)) return 'panfish';
   if (/largemouth|smallmouth|spotted bass|rock bass|peacock|\bbass\b/.test(n)) return 'bass';
   return 'gamefish';

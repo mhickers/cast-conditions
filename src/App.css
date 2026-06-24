@@ -21,9 +21,9 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 /* Header */
 .header { background: var(--navy); color: white; padding: 0 1.5rem; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid var(--ocean); }
 .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; height: 56px; gap: 16px; }
-.logo { display: flex; align-items: center; gap: 10px; }
+.logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .logo-icon { font-size: 22px; }
-.logo-text { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: white; }
+.logo-text { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .updated-txt { font-size: 12px; color: rgba(255,255,255,0.6); }
 .btn-icon { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
@@ -147,6 +147,10 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
   .search-primary { flex-wrap: wrap; }
   .search-primary .search-input-lg { flex: 1 1 60%; min-width: 0; }
   .header-right .updated-txt { display: none; }
+  .header { padding: 0 0.85rem; }
+  .header-inner { gap: 10px; }
+  .header-right { gap: 7px; }
+  .btn-icon { width: 30px; height: 30px; font-size: 13px; }
 }
 
 /* Date picker */
@@ -259,7 +263,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .bait-advice + .bait-advice { margin-top: 10px; }
 
 /* Logo & share */
-.logo-img { width: 34px; height: 34px; display: block; }
+.logo-img { width: 40px; height: 40px; display: block; flex-shrink: 0; }
 .share-msg { margin-top: 8px; font-size: 13px; color: #0F6E56; background: #E1F5EE; padding: 8px 12px; border-radius: 8px; display: inline-block; }
 
 /* Professional icon polish */

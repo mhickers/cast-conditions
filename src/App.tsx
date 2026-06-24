@@ -134,8 +134,7 @@ export default function App() {
   const [windLoading, setWindLoading] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
     try {
-      return localStorage.getItem('theme')
-        || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      return localStorage.getItem('theme') || 'light';
     } catch { return 'light'; }
   });
   const [units, setUnits] = useState<UnitSystem>(() => {
@@ -170,15 +169,14 @@ export default function App() {
   const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
-  // Coastal/saltwater requires BOTH a nearby NOAA tide station AND real marine
-  // data from Open-Meteo (wave or SST). Tidal rivers have inland tide stations
-  // but no ocean marine grid, so this flips inland tidal spots (e.g. Havertown,
-  // PA) to freshwater. A very close station (<=6 mi) counts as coastal even if
-  // marine is momentarily down. During load we assume coastal to avoid flicker.
+  // Coastal/saltwater now REQUIRES real marine data (Open-Meteo wave or SST),
+  // not just a nearby NOAA tide station. Tidal rivers (e.g. the Delaware at
+  // Philadelphia) have a station right in town but no ocean marine grid, so they
+  // correctly resolve to freshwater. During load we stay optimistic about a near
+  // station to avoid a species flicker, then require marine once loaded.
   const hasMarine = conditions.waveFt != null || conditions.sstF != null;
-  const stationClose = !!tideStation && tideStation.distanceMi <= 6;
   const stationNear = !!tideStation && tideStation.distanceMi <= 12;
-  const isInland = stationChecked && !(stationClose || (stationNear && (hasMarine || loading)));
+  const isInland = stationChecked && !(stationNear && (hasMarine || loading));
   const isSaved = spots.some(s => s.label === locationLabel);
 
   const getStationOverride = (lbl: string): NearestStation | null => {
@@ -1163,7 +1161,7 @@ export default function App() {
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
           {!stationChecked && <p className="muted" style={{ padding: '4px 0' }}>Loading species for this location...</p>}
           <div className="species-grid" style={!stationChecked ? { display: 'none' } : undefined}>
-            {[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 6).map((sp, i) => {
+            {[...species].sort((a, b) => (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 6).map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
               const open = openSpecies.has(i);
               return (
@@ -1202,7 +1200,7 @@ export default function App() {
           locationLabel={locationLabel}
           dateStr={selectedDate}
           speciesOptions={species.map(sp => sp.name)}
-          topSpecies={[...species].sort((a, b) => b.biteScore - a.biteScore).slice(0, 3).map(sp => sp.name)}
+          topSpecies={[...species].sort((a, b) => (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 3).map(sp => sp.name)}
           conditions={conditions}
           isInland={isInland}
           waterClarity={waterClarity.level}

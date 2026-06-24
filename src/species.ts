@@ -25,7 +25,7 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'Snook',           icon: '🌴', regions: ['southeast','gulf'],                               tempMin: 68, tempMax: 88, lures: 'Live pilchards; flair hawk jigs and swimbaits at night', tip: 'Structure-oriented. Work dock lights at night and mangrove edges on tide changes.' },
   { name: 'Pompano',         icon: '🌞', regions: ['southeast','gulf'],                               tempMin: 65, tempMax: 84, lures: 'Sand fleas and Fishbites on pompano rigs; banana jigs', tip: 'Surf species. Sand fleas and small jigs in the wash near troughs.' },
   { name: 'Grouper',         icon: '🪸', regions: ['southeast','gulf','pacific'],                     tempMin: 60, tempMax: 82, lures: 'Live pinfish or large cut baits fished on bottom', tip: 'Deep structure fish. Live bait on the bottom near ledges and wrecks.' },
-  { name: 'Mahi-mahi',       icon: '🐬', regions: ['southeast','gulf','pacific','hawaii','midatlantic','northeast'],             tempMin: 70, tempMax: 88, lures: 'Rigged ballyhoo, trolling skirts; jigs near weedlines', tip: 'Follow weedlines and color changes offshore. Highly active in warm blue water.' },
+  { name: 'Mahi-mahi',       icon: '🐬', regions: ['southeast','gulf','pacific','hawaii'],             tempMin: 70, tempMax: 88, lures: 'Rigged ballyhoo, trolling skirts; jigs near weedlines', tip: 'Follow weedlines and color changes offshore. Highly active in warm blue water.' },
   { name: 'Yellowfin tuna',  icon: '🚤', regions: ['southeast','gulf','pacific','hawaii'],             tempMin: 68, tempMax: 86, lures: 'Trolled ballyhoo, cedar plugs; chunked butterfish', tip: 'Offshore species. Follow birds and temperature breaks. Chunking or trolling work well.' },
   { name: 'King mackerel',   icon: '⚡', regions: ['southeast','gulf'],                               tempMin: 68, tempMax: 86, lures: 'Slow-trolled live menhaden; drone spoons', tip: 'Fast trolling with live baits near structure. Watch for baitfish schools.' },
   { name: 'Cobia',           icon: '🦈', regions: ['midatlantic','southeast','gulf'],                 tempMin: 65, tempMax: 85, lures: 'Bucktail jigs, live eels; sight-cast swimbaits', tip: 'Follow cownose rays in spring. Often seen cruising near the surface solo.' },
@@ -108,6 +108,26 @@ export function getRegion(lat: number, lon: number): string {
   return 'midatlantic';
 }
 
+// How commonly anglers target each species (1-10). Drives display order so the
+// list leads with what people actually fish for in an area (e.g. rainbow trout
+// over channel catfish in the Mountain West), not whatever scores highest today.
+const POPULARITY: Record<string, number> = {
+  // freshwater
+  'Largemouth bass': 10, 'Rainbow trout': 9, 'Smallmouth bass': 9, 'Walleye': 9,
+  'Brown trout': 8, 'Crappie': 8, 'Channel catfish': 7, 'Northern pike': 7,
+  'Bluegill': 7, 'Yellow perch': 7, 'Muskie': 6, 'Lake trout': 6,
+  'Hybrid striper': 6, 'White bass': 5,
+  // saltwater
+  'Striped bass': 10, 'Flounder': 9, 'Red drum': 9, 'Salmon': 9, 'Snook': 8,
+  'Speckled trout': 8, 'Bluefish': 8, 'Halibut': 8, 'Sea bass': 7, 'Tautog': 7,
+  'Sheepshead': 7, 'Grouper': 7, 'Rockfish': 7, 'Tarpon': 7, 'Cod': 6,
+  'Black drum': 6, 'Spanish mackerel': 6, 'Pompano': 6, 'Lingcod': 6, 'Yellowtail': 6,
+  'Bonefish': 6, 'Cobia': 6, 'Mahi-mahi': 6, 'Weakfish': 5, 'Kingfish': 5,
+  'Scup (porgy)': 5, 'King mackerel': 5, 'Yellowfin tuna': 5, 'Tuna (bluefin)': 5,
+  'False albacore': 5, 'Pollock': 4, 'Atlantic bonito': 4, 'Triggerfish': 4,
+  'Atlantic croaker': 4, 'Spadefish': 3, 'Spot': 3,
+};
+
 export function getSpeciesForLocation(
   lat: number,
   lon: number,
@@ -118,7 +138,7 @@ export function getSpeciesForLocation(
   tideDirection: 'rising' | 'falling' | null,
   moonPhase: number,
   isInland: boolean = false
-): Array<{ name: string; icon: string; biteScore: number; biteLabel: 'Hot bite' | 'Active' | 'Slow'; tip: string; lures: string }> {
+): Array<{ name: string; icon: string; biteScore: number; biteLabel: 'Hot bite' | 'Active' | 'Slow'; tip: string; lures: string; popularity: number }> {
   const region = isInland ? getInlandRegion(lat, lon) : getRegion(lat, lon);
   const wt = waterTempF ?? 68;
   const isFullMoon = Math.abs(moonPhase - 14.77) < 4;
@@ -127,35 +147,44 @@ export function getSpeciesForLocation(
   const regional = ALL_SPECIES.filter(s => s.regions.includes(region));
 
   return regional.map(sp => {
-    let score = 40; // base
-
-    // Water temp bonus
-    if (wt >= sp.tempMin && wt <= sp.tempMax) score += 30;
-    else if (wt < sp.tempMin - 10 || wt > sp.tempMax + 10) score -= 20;
+    // Graded temperature match: peaks only near the species' optimal mid-range,
+    // so simply being in range no longer makes nearly everything a Hot bite.
+    let score = 28;
+    const mid = (sp.tempMin + sp.tempMax) / 2;
+    const half = Math.max(1, (sp.tempMax - sp.tempMin) / 2);
+    if (wt >= sp.tempMin && wt <= sp.tempMax) {
+      const closeness = 1 - Math.abs(wt - mid) / half; // 1 at optimal, 0 at the edges
+      score += 12 + 26 * closeness;                    // 12..38
+    } else {
+      const over = wt < sp.tempMin ? sp.tempMin - wt : wt - sp.tempMax;
+      score -= Math.min(38, 8 + over * 1.6);
+    }
 
     // Wind
-    if (windMph < 8) score += 10;
-    else if (windMph > 20) score -= 15;
+    if (windMph < 8) score += 8;
+    else if (windMph > 18) score -= 12;
+    else if (windMph > 12) score -= 4;
 
     // Waves & tide only matter on the coast
     if (!isInland) {
-      if (waveFt < 2) score += 8;
-      else if (waveFt > 4) score -= 12;
-      if (rising) score += 8;
+      if (waveFt < 2) score += 6;
+      else if (waveFt > 4) score -= 10;
+      if (rising) score += 6;
     } else {
-      score += 8; // neutral baseline so inland scores aren't penalized
+      score += 4; // mild neutral baseline inland
     }
 
     // Pressure
-    if (pressureMb > 1015) score += 8;
-    else if (pressureMb < 1005) score -= 8;
+    if (pressureMb < 1005) score += 6;       // falling/low often triggers feeding
+    else if (pressureMb > 1020) score -= 6;  // high & bluebird tends to slow it
+    else if (pressureMb >= 1012) score += 3;
 
     // Moon
-    if (isFullMoon) score += 10;
+    if (isFullMoon) score += 6;
 
     const biteScore = Math.min(100, Math.max(0, Math.round(score)));
-    const biteLabel: 'Hot bite' | 'Active' | 'Slow' = biteScore > 75 ? 'Hot bite' : biteScore > 52 ? 'Active' : 'Slow';
-    return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip, lures: sp.lures };
+    const biteLabel: 'Hot bite' | 'Active' | 'Slow' = biteScore >= 80 ? 'Hot bite' : biteScore >= 56 ? 'Active' : 'Slow';
+    return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip, lures: sp.lures, popularity: POPULARITY[sp.name] ?? 5 };
   });
 }
 

@@ -366,13 +366,18 @@ function distMi(lat1: number, lon1: number, lat2: number, lon2: number): number 
 // Independent and resilient: returns null on any failure so it can never block
 // the rest of the dashboard.
 export async function fetchRiverData(lat: number, lon: number): Promise<RiverData[]> {
-  const d = 0.5; // ~34-mile search box around the point
-  const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
-  const json = await fetchJson(
-    `https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`
-  );
-  const series = json?.value?.timeSeries;
-  if (!Array.isArray(series) || series.length === 0) return [];
+  // Expand the search box until at least one active gauge appears, so inland
+  // spots far from any gauge still get the nearest one (the picker never vanishes).
+  let series: any[] | null = null;
+  for (const d of [0.5, 1.0, 2.0]) {
+    const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
+    const json = await fetchJson(
+      `https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`
+    );
+    const s = json?.value?.timeSeries;
+    if (Array.isArray(s) && s.length) { series = s; break; }
+  }
+  if (!series) return [];
 
   // Group the parameter time-series by gauge site
   const sites: Record<string, { name: string; lat: number; lon: number; params: Record<string, number> }> = {};
