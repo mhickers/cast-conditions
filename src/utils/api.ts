@@ -1,5 +1,6 @@
 import type { Conditions, HourlyForecast, TideData, RiverData, RiverDetail } from '../types';
 import { degToCompass, calcFishingScore } from './fishing';
+import { UnitSystem, convTemp, convWind, convWave, tempLabel, windLabel, waveLabel } from './units';
 
 // "Today" in the user's local timezone (toISOString alone gives UTC,
 // which flips to tomorrow for US users in the evening)
@@ -248,7 +249,7 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
   return { events: [], curve: [] };
 }
 
-export async function fetchAISummary(conditions: Partial<Conditions>, moonName: string, moonIllum: number, score: number, location: string, dateStr: string): Promise<string> {
+export async function fetchAISummary(conditions: Partial<Conditions>, moonName: string, moonIllum: number, score: number, location: string, dateStr: string, units: UnitSystem = 'imperial'): Promise<string> {
   const isFuture = !isToday(dateStr);
   const dayLabel = isFuture
     ? new Date(dateStr + 'T12:00:00').toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })
@@ -258,10 +259,10 @@ export async function fetchAISummary(conditions: Partial<Conditions>, moonName: 
   // never narrate values the dashboard shows as unavailable.
   const lines: string[] = [];
   if (conditions.conditionLabel) lines.push(`- Weather: ${conditions.conditionLabel}${conditions.precipChance != null ? `, ${conditions.precipChance}% chance of rain` : ''}`);
-  if (conditions.windMph != null) lines.push(`- Wind: ${conditions.windMph.toFixed(0)} mph${conditions.windDir ? ` from ${conditions.windDir}` : ''}`);
-  if (conditions.airTempF != null) lines.push(`- Air temp: ${conditions.airTempF}°F`);
-  if (conditions.waterTempF != null) lines.push(`- Water temp: ${conditions.waterTempF.toFixed(0)}°F`);
-  if (conditions.waveFt != null) lines.push(`- Wave height: ${conditions.waveFt} ft${conditions.wavePeriod ? `, period ${conditions.wavePeriod} sec` : ''}`);
+  if (conditions.windMph != null) lines.push(`- Wind: ${convWind(conditions.windMph, units).toFixed(0)} ${windLabel(units)}${conditions.windDir ? ` from ${conditions.windDir}` : ''}`);
+  if (conditions.airTempF != null) lines.push(`- Air temp: ${Math.round(convTemp(conditions.airTempF, units))}${tempLabel(units)}`);
+  if (conditions.waterTempF != null) lines.push(`- Water temp: ${convTemp(conditions.waterTempF, units).toFixed(0)}${tempLabel(units)}`);
+  if (conditions.waveFt != null) lines.push(`- Wave height: ${convWave(conditions.waveFt, units).toFixed(1)} ${waveLabel(units)}${conditions.wavePeriod ? `, period ${conditions.wavePeriod} sec` : ''}`);
   if (conditions.pressureMb != null) {
     const t = conditions.pressureTrend;
     lines.push(`- Barometric pressure: ${conditions.pressureMb} mb${t != null ? ` (${t <= -2 ? 'falling — front approaching' : t >= 3 ? 'rising quickly' : 'steady'})` : ''}`);
@@ -279,6 +280,7 @@ STRICT RULES:
 - Reference ONLY the conditions listed above. If tide is not listed, do not mention tides at all. Same for waves, water temp, or any other missing value.
 - Your tone must match the score: below 5 is a tough day, 5-6.5 is mixed, above 6.5 is promising. Never call a below-6 day "great" or "solid".
 - Never state size limits, slot limits, bag limits, or season open/close dates — these change often and vary by state, and a wrong number misleads anglers. If harvest comes up, just say to check current local regulations.
+- All measurements above are already in ${units} units; report them exactly as given and never convert to other units.
 - Keep it to 2-3 sentences max. Warm and helpful like a local guide. Plain text only — no markdown, no asterisks, no bullet points.`;
 
   // Calls our own serverless function (/api/summary) which holds the API key

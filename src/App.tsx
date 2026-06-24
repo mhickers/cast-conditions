@@ -13,6 +13,7 @@ import {
 import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData, RiverDetail } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass, calcWaterClarity } from './utils/fishing';
 import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchRiverDetail, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
+import { UnitSystem, convTemp, convWind, convWave, tempLabel, windLabel, waveLabel, fmtTemp, fmtWind, fmtWave, defaultUnitsFromLabel } from './utils/units';
 import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
@@ -137,7 +138,23 @@ export default function App() {
         || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     } catch { return 'light'; }
   });
+  const [units, setUnits] = useState<UnitSystem>(() => {
+    try { const s = localStorage.getItem('castUnits'); if (s === 'imperial' || s === 'metric') return s; } catch {}
+    return 'imperial';
+  });
+  useEffect(() => { try { localStorage.setItem('castUnits', units); } catch {} }, [units]);
+  const unitsManual = useRef<boolean>((() => { try { return localStorage.getItem('castUnitsManual') === '1'; } catch { return false; } })());
+  const toggleUnits = () => {
+    unitsManual.current = true;
+    try { localStorage.setItem('castUnitsManual', '1'); } catch {}
+    setUnits(u => (u === 'imperial' ? 'metric' : 'imperial'));
+  };
   const [spotMsg, setSpotMsg] = useState('');
+  // Default units from detected country on location change, unless the user chose manually.
+  useEffect(() => {
+    if (unitsManual.current || !locationLabel) return;
+    setUnits(defaultUnitsFromLabel(locationLabel));
+  }, [locationLabel]);
   const [stationChecked, setStationChecked] = useState(false);
   const [openSpecies, setOpenSpecies] = useState<Set<number>>(() => new Set());
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -153,11 +170,15 @@ export default function App() {
   const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
 
-  // Coastal spots sit within a few miles of a NOAA tide station; an inland
-  // lake near the coast can still have one 15-25 mi away, which used to make
-  // it read as coastal (showing saltwater species). Treat a distant station
-  // as inland so freshwater spots get freshwater species + river/lake data.
-  const isInland = stationChecked && (!tideStation || tideStation.distanceMi > 12);
+  // Coastal/saltwater requires BOTH a nearby NOAA tide station AND real marine
+  // data from Open-Meteo (wave or SST). Tidal rivers have inland tide stations
+  // but no ocean marine grid, so this flips inland tidal spots (e.g. Havertown,
+  // PA) to freshwater. A very close station (<=6 mi) counts as coastal even if
+  // marine is momentarily down. During load we assume coastal to avoid flicker.
+  const hasMarine = conditions.waveFt != null || conditions.sstF != null;
+  const stationClose = !!tideStation && tideStation.distanceMi <= 6;
+  const stationNear = !!tideStation && tideStation.distanceMi <= 12;
+  const isInland = stationChecked && !(stationClose || (stationNear && (hasMarine || loading)));
   const isSaved = spots.some(s => s.label === locationLabel);
 
   const getStationOverride = (lbl: string): NearestStation | null => {
@@ -290,7 +311,7 @@ export default function App() {
         tideDirection: extra ? (tideAt(extra.tideData.curve, refTime)?.dir ?? null) : null,
       };
       const { score: sc } = calcFishingScore(snapshot);
-      fetchAISummary(snapshot, dayMoon.name, dayMoon.illum, sc, lbl, dateStr).then(s => {
+      fetchAISummary(snapshot, dayMoon.name, dayMoon.illum, sc, lbl, dateStr, units).then(s => {
         if (seq === loadSeq.current) setAiSummary(s);
       }).catch(() => {});
 
@@ -317,7 +338,7 @@ export default function App() {
         }
       }
     }
-  }, []);
+  }, [units]);
 
   useEffect(() => { loadData(lon, lat, locationLabel, selectedDate, selectedTime); }, []); // eslint-disable-line
 
@@ -715,6 +736,7 @@ export default function App() {
           <div className="header-right">
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
+            <button className="btn-icon" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>
             <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
             <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh"><RefreshCw size={15} /></button>
           </div>
@@ -835,8 +857,8 @@ export default function App() {
           <h3 className="section-label">Atmosphere{timeContext}</h3>
           <div className="stat-grid-4">
             <StatCard icon={condIcon(conditions.conditionLabel)} value={conditions.conditionLabel ?? '--'} unit={conditions.precipChance != null ? `${conditions.precipChance}% rain` : ''} label="Conditions" />
-            <StatCard icon={<Wind size={18} />} value={conditions.windMph ? Math.round(conditions.windMph).toString() : '--'} unit={conditions.windDir ? `mph · ${conditions.windDir}` : 'mph'} label="Wind" sub={conditions.windGustMph != null ? `gusts to ${Math.round(conditions.windGustMph)} mph` : undefined} />
-            <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF?.toString() ?? '--'} unit="°F" label="Air temp" sub={dayTemps ? `H ${dayTemps.hi}° · L ${dayTemps.lo}°` : undefined} />
+            <StatCard icon={<Wind size={18} />} value={conditions.windMph != null ? Math.round(convWind(conditions.windMph, units)).toString() : '--'} unit={conditions.windDir ? `${windLabel(units)} · ${conditions.windDir}` : windLabel(units)} label="Wind" sub={conditions.windGustMph != null ? `gusts to ${fmtWind(conditions.windGustMph, units)}` : undefined} />
+            <StatCard icon={<Thermometer size={18} />} value={conditions.airTempF != null ? Math.round(convTemp(conditions.airTempF, units)).toString() : '--'} unit={tempLabel(units)} label="Air temp" sub={dayTemps ? `H ${Math.round(convTemp(dayTemps.hi, units))}° · L ${Math.round(convTemp(dayTemps.lo, units))}°` : undefined} />
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
 
@@ -867,10 +889,10 @@ export default function App() {
                 return (
                   <>
                     <div className={`wind-consensus wind-conf-${windChart.conf}`}>
-                      <strong>{confText}</strong> · {windChart.overallMin}–{windChart.overallMax} mph{windChart.conf === 'low' ? ' · lower confidence' : ''}
+                      <strong>{confText}</strong> · {Math.round(convWind(windChart.overallMin, units))}–{Math.round(convWind(windChart.overallMax, units))} {windLabel(units)}{windChart.conf === 'low' ? ' · lower confidence' : ''}
                     </div>
                     <div className="chart-block">
-                      <div className="chart-yaxis"><span>{windChart.yMax} mph</span><span>{Math.round(windChart.yMax / 2)}</span><span>0</span></div>
+                      <div className="chart-yaxis"><span>{Math.round(convWind(windChart.yMax, units))} {windLabel(units)}</span><span>{Math.round(convWind(windChart.yMax / 2, units))}</span><span>0</span></div>
                       <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
                         {bandPath && <path d={bandPath} className="wind-band" />}
                         {showWindModels && windModels && windModels.models.map((m, mi) => (
@@ -884,7 +906,7 @@ export default function App() {
                         <div className="wind-arrows" aria-hidden="true">
                           {arrowIdx.map(i => {
                             const p = pts[i]!;
-                            return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${Math.round(p.mean)} mph${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
+                            return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${fmtWind(p.mean, units)}${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
                           })}
                         </div>
                         <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
@@ -942,9 +964,9 @@ export default function App() {
                 <div className="fc-time">{s.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 <div className="fc-icon">{condIcon(s.cond)}</div>
                 {s.precip != null && s.precip > 0 && <div className="fc-precip"><Droplet size={10} style={{ verticalAlign: '-1px' }} /> {s.precip}%</div>}
-                {s.temp != null && <div className="fc-val">{s.temp}°F</div>}
-                <div className="fc-sub">{s.wind} mph {s.dir}</div>
-                {s.wave != null && <div className="fc-sub">{s.wave.toFixed(1)} ft waves</div>}
+                {s.temp != null && <div className="fc-val">{fmtTemp(s.temp, units)}</div>}
+                <div className="fc-sub">{fmtWind(s.wind, units)} {s.dir}</div>
+                {s.wave != null && <div className="fc-sub">{fmtWave(s.wave, units)} waves</div>}
               </div>
             ))}
             {forecastSlots.length === 0 && <span className="muted">Loading forecast...</span>}
@@ -1005,7 +1027,7 @@ export default function App() {
             {riverStation ? (
               <>
                 <div className="stat-grid-3">
-                  <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? conditions.waterTempF.toFixed(1) : '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest)'} />
+                  <StatCard icon={<Droplets size={18} />} value={conditions.waterTempF != null ? convTemp(conditions.waterTempF, units).toFixed(1) : '--'} unit={tempLabel(units)} label={isNow ? 'Water temp' : 'Water temp (latest)'} />
                   <StatCard icon={<Waves size={18} />} value={riverStation.flowCfs != null ? Math.round(riverStation.flowCfs).toLocaleString() : '--'} unit="cfs" label="Flow (discharge)"
                     sub={riverDetail ? ([
                       riverDetail.flowTrend ? `${riverDetail.flowTrend === 'rising' ? '▲' : riverDetail.flowTrend === 'falling' ? '▼' : '→'}${riverDetail.flowChangePct != null && riverDetail.flowTrend !== 'steady' ? ` ${riverDetail.flowChangePct > 0 ? '+' : ''}${riverDetail.flowChangePct}%` : ''}` : null,
@@ -1061,11 +1083,10 @@ export default function App() {
             <section className="section">
               <h3 className="section-label">Water conditions{timeContext}</h3>
               <div className="stat-grid-auto">
-                <StatCard icon={<Droplets size={18} />} value={(conditions.waterTempF ?? conditions.sstF)?.toFixed(1) ?? '--'} unit="°F" label={isNow ? 'Water temp' : 'Water temp (latest reading)'} sub={conditions.waterTempF == null && conditions.sstF != null ? 'satellite SST' : undefined} />
-                <StatCard icon={<Waves size={18} />} value={conditions.waveFt?.toFixed(1) ?? '--'} unit="ft" label="Wave height" />
+                <StatCard icon={<Droplets size={18} />} value={(conditions.waterTempF ?? conditions.sstF) != null ? convTemp((conditions.waterTempF ?? conditions.sstF)!, units).toFixed(1) : '--'} unit={tempLabel(units)} label={isNow ? 'Water temp' : 'Water temp (latest reading)'} sub={conditions.waterTempF == null && conditions.sstF != null ? 'satellite SST' : undefined} />
+                <StatCard icon={<Waves size={18} />} value={conditions.waveFt != null ? convWave(conditions.waveFt, units).toFixed(1) : '--'} unit={waveLabel(units)} label="Wave height" />
                 <StatCard icon={<Timer size={18} />} value={conditions.wavePeriod?.toString() ?? '--'} unit="sec" label="Wave period" />
                 <StatCard icon={<Navigation size={18} />} value={conditions.currentKn != null ? conditions.currentKn.toFixed(1) : '--'} unit={conditions.currentDir ? `kn · ${conditions.currentDir}` : 'kn'} label="Current" />
-                <StatCard icon={<ArrowUpDown size={18} />} value={conditions.tideNow != null ? conditions.tideNow.toFixed(1) : '--'} unit={conditions.tideDirection ? `ft · ${conditions.tideDirection}` : 'ft'} label={isNow ? 'Tide now' : `Tide at ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`} />
               </div>
             </section>
             <section className="section">
@@ -1185,6 +1206,7 @@ export default function App() {
           conditions={conditions}
           isInland={isInland}
           waterClarity={waterClarity.level}
+          units={units}
         />
 
         {weekScores.length > 0 && (
@@ -1239,6 +1261,7 @@ export default function App() {
           conditions={conditions}
           score={score}
           moonName={moon.name}
+          units={units}
         />
 
         <AlertSignup locationLabel={locationLabel} lat={lat} lon={lon} />

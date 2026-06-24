@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Trash2, Plus } from 'lucide-react';
 import type { Conditions } from './types';
+import { UnitSystem, fmtWind, fmtTemp } from './utils/units';
 
 interface LogEntry {
   id: string;
@@ -27,11 +28,12 @@ interface Props {
   conditions: Partial<Conditions>;
   score: number;
   moonName: string;
+  units: UnitSystem;
 }
 
 const LOG_KEY = 'personalCatchLog';
 
-export default function CatchLog({ speciesOptions, locationLabel, conditions, score, moonName }: Props) {
+export default function CatchLog({ speciesOptions, locationLabel, conditions, score, moonName, units }: Props) {
   const [entries, setEntries] = useState<LogEntry[]>(() => {
     try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { return []; }
   });
@@ -89,8 +91,8 @@ export default function CatchLog({ speciesOptions, locationLabel, conditions, sc
   const fmtSnapshot = (s: LogEntry['snapshot']) => {
     const bits: string[] = [];
     if (s.conditionLabel) bits.push(s.conditionLabel);
-    if (s.windMph != null) bits.push(`${s.windMph} mph wind`);
-    if (s.waterTempF != null) bits.push(`${s.waterTempF}°F water`);
+    if (s.windMph != null) bits.push(`${fmtWind(s.windMph, units)} wind`);
+    if (s.waterTempF != null) bits.push(`${fmtTemp(s.waterTempF, units)} water`);
     if (s.tideDirection) bits.push(`${s.tideDirection} tide`);
     bits.push(s.moonName.toLowerCase());
     bits.push(`score ${s.score}/10`);

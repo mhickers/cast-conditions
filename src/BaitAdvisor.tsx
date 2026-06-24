@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Anchor, RefreshCw } from 'lucide-react';
 import type { Conditions } from './types';
+import { UnitSystem, fmtWind, fmtTemp } from './utils/units';
 
 // Normalize the model's report text into clean paragraphs: strip stray bullet/
 // asterisk markers, collapse runs of blank lines, and split on blank lines so
@@ -24,9 +25,10 @@ interface Props {
   conditions: Partial<Conditions>;
   isInland: boolean;
   waterClarity?: string;
+  units: UnitSystem;
 }
 
-export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland, waterClarity }: Props) {
+export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland, waterClarity, units }: Props) {
   const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,8 +42,8 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
     const dateLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const condBits: string[] = [];
     if (conditions.conditionLabel) condBits.push(conditions.conditionLabel.toLowerCase());
-    if (conditions.windMph != null) condBits.push(`${Math.round(conditions.windMph)} mph wind`);
-    if (conditions.waterTempF != null) condBits.push(`${conditions.waterTempF.toFixed(0)}°F water`);
+    if (conditions.windMph != null) condBits.push(`${fmtWind(conditions.windMph, units)} wind`);
+    if (conditions.waterTempF != null) condBits.push(`${fmtTemp(conditions.waterTempF, units)} water`);
     if (conditions.pressureMb != null) condBits.push(`${conditions.pressureMb} mb pressure`);
     if (waterClarity) condBits.push(`${waterClarity.toLowerCase()} water clarity`);
 
