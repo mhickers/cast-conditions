@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Anchor, RefreshCw } from 'lucide-react';
 import type { Conditions } from './types';
 import { UnitSystem, fmtWind, fmtTemp } from './utils/units';
+import { API_BASE } from './utils/api';
 
 // Normalize the model's report text into clean paragraphs: strip stray bullet/
 // asterisk markers, collapse runs of blank lines, and split on blank lines so
@@ -48,7 +49,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
     if (waterClarity) condBits.push(`${waterClarity.toLowerCase()} water clarity`);
 
     try {
-      const res = await fetch('/api/bait', {
+      const res = await fetch(`${API_BASE}/api/bait`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

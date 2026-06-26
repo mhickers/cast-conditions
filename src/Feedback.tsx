@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from './supabase';
+import { API_BASE } from './utils/api';
 import './Feedback.css';
 
 const CATEGORIES = ['Bug report', 'Feature request', 'Data issue', 'General feedback'];
@@ -25,7 +26,7 @@ export default function Feedback() {
       });
       if (err) throw err;
       // Fire-and-forget owner notification — never blocks or fails the user flow
-      fetch('/api/notify', {
+      fetch(`${API_BASE}/api/notify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'feedback', category, message: message.trim(), email: email.trim() || null }),

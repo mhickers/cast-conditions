@@ -1,6 +1,12 @@
 import type { Conditions, HourlyForecast, TideData, RiverData, RiverDetail } from '../types';
 import { degToCompass, calcFishingScore } from './fishing';
 import { UnitSystem, convTemp, convWind, convWave, tempLabel, windLabel, waveLabel } from './units';
+import { isNative } from '../native';
+
+// Inside the packaged native app there is no same-origin server, so '/api/*'
+// serverless functions (AI summary, bait, notify) must be called on the live
+// deployed origin. On web this stays empty so calls remain same-origin.
+export const API_BASE = isNative() ? 'https://fishcondish.com' : '';
 
 // "Today" in the user's local timezone (toISOString alone gives UTC,
 // which flips to tomorrow for US users in the evening)
@@ -18,9 +24,11 @@ function nextDay(dateStr: string): string {
 }
 
 // Route Open-Meteo requests through our own same-origin /api/weather proxy in
-// production, so ad blockers (which block the open-meteo.com domains directly)
-// can't break weather data. In local dev, hit Open-Meteo directly.
+// production web, so ad blockers (which block the open-meteo.com domains
+// directly) can't break weather data. In the native app there is no such
+// proxy server AND no ad blockers, so hit Open-Meteo directly (same as dev).
 function wx(url: string): string {
+  if (isNative()) return url;
   return process.env.NODE_ENV === 'production' ? `/api/weather?u=${encodeURIComponent(url)}` : url;
 }
 
@@ -288,7 +296,7 @@ STRICT RULES:
   let lastError = '';
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const res = await fetch('/api/summary', {
+      const res = await fetch(`${API_BASE}/api/summary`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
@@ -311,7 +319,7 @@ STRICT RULES:
 // Generic AI advice call (used by the bait & lure advisor)
 export async function fetchAIAdvice(prompt: string): Promise<string | null> {
   try {
-    const res = await fetch('/api/summary', {
+    const res = await fetch(`${API_BASE}/api/summary`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
