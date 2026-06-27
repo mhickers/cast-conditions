@@ -62,7 +62,7 @@ Weigh any report intel against the current conditions above. If conditions now d
 
 HONESTY ABOUT COVERAGE: If you cannot find recent, area-specific reports, do NOT invent or imply that there is current report activity. In that case, base the advice on well-established seasonal patterns for this exact area and month, keep it appropriately general, and never fabricate a "hot bite" or a specific recent catch. Accurate-but-general beats confident-but-wrong.
 
-Never state specific size limits, slot limits, bag limits, or season open/close dates for any species — these change often, vary by state, and a wrong number (like an outdated striped bass slot) misleads anglers. If harvest rules might matter, simply remind the reader to check current local regulations before keeping fish. Give the full bait and lure advice regardless, since people fish catch-and-release and plan ahead.`;
+Never state ANY fishing regulation as fact. This includes size limits, slot limits, bag limits, and season open/close dates, AND gear or method rules — hook-type requirements (e.g. "circle hooks required"), legal rigs, line restrictions, or anything described as "required by law" or "illegal." These vary by state and change often, and a wrong rule misleads anglers. You may recommend baits, lures, hooks, and techniques on their own merits, but never claim any gear, method, or harvest practice is legally required or prohibited. If regulations might matter, simply remind the reader to check current local rules. Give the full bait and lure advice regardless, since people fish catch-and-release and plan ahead.`;
 
   const detailedPrompt = `${grounding}
 

@@ -287,7 +287,7 @@ ${lines.join('\n')}
 STRICT RULES:
 - Reference ONLY the conditions listed above. If tide is not listed, do not mention tides at all. Same for waves, water temp, or any other missing value.
 - Your tone must match the score: below 5 is a tough day, 5-6.5 is mixed, above 6.5 is promising. Never call a below-6 day "great" or "solid".
-- Never state size limits, slot limits, bag limits, or season open/close dates — these change often and vary by state, and a wrong number misleads anglers. If harvest comes up, just say to check current local regulations.
+- Never state any fishing regulation as fact — size, slot, or bag limits, season open/close dates, or gear/method rules like required hook types or legal rigs. These vary by state and change often, and a wrong rule misleads anglers. If regulations come up, just say to check current local rules.
 - All measurements above are already in ${units} units; report them exactly as given and never convert to other units.
 - Keep it to 2-3 sentences max. Warm and helpful like a local guide. Plain text only — no markdown, no asterisks, no bullet points.`;
 
