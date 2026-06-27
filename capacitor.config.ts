@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Fish Condish',
   webDir: 'build', // Create React App build output
   ios: {
-    contentInset: 'always',
+    contentInset: 'never',
   },
   plugins: {
     SplashScreen: {

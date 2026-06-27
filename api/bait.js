@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
 
 Requested species: ${species}.
 
-First, use web search to find the MOST RECENT fishing reports for this area — ideally from the last 1-3 weeks. Look at local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts. Search for things like "${location.split(',')[0]} fishing report", "${species.split(',')[0]} ${location.split(',')[0]}", and the same with the current month. Prioritize the newest reports; ignore reports more than ~2 months old unless nothing newer exists.
+Silently use web search to find the MOST RECENT fishing reports for this area — ideally from the last 1-3 weeks. Look at local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts. Search for things like "${location.split(',')[0]} fishing report", "${species.split(',')[0]} ${location.split(',')[0]}", and the same with the current month. Prioritize the newest reports; ignore reports more than ~2 months old unless nothing newer exists. Do NOT describe your search, your reasoning, the report names or dates, or what you found — that research must only inform the advice below and must never appear in your written answer.
 
 Weigh any report intel against the current conditions above. If conditions now differ from when a report was written (e.g. a cold front has since moved through, or water temps have shifted), adjust the advice accordingly rather than repeating the report verbatim.
 
@@ -66,7 +66,7 @@ Never state specific size limits, slot limits, bag limits, or season open/close 
 
   const detailedPrompt = `${grounding}
 
-Then write a detailed report for ${species} ONLY at this location, as plain text. Use these exact labels, each on its own line, with a blank line between them:
+Then write a detailed report for ${species} ONLY at this location, as plain text. Begin your answer directly with the "Baits & lures:" label — nothing before it. Use these exact labels, each on its own line, with a blank line between them:
 
 Baits & lures: the specific baits, lure types, sizes, and colors producing now.
 Technique: how to present them — retrieve, depth, rigging, and speed.
@@ -74,6 +74,7 @@ Where to fish: the structure and water to target on this kind of waterbody.
 Timing & conditions: the best time of day, ${isInland ? 'water temp, and weather' : 'tide stage, time of day, and weather'} for this date.
 
 STRICT RULES:
+- Output ONLY the four labeled sections. No preamble, no introduction, no closing line, and no commentary about your search, sources, report names, dates, or reasoning — anywhere in the answer.
 - Cover ONLY ${species}. Never mention other species, regulations, or slot limits.
 - Keep the whole report under ~160 words. Plain text only — no markdown, asterisks, bullets, or headers other than the four labels above.
 - Work recent report intel in where you have it; otherwise rely on seasonal patterns for this exact area and month.`;
@@ -89,7 +90,7 @@ Example of the style: "Rainbow trout: PMDs and caddis coming off — try a size 
 STRICT RULES:
 - Cover ONLY the requested species (${species}). Never mention other species, their regulations, or slot limits.
 - Max 40 words per species line.
-- Plain text only — no markdown, no asterisks, no bullets, no headers, no intro or closing sentence.
+- Plain text only — no markdown, no asterisks, no bullets, no headers, no intro or closing sentence, and no commentary about your search, sources, or reasoning. Begin directly with the first species name.
 - If recent reports mention the requested species, work that intel into the line; if not, rely on seasonal patterns for this exact area and month.`;
 
   const prompt = detailed ? detailedPrompt : summaryPrompt;

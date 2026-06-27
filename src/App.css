@@ -19,7 +19,7 @@
 body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); color: var(--text); }
 
 /* Header */
-.header { background: var(--navy); color: white; padding: 0 1.5rem; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid var(--ocean); }
+.header { background: var(--navy); color: white; padding: env(safe-area-inset-top) 1.5rem 0; position: sticky; top: 0; z-index: 100; border-bottom: 3px solid var(--ocean); }
 .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; height: 56px; gap: 16px; }
 .logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .logo-icon { font-size: 22px; }
@@ -152,7 +152,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
   .search-primary { flex-wrap: wrap; }
   .search-primary .search-input-lg { flex: 1 1 60%; min-width: 0; }
   .header-right .updated-txt { display: none; }
-  .header { padding: 0 0.85rem; }
+  .header { padding: env(safe-area-inset-top) 0.85rem 0; }
   .header-inner { gap: 10px; }
   .header-right { gap: 7px; }
   .btn-icon { width: 30px; height: 30px; font-size: 13px; }
