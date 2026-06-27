@@ -131,6 +131,25 @@ const POPULARITY: Record<string, number> = {
   'Atlantic croaker': 4, 'Spadefish': 3, 'Spot': 3,
 };
 
+// Region-specific popularity overrides. The global POPULARITY map reflects how
+// marquee a species is overall, but a fish can be a top target in one region and
+// an incidental catch in another. We override popularity ONLY where the global
+// number misranks the local "hot bite" cards — this never changes which species
+// are valid for a region (red drum stays a valid mid-Atlantic entry), only how
+// it's ranked among the six cards shown. Example: red drum is a marquee fish in
+// the Southeast and Gulf, but is seldom targeted in the mid-Atlantic, so its
+// global 9 shouldn't float it into Margate's top six.
+// To tune a region, add `region: { 'Species': n }` entries below.
+const REGION_POPULARITY: Record<string, Record<string, number>> = {
+  midatlantic: {
+    'Red drum': 4,
+  },
+};
+
+function popularityFor(region: string, name: string): number {
+  return REGION_POPULARITY[region]?.[name] ?? POPULARITY[name] ?? 5;
+}
+
 export function getSpeciesForLocation(
   lat: number,
   lon: number,
@@ -187,7 +206,7 @@ export function getSpeciesForLocation(
 
     const biteScore = Math.min(100, Math.max(0, Math.round(score)));
     const biteLabel: 'Hot bite' | 'Active' | 'Slow' = biteScore >= 80 ? 'Hot bite' : biteScore >= 56 ? 'Active' : 'Slow';
-    return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip, lures: sp.lures, popularity: POPULARITY[sp.name] ?? 5 };
+    return { name: sp.name, icon: sp.icon, biteScore, biteLabel, tip: sp.tip, lures: sp.lures, popularity: popularityFor(region, sp.name) };
   });
 }
 
