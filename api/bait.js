@@ -38,9 +38,9 @@ module.exports = async (req, res) => {
   const supa = supaUrl && serviceKey ? createClient(supaUrl, serviceKey) : null;
   if (supa) {
     try {
-      const { data: hit } = await supa.from('bait_cache').select('advice, created_at').eq('key', cacheKey).maybeSingle();
+      const { data: hit } = await supa.from('bait_cache').select('advice, sources, created_at').eq('key', cacheKey).maybeSingle();
       if (hit && Date.now() - new Date(hit.created_at).getTime() < 12 * 3600 * 1000) {
-        return res.status(200).json({ text: hit.advice, cached: true });
+        return res.status(200).json({ text: hit.advice, sources: Array.isArray(hit.sources) ? hit.sources : [], cached: true });
       }
     } catch {}
   }
@@ -49,7 +49,11 @@ module.exports = async (req, res) => {
 
 Requested species: ${species}.
 
-First, use web search to find RECENT fishing reports for this area — local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts from the last few weeks. Search for things like "${location.split(',')[0]} fishing report" and "${species.split(',')[0]} ${location.split(',')[0]}".
+First, use web search to find the MOST RECENT fishing reports for this area — ideally from the last 1-3 weeks. Look at local bait and tackle shop report pages, regional fishing report sites${isInland ? ', fly shop reports' : ''}, and public forum posts. Search for things like "${location.split(',')[0]} fishing report", "${species.split(',')[0]} ${location.split(',')[0]}", and the same with the current month. Prioritize the newest reports; ignore reports more than ~2 months old unless nothing newer exists.
+
+Weigh any report intel against the current conditions above. If conditions now differ from when a report was written (e.g. a cold front has since moved through, or water temps have shifted), adjust the advice accordingly rather than repeating the report verbatim.
+
+HONESTY ABOUT COVERAGE: If you cannot find recent, area-specific reports, do NOT invent or imply that there is current report activity. In that case, base the advice on well-established seasonal patterns for this exact area and month, keep it appropriately general, and never fabricate a "hot bite" or a specific recent catch. Accurate-but-general beats confident-but-wrong.
 
 Never state specific size limits, slot limits, bag limits, or season open/close dates for any species — these change often, vary by state, and a wrong number (like an outdated striped bass slot) misleads anglers. If harvest rules might matter, simply remind the reader to check current local regulations before keeping fish. Give the full bait and lure advice regardless, since people fish catch-and-release and plan ahead.`;
 
@@ -105,18 +109,49 @@ STRICT RULES:
       return res.status(502).json({ error: 'AI advisor temporarily unavailable' });
     }
 
-    const text = (data.content || [])
+    const content = data.content || [];
+    const text = content
       .filter((b) => b.type === 'text')
       .map((b) => b.text)
       .join('\n')
       .replace(/\*/g, '')
       .trim();
 
+    // Pull the real reports out of the response so the UI can show dated, linkable
+    // sources. Two tiers: every result the search surfaced ("scanned"), and the
+    // subset the model actually cited in its answer ("cited"). Showing real URLs
+    // also makes hallucinated reports much harder — the model can't link to a
+    // report that the search never returned.
+    const scanned = [];
+    const seenUrls = new Set();
+    const citedUrls = new Set();
+    for (const b of content) {
+      if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+        for (const rsl of b.content) {
+          if (rsl && rsl.type === 'web_search_result' && rsl.url && !seenUrls.has(rsl.url)) {
+            seenUrls.add(rsl.url);
+            scanned.push({ url: rsl.url, title: rsl.title || rsl.url, age: rsl.page_age || null });
+          }
+        }
+      }
+      if (b.type === 'text' && Array.isArray(b.citations)) {
+        for (const c of b.citations) {
+          if (c && c.url) citedUrls.add(c.url);
+        }
+      }
+    }
+    // Cited reports first (they directly back the advice), then the rest of the
+    // scanned reports, capped so the UI stays tidy.
+    const sources = [
+      ...scanned.filter((s) => citedUrls.has(s.url)).map((s) => ({ ...s, cited: true })),
+      ...scanned.filter((s) => !citedUrls.has(s.url)).map((s) => ({ ...s, cited: false })),
+    ].slice(0, 6);
+
     if (!text) return res.status(502).json({ error: 'Empty response' });
     if (supa) {
-      try { await supa.from('bait_cache').upsert({ key: cacheKey, advice: text, created_at: new Date().toISOString() }); } catch {}
+      try { await supa.from('bait_cache').upsert({ key: cacheKey, advice: text, sources, created_at: new Date().toISOString() }); } catch {}
     }
-    return res.status(200).json({ text });
+    return res.status(200).json({ text, sources });
   } catch {
     return res.status(500).json({ error: 'Request failed' });
   }

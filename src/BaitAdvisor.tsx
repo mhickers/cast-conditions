@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Anchor, RefreshCw } from 'lucide-react';
+import { Anchor, RefreshCw, ExternalLink } from 'lucide-react';
 import type { Conditions } from './types';
 import { UnitSystem, fmtWind, fmtTemp } from './utils/units';
 import { API_BASE } from './utils/api';
@@ -17,6 +17,15 @@ function cleanAdvice(text: string): string[] {
     .filter(Boolean);
 }
 
+// A real report the search surfaced. `cited` means the model's advice actually
+// leaned on it (vs. just appearing in the scan) — we mark those so the user
+// can see the advice is grounded in something real.
+interface Source {
+  url: string;
+  title: string;
+  age?: string | null;
+  cited?: boolean;
+}
 
 interface Props {
   locationLabel: string;
@@ -32,6 +41,8 @@ interface Props {
 export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland, waterClarity, units }: Props) {
   const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
+  const [sources, setSources] = useState<Source[]>([]);
+  const [scanned, setScanned] = useState(false); // a scan has completed at least once this render
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -39,6 +50,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
     setLoading(true);
     setError('');
     setAdvice('');
+    setSources([]);
     const speciesStr = selected === 'top' ? topSpecies.join(', ') : selected;
     const dateLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const condBits: string[] = [];
@@ -64,6 +76,8 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.text) throw new Error(data?.error || 'failed');
       setAdvice(data.text);
+      setSources(Array.isArray(data.sources) ? data.sources : []);
+      setScanned(true);
     } catch (e: any) {
       setError(e?.message === 'Too many requests — try again later'
         ? 'You\u2019ve hit the hourly limit for report scans — try again in a bit.'
@@ -74,20 +88,23 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
 
   return (
     <section className="section">
-      <h3 className="section-label">Bait & lure advisor</h3>
+      <h3 className="section-label">Local Bite Report</h3>
       <div className="card">
+        <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', margin: '0 0 6px' }}>
+          Scans recent local fishing reports for what&rsquo;s working now.
+        </p>
         <p className="alert-desc">
-          Scans recent public fishing reports near <strong>{locationLabel}</strong> — bait shop report pages,
+          Pulls recent public reports near <strong>{locationLabel}</strong> — bait shop report pages,
           regional report sites, and forums — and blends them with seasonal patterns for this date.
           Leave it on <strong>Top species</strong> for a quick rundown, or pick one species for a full breakdown of baits, lures, technique, where to fish, and timing.
         </p>
         <div className="add-spot-row">
-          <select className="search-input" value={selected} onChange={e => setSelected(e.target.value)} aria-label="Species for bait advice">
+          <select className="search-input" value={selected} onChange={e => setSelected(e.target.value)} aria-label="Species for bite report">
             <option value="top">Top species here ({topSpecies.slice(0, 2).join(', ')}...)</option>
             {speciesOptions.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <button className="btn" onClick={getAdvice} disabled={loading}>
-            {loading ? 'Scanning...' : 'Get suggestions'}
+            {loading ? 'Scanning...' : 'Get report'}
           </button>
         </div>
 
@@ -99,6 +116,37 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
             <div className="bait-advice-wrap">
               {cleanAdvice(advice).map((p, i) => <p key={i} className="bait-advice">{p}</p>)}
             </div>
+
+            {sources.length > 0 ? (
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                <div className="muted" style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginBottom: 7 }}>
+                  Reports scanned ({sources.length})
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {sources.map((s, i) => (
+                    <a
+                      key={i}
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: 12.5, lineHeight: 1.4, color: 'var(--ocean)', textDecoration: 'none', display: 'flex', alignItems: 'flex-start', gap: 5, wordBreak: 'break-word' }}
+                    >
+                      <ExternalLink size={12} style={{ flexShrink: 0, marginTop: 2, opacity: 0.7 }} />
+                      <span>
+                        {s.title}
+                        {s.cited && <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}> · cited</span>}
+                        {s.age && <span style={{ color: 'var(--text-muted)' }}> · {s.age}</span>}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : scanned ? (
+              <p className="muted" style={{ marginTop: 12, fontSize: 12.5, lineHeight: 1.5 }}>
+                No recent local reports surfaced for this area — this rundown leans on seasonal patterns and the current conditions, so treat it as a starting point rather than a live bite report.
+              </p>
+            ) : null}
+
             <div className="bait-footer">
               <span className="bait-source-note"><Anchor size={11} style={{ verticalAlign: '-1px' }} /> Aggregated from recent public reports + seasonal patterns — verify with your local shop.</span>
               <button className="btn btn-secondary btn-sm" onClick={getAdvice}><RefreshCw size={12} style={{ verticalAlign: '-1px' }} /> Refresh</button>
