@@ -5,6 +5,13 @@ const LIMIT = 20; // requests per hour per IP
 const WINDOW = 60 * 60 * 1000;
 
 module.exports = async (req, res) => {
+  // CORS: the native app calls this cross-origin from capacitor://localhost.
+  // These endpoints carry no cookies/credentials, so a wildcard origin is safe.
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(204).end();
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
