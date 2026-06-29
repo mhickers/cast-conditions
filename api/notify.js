@@ -10,8 +10,8 @@ const SITE = 'https://fishcondish.com';
 
 // Sender for outbound email. Defaults to Resend's shared address so mail keeps
 // working before domain verification; set MAIL_FROM in Vercel once fishcondish.com
-// is verified in Resend (e.g. 'Fish Condish <alerts@fishcondish.com>').
-const MAIL_FROM = process.env.MAIL_FROM || 'Fish Condish <onboarding@resend.dev>';
+// is verified in Resend (e.g. 'FishCondish <alerts@fishcondish.com>').
+const MAIL_FROM = process.env.MAIL_FROM || 'FishCondish <onboarding@resend.dev>';
 
 // Basic HTML-escape + length cap so user-supplied text can't inject markup
 const esc = (s) =>

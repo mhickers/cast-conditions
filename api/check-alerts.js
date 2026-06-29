@@ -4,7 +4,7 @@
 const { createClient } = require('@supabase/supabase-js');
 
 // See notify.js — set MAIL_FROM in Vercel after verifying the domain in Resend.
-const MAIL_FROM = process.env.MAIL_FROM || 'Fish Condish <onboarding@resend.dev>';
+const MAIL_FROM = process.env.MAIL_FROM || 'FishCondish <onboarding@resend.dev>';
 
 function moonPhaseDays(d) {
   const known = new Date(2000, 0, 6, 18, 14, 0);

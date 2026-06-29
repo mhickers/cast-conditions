@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.fishcondish.app',
-  appName: 'Fish Condish',
+  appName: 'FishCondish',
   webDir: 'build', // Create React App build output
   ios: {
     contentInset: 'never',

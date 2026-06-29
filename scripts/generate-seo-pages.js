@@ -881,6 +881,12 @@ const MARQUEE_REGIONS = [
   { name: 'Florida Gulf Coast', slug: 'florida-gulf-coast',
     blurb: 'the bays, passes, and grass flats of Floridas Gulf side',
     members: ['Tampa, FL','Naples, FL','Cedar Key, FL','Steinhatchee, FL','Apalachicola, FL','Destin, FL','Pensacola, FL'] },
+  { name: 'Vancouver Island', slug: 'vancouver-island',
+    blurb: 'the salmon, halibut, and lingcod grounds around Vancouver Island, from Victoria to Campbell River and the open west coast',
+    members: ['Victoria, BC','Nanaimo, BC','Campbell River, BC','Port Alberni, BC','Tofino, BC'] },
+  { name: 'St. Lawrence River', slug: 'st-lawrence-river',
+    blurb: 'the walleye, pike, and muskie water of the St. Lawrence and Thousand Islands, from Kingston through Montreal to Quebec City',
+    members: ['Kingston, ON','Montreal, QC','Trois-Rivieres, QC','Quebec City, QC'] },
 ].map(r => ({ ...r, path: `/fishing/region/${r.slug}/`, memberSlugs: new Set(r.members.map(slugify)) }));
 
 function buildHubs(towns) {
