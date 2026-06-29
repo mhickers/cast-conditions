@@ -3,3 +3,4 @@ User-agent: *
 Disallow:
 
 Sitemap: https://fishcondish.com/sitemap.xml
+Sitemap: https://fishcondish.com/fishing-tips/sitemap.xml

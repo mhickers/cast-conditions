@@ -1,0 +1,473 @@
+#!/usr/bin/env node
+/*
+ * generate-blog-pages.js
+ * -----------------------------------------------------------------------------
+ * Generates the static "Fishing Tips & Tactics" section from a single markdown
+ * source file. Produces one clean-URL page per post plus a section index page.
+ *
+ * Pattern mirrors scripts/generate-seo-pages.js: a standalone Node script that
+ * writes real .html files into the build output. Real files are served by Vercel
+ * BEFORE any SPA catch-all rewrite, so these coexist with the Create React App.
+ *
+ * Run:  node scripts/generate-blog-pages.js
+ *
+ * Zero dependencies (no npm install). Pure Node + fs.
+ * -----------------------------------------------------------------------------
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+// ============================ CONFIG ========================================
+// Edit these to match your generate-seo-pages.js conventions if they differ.
+const SOURCE_MD   = path.join(__dirname, '..', 'content', 'fishing-tips-tactics.md');
+const OUTPUT_DIR  = path.join(__dirname, '..', 'public', 'fishing-tips');
+const SITE_URL    = 'https://fishcondish.com';   // no trailing slash
+const SECTION_URL = '/fishing-tips';             // section base path
+const APP_URL     = 'https://fishcondish.com';   // link back to the live app
+const BRAND       = 'FishCondish';
+const PAGE_TITLE  = 'Fishing Tips & Tactics';
+const NAV_LABEL   = 'Fishing Tips';
+
+// Optional spot dataset for species -> spot cross-links. If this file is
+// missing, species pages fall back to a "find spots near you" CTA instead.
+// Expected shape: JSON array of objects with at least { name, url } and
+// ideally { state, water }. Point this at whatever generate-seo-pages.js uses.
+const SPOTS_DATA  = path.join(__dirname, '..', 'content', 'spots.json');
+// ===========================================================================
+
+const tipLinks = require('./tip-links');
+
+let SPOTS = [];
+try {
+  if (fs.existsSync(SPOTS_DATA)) {
+    SPOTS = JSON.parse(fs.readFileSync(SPOTS_DATA, 'utf8'));
+    if (!Array.isArray(SPOTS)) SPOTS = [];
+  }
+} catch (e) {
+  console.warn('Could not read spots data (' + SPOTS_DATA + '): ' + e.message);
+  SPOTS = [];
+}
+
+// --------------------------- small helpers ---------------------------------
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// anchor (e.g. "pompano") -> URL segment (e.g. "florida-pompano")
+const anchorToSegment = {};
+
+function rewriteLink(url) {
+  if (url && url.charAt(0) === '#') {
+    const seg = anchorToSegment[url.slice(1)];
+    if (seg) return `${SECTION_URL}/${seg}`;
+    return url; // unknown anchor: leave as-is so it's easy to spot
+  }
+  return url;
+}
+
+// inline markdown -> html (escape first, then introduce tags)
+function inlineMd(s) {
+  s = escapeHtml(s);
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${rewriteLink(u)}">${t}</a>`);
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  return s;
+}
+
+// block-level markdown subset -> html (headings, lists, paragraphs)
+function bodyToHtml(md) {
+  const lines = md.split('\n');
+  let html = '';
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*$/.test(line)) { i++; continue; }
+    if (/^### /.test(line)) {
+      html += `<h3>${inlineMd(line.replace(/^###\s+/, ''))}</h3>\n`;
+      i++; continue;
+    }
+    if (/^- /.test(line)) {
+      const items = [];
+      while (i < lines.length && /^- /.test(lines[i])) {
+        items.push(`  <li>${inlineMd(lines[i].replace(/^-\s+/, ''))}</li>`);
+        i++;
+      }
+      html += `<ul>\n${items.join('\n')}\n</ul>\n`;
+      continue;
+    }
+    const para = [];
+    while (i < lines.length && !/^\s*$/.test(lines[i]) && !/^### /.test(lines[i]) && !/^- /.test(lines[i])) {
+      para.push(lines[i]); i++;
+    }
+    html += `<p>${inlineMd(para.join(' '))}</p>\n`;
+  }
+  return html;
+}
+
+// ----------------------------- parse source --------------------------------
+const raw = fs.readFileSync(SOURCE_MD, 'utf8');
+const allLines = raw.split('\n');
+
+// locate post starts ("## 1. ...") and the closing notes ("# Research...")
+const postStartIdx = [];
+let closingIdx = allLines.length;
+for (let i = 0; i < allLines.length; i++) {
+  if (/^## \d+\. /.test(allLines[i])) postStartIdx.push(i);
+  if (/^# Research & source notes/.test(allLines[i])) { closingIdx = i; break; }
+}
+
+const frontMatter = allLines.slice(0, postStartIdx[0]).join('\n');
+
+// build post slices
+const posts = [];
+for (let p = 0; p < postStartIdx.length; p++) {
+  const start = postStartIdx[p];
+  const end = (p + 1 < postStartIdx.length) ? postStartIdx[p + 1] : closingIdx;
+  const slice = allLines.slice(start, end);
+
+  // header line: "## N. Title {#anchor}"
+  const header = slice[0];
+  const anchorMatch = header.match(/\{#([^}]+)\}\s*$/);
+  const anchor = anchorMatch ? anchorMatch[1] : '';
+  const title = header
+    .replace(/^##\s+\d+\.\s+/, '')
+    .replace(/\s*\{#[^}]+\}\s*$/, '')
+    .trim();
+
+  // meta + slug
+  let meta = '';
+  let segment = anchor;
+  for (const l of slice) {
+    const m = l.match(/^\*\*Meta description:\*\*\s*(.+)$/);
+    if (m) meta = m[1].trim();
+    const s = l.match(/^\*\*URL slug:\*\*\s*`([^`]+)`/);
+    if (s) segment = s[1].split('/').filter(Boolean).pop();
+  }
+
+  // find commercial-notes marker
+  let commercialStart = slice.length;
+  for (let k = 0; k < slice.length; k++) {
+    if (/Build & commercial notes/.test(slice[k])) { commercialStart = k; break; }
+  }
+
+  // body = after slug line up to commercial marker
+  let bodyStart = 1;
+  for (let k = 1; k < slice.length; k++) {
+    if (/^\*\*URL slug:\*\*/.test(slice[k])) { bodyStart = k + 1; break; }
+  }
+  const bodyLines = slice.slice(bodyStart, commercialStart);
+  const commercialLines = slice.slice(commercialStart, slice.length);
+
+  // parse commercial block
+  let affiliate = '';
+  const related = [];
+  const faq = [];
+  let inFaq = false;
+  for (let k = 0; k < commercialLines.length; k++) {
+    const l = commercialLines[k];
+    const a = l.match(/^- \*\*Affiliate gear categories:\*\*\s*(.+)$/);
+    if (a) { affiliate = a[1].trim(); continue; }
+    const il = l.match(/^- \*\*Internal links:\*\*\s*(.+)$/);
+    if (il) {
+      const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+      let mm;
+      while ((mm = re.exec(il[1])) !== null) related.push({ text: mm[1], url: mm[2] });
+      continue;
+    }
+    if (/^- \*\*FAQ:\*\*/.test(l)) { inFaq = true; continue; }
+    // Only indented sub-bullets after the FAQ marker count as Q/A pairs.
+    if (inFaq) {
+      const fq = l.match(/^\s+-\s+\*(.+?)\*\s+(.+)$/);
+      if (fq) faq.push({ q: fq[1].trim(), a: fq[2].trim() });
+    }
+  }
+
+  posts.push({ title, anchor, segment, meta, bodyLines, affiliate, related, faq });
+  if (anchor) anchorToSegment[anchor] = segment;
+}
+
+// --------------------------- shared CSS ------------------------------------
+const CSS = `
+:root{--bg:#ffffff;--fg:#1a1a1a;--muted:#5b6470;--rule:#e7e9ee;--link:#0a6cbf;--accent:#0a6cbf;--card:#f7f8fa}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1115;--fg:#e7e9ee;--muted:#9aa3af;--rule:#222731;--link:#5db0ff;--accent:#5db0ff;--card:#161a21}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header.site{border-bottom:1px solid var(--rule)}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+header.site a{color:var(--fg);text-decoration:none;font-weight:600}
+header.site nav a{color:var(--muted);font-weight:500;margin-left:18px}
+header.site nav a:hover{color:var(--link)}
+main{padding:28px 0 8px}
+h1{font-size:30px;line-height:1.25;margin:8px 0 6px}
+h2{font-size:23px;line-height:1.3;margin:34px 0 8px}
+h3{font-size:19px;margin:26px 0 6px}
+p{margin:0 0 14px}
+ul{margin:0 0 16px;padding-left:22px}
+li{margin:4px 0}
+a{color:var(--link)}
+code{background:var(--card);padding:1px 5px;border-radius:4px;font-size:.92em}
+.lede{color:var(--muted);font-size:18px}
+.breadcrumb{font-size:14px;color:var(--muted);margin:0 0 6px}
+.breadcrumb a{color:var(--muted)}
+.faq{margin-top:30px;border-top:1px solid var(--rule);padding-top:8px}
+.faq h2{margin-top:18px}
+.faq dt{font-weight:600;margin-top:16px}
+.faq dd{margin:4px 0 0;color:var(--fg)}
+.related{margin-top:30px;border-top:1px solid var(--rule);padding-top:8px}
+.related ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.related li{margin:0}
+.related a{display:inline-block;background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:6px 14px;text-decoration:none}
+.applink{margin-top:30px;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px 20px}
+.applink a{font-weight:600}
+footer.site{border-top:1px solid var(--rule);margin-top:40px;padding:22px 0 48px;color:var(--muted);font-size:14px}
+.cards{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cards li{margin:0}
+.cards a{display:block;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--fg)}
+.cards a:hover{border-color:var(--link)}
+.rationale li{margin:8px 0}
+@media(max-width:560px){.cards{grid-template-columns:1fr}h1{font-size:26px}}
+`.trim();
+
+function siteHeader() {
+  return `<header class="site"><div class="wrap">
+  <a href="${APP_URL}">${BRAND}</a>
+  <nav><a href="${SECTION_URL}">${escapeHtml(NAV_LABEL)}</a><a href="${APP_URL}">Live conditions</a></nav>
+</div></header>`;
+}
+
+function siteFooter() {
+  return `<footer class="site"><div class="wrap">
+  <p>Gear sizes, rigs, and tactics here are starting points for beginner and intermediate anglers. Local knowledge and current regulations always take precedence. <strong>Always check your current state and local fishing regulations before keeping any fish.</strong></p>
+  <p><a href="${APP_URL}">${BRAND}</a> &middot; real-time fishing conditions for any US spot.</p>
+</div></footer>`;
+}
+
+function pageShell({ title, description, canonical, bodyHtml, jsonLd }) {
+  const head = [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    `<title>${escapeHtml(title)}</title>`,
+    description ? `<meta name="description" content="${escapeHtml(description)}">` : '',
+    `<link rel="canonical" href="${canonical}">`,
+    `<meta property="og:type" content="article">`,
+    `<meta property="og:title" content="${escapeHtml(title)}">`,
+    description ? `<meta property="og:description" content="${escapeHtml(description)}">` : '',
+    `<meta property="og:url" content="${canonical}">`,
+    `<meta property="og:site_name" content="${BRAND}">`,
+    `<meta name="twitter:card" content="summary">`,
+    jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : '',
+    `<style>${CSS}</style>`,
+    '</head>',
+    '<body>'
+  ].filter(Boolean).join('\n');
+  return `${head}
+${siteHeader()}
+<main><div class="wrap">
+${bodyHtml}
+</div></main>
+${siteFooter()}
+</body>
+</html>`;
+}
+
+// ----------------------------- render posts --------------------------------
+function renderPost(post) {
+  const canonical = `${SITE_URL}${SECTION_URL}/${post.segment}`;
+
+  // water type for this post: species lookup, else infer from the conditions slug
+  const speciesEntry = tipLinks.SPECIES_TIPS.find((s) => s.slug === post.segment);
+  let postWater = speciesEntry ? speciesEntry.water : null;
+  if (!postWater) {
+    if (/freshwater/.test(post.segment)) postWater = 'fresh';
+    else if (/saltwater/.test(post.segment)) postWater = 'salt';
+  }
+
+  let body = '';
+  body += `<p class="breadcrumb"><a href="${SECTION_URL}">${escapeHtml(NAV_LABEL)}</a> &rsaquo; ${escapeHtml(post.title)}</p>\n`;
+  body += `<h1>${escapeHtml(post.title)}</h1>\n`;
+  body += bodyToHtml(post.bodyLines.join('\n'));
+
+  // affiliate categories: invisible note for later monetization, not shown to readers
+  if (post.affiliate) {
+    body += `\n<!-- Recommended gear (add affiliate links here): ${escapeHtml(post.affiliate)} -->\n`;
+  }
+
+  // related guides — guarantee the matching "reading conditions" guide is linked
+  const related = post.related.slice();
+  if (postWater) {
+    const cond = tipLinks.conditionsTipForWater(postWater);
+    if (cond && cond.slug !== post.segment) {
+      const target = `${SECTION_URL}/${cond.slug}`;
+      const already = related.some((r) => rewriteLink(r.url) === target);
+      if (!already) related.push({ text: `Reading ${postWater === 'salt' ? 'Saltwater' : 'Freshwater'} Conditions`, url: target });
+    }
+  }
+  if (related.length) {
+    body += `\n<section class="related"><h2>Related guides</h2>\n<ul>\n`;
+    for (const r of related) {
+      body += `  <li><a href="${rewriteLink(r.url)}">${escapeHtml(r.text)}</a></li>\n`;
+    }
+    body += `</ul></section>\n`;
+  }
+
+  // species -> spots cross-link (lights up when content/spots.json is present)
+  const plainName = speciesEntry
+    ? speciesEntry.title.replace(/\s*\(.*\)\s*$/, '')
+    : post.title.replace(/^How to (Catch|Read)\s+/i, '').replace(/\s*\(.*\)\s*$/, '');
+  let shownSpeciesCta = false;
+  if (speciesEntry) {
+    const spots = tipLinks.spotsForSpecies(post.segment, SPOTS, { limit: 8 });
+    if (spots.length) {
+      body += `\n<section class="related"><h2>Where to fish for ${escapeHtml(plainName)}</h2>\n<ul>\n`;
+      for (const sp of spots) {
+        const href = sp.url || sp.path || '#';
+        const name = sp.name || sp.title || sp.slug || 'Fishing spot';
+        body += `  <li><a href="${escapeHtml(href)}">${escapeHtml(name)}</a></li>\n`;
+      }
+      body += `</ul></section>\n`;
+    } else {
+      body += `\n<section class="applink"><p>Find ${escapeHtml(plainName)} waters near you — search your town on <a href="${APP_URL}">${BRAND}</a> for live conditions and a species bite forecast.</p></section>\n`;
+      shownSpeciesCta = true;
+    }
+  }
+
+  // general app cross-link (skip if the species CTA already covered it)
+  if (!shownSpeciesCta) {
+    body += `\n<section class="applink"><p>Planning a trip? Check the live tides, wind, water temperature, and bite forecast for your exact spot on <a href="${APP_URL}">${BRAND}</a> before you go.</p></section>\n`;
+  }
+
+  // FAQ + JSON-LD
+  let jsonLd = '';
+  if (post.faq.length) {
+    body += `\n<section class="faq"><h2>Frequently asked questions</h2>\n<dl>\n`;
+    for (const f of post.faq) {
+      body += `  <dt>${inlineMd(f.q)}</dt>\n  <dd>${inlineMd(f.a)}</dd>\n`;
+    }
+    body += `</dl></section>\n`;
+
+    const faqLd = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: post.faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q.replace(/[*`]/g, ''),
+        acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/[*`]/g, '') }
+      }))
+    };
+    jsonLd = JSON.stringify(faqLd);
+  }
+
+  return pageShell({
+    title: `${post.title} | ${BRAND}`,
+    description: post.meta,
+    canonical,
+    bodyHtml: body,
+    jsonLd
+  });
+}
+
+// ----------------------------- render index --------------------------------
+function renderIndex() {
+  const canonical = `${SITE_URL}${SECTION_URL}`;
+  const fmLines = frontMatter.split('\n');
+
+  // Welcome intro: from "## Welcome to the water" to next "## "
+  function grabSection(startRe) {
+    const out = [];
+    let on = false;
+    for (let i = 0; i < fmLines.length; i++) {
+      if (startRe.test(fmLines[i])) { on = true; continue; }
+      if (on && /^## /.test(fmLines[i])) break;
+      if (on) out.push(fmLines[i]);
+    }
+    return out.join('\n').trim();
+  }
+
+  const welcome = grabSection(/^## Welcome to the water/);
+  const rationale = grabSection(/^## The 25 species/);
+
+  // Index ToC: three "### category" groups with numbered links
+  const idxLines = grabSection(/^## Index/).split('\n');
+  let toc = '';
+  let i = 0;
+  while (i < idxLines.length) {
+    const l = idxLines[i];
+    if (/^### /.test(l)) {
+      toc += `<h2>${inlineMd(l.replace(/^###\s+/, ''))}</h2>\n<ul class="cards">\n`;
+      i++;
+      while (i < idxLines.length && !/^### /.test(idxLines[i])) {
+        const m = idxLines[i].match(/^\d+\.\s+\[([^\]]+)\]\(([^)]+)\)/);
+        if (m) toc += `  <li><a href="${rewriteLink(m[2])}">${escapeHtml(m[1])}</a></li>\n`;
+        i++;
+      }
+      toc += `</ul>\n`;
+    } else {
+      i++;
+    }
+  }
+
+  let body = '';
+  body += `<h1>${escapeHtml(PAGE_TITLE)}</h1>\n`;
+  body += bodyToHtml(welcome).replace('<p>', '<p class="lede">'); // first para as lede
+  body += `\n${toc}\n`;
+  if (rationale) {
+    body += `<section class="rationale"><h2>The 25 species, and why each made the list</h2>\n`;
+    body += bodyToHtml(rationale);
+    body += `</section>\n`;
+  }
+
+  return pageShell({
+    title: `${PAGE_TITLE} | ${BRAND}`,
+    description: 'Beginner-friendly fishing tips and tactics for 25 popular freshwater and saltwater species, plus how to read fishing conditions.',
+    canonical,
+    bodyHtml: body,
+    jsonLd: ''
+  });
+}
+
+// ------------------------------- write -------------------------------------
+fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+// index at /fishing-tips
+fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), renderIndex(), 'utf8');
+
+// each post at /fishing-tips/<segment>/index.html  (clean URL, no vercel.json needed)
+const written = [];
+for (const post of posts) {
+  const dir = path.join(OUTPUT_DIR, post.segment);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), renderPost(post), 'utf8');
+  written.push(`${SECTION_URL}/${post.segment}`);
+}
+
+// sitemap for the tips section (slugs are apostrophe-free, so URLs are safe)
+const today = new Date().toISOString().slice(0, 10);
+const urls = [`${SITE_URL}${SECTION_URL}`].concat(
+  posts.map((p) => `${SITE_URL}${SECTION_URL}/${p.segment}`)
+);
+const sitemap =
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  urls.map((u) =>
+    `  <url><loc>${u}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq></url>`
+  ).join('\n') +
+  '\n</urlset>\n';
+fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemap, 'utf8');
+
+console.log(`Generated ${posts.length} post pages + 1 index page.`);
+console.log(`Output: ${OUTPUT_DIR}`);
+console.log(`Sitemap: ${path.join(OUTPUT_DIR, 'sitemap.xml')} (${urls.length} URLs)`);
+console.log(`Spots data: ${SPOTS.length ? SPOTS.length + ' spots loaded' : 'none found — species pages use CTA fallback'}`);
+written.forEach((u) => console.log('  ' + u));
