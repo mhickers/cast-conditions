@@ -13,14 +13,19 @@ export function getMoonPhase(forDate?: Date): MoonInfo {
   const phase = ((diff % cycle) + cycle) % cycle;
   const illum = Math.round(50 * (1 - Math.cos(2 * Math.PI * phase / cycle)));
   let name: string, desc: string;
-  if (phase < 1.85)       { name = 'New moon';        desc = 'Dark skies — great night fishing'; }
-  else if (phase < 7.38)  { name = 'Waxing crescent'; desc = 'Rising light, active bite'; }
+  // Each cardinal phase (new/first quarter/full/last quarter) sits at the CENTER
+  // of its ~3.7-day window; the four intermediate phases fill the gaps. The full
+  // window (12.93–16.61) brackets the 14.77 midpoint so a 100%-lit moon reads as
+  // "Full moon" rather than slipping into "Waxing gibbous" just before the peak.
+  if (phase < 1.84)       { name = 'New moon';        desc = 'Dark skies — great night fishing'; }
+  else if (phase < 5.54)  { name = 'Waxing crescent'; desc = 'Rising light, active bite'; }
   else if (phase < 9.22)  { name = 'First quarter';   desc = 'Half lit, moderate activity'; }
-  else if (phase < 14.77) { name = 'Waxing gibbous';  desc = 'Bright nights, surface feeding'; }
+  else if (phase < 12.93) { name = 'Waxing gibbous';  desc = 'Bright nights, surface feeding'; }
   else if (phase < 16.61) { name = 'Full moon';        desc = 'Peak night feeding activity'; }
-  else if (phase < 22.15) { name = 'Waning gibbous';  desc = 'Still bright, good feeding'; }
+  else if (phase < 20.30) { name = 'Waning gibbous';  desc = 'Still bright, good feeding'; }
   else if (phase < 23.99) { name = 'Last quarter';    desc = 'Decreasing light'; }
-  else                    { name = 'Waning crescent'; desc = 'Quiet nights, good dawn bite'; }
+  else if (phase < 27.69) { name = 'Waning crescent'; desc = 'Quiet nights, good dawn bite'; }
+  else                    { name = 'New moon';        desc = 'Dark skies — great night fishing'; }
   return { phase, illum, name, desc };
 }
 

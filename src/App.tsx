@@ -31,15 +31,24 @@ import './App.css';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
 function MoonSVG({ phase }: { phase: number }) {
-  const lit = phase / 29.53;
-  let cx = 24, rx = 20;
-  if (lit < 0.5) { cx = 24 + 20 * (1 - lit * 4); rx = 20 * Math.abs(1 - lit * 4); }
-  else { cx = 24 - 20 * ((lit - 0.5) * 4); rx = 20 * Math.abs((lit - 0.5) * 4); }
+  const cycle = 29.53058867;
+  const a = (((phase % cycle) + cycle) % cycle) / cycle; // 0 = new, 0.5 = full
+  const cx = 24, cy = 24, r = 20;
+  const cosA = Math.cos(2 * Math.PI * a);
+  const k = (1 - cosA) / 2;          // illuminated fraction (0 new → 1 full)
+  const tx = r * Math.abs(cosA);     // terminator ellipse x-radius (0 at quarters)
+  const waxing = a < 0.5;            // N. hemisphere: lit limb on the right when waxing
+  const DARK = '#444441', LIGHT = '#D3D1C7';
+  const litX = waxing ? cx : cx - r; // lit semicircle covers the right (or left) half
+  const ellipseFill = k > 0.5 ? LIGHT : DARK; // gibbous adds light; crescent eats it
   return (
     <svg width="52" height="52" viewBox="0 0 48 48" aria-hidden="true">
-      <defs><clipPath id="mc"><circle cx="24" cy="24" r="20" /></clipPath></defs>
-      <circle cx="24" cy="24" r="20" fill="#D3D1C7" />
-      <ellipse cx={cx} cy={24} rx={rx} ry={20} fill="#444441" clipPath="url(#mc)" />
+      <defs><clipPath id="mc"><circle cx={cx} cy={cy} r={r} /></clipPath></defs>
+      <g clipPath="url(#mc)">
+        <circle cx={cx} cy={cy} r={r} fill={DARK} />
+        <rect x={litX} y={cy - r} width={r} height={2 * r} fill={LIGHT} />
+        <ellipse cx={cx} cy={cy} rx={tx} ry={r} fill={ellipseFill} />
+      </g>
     </svg>
   );
 }

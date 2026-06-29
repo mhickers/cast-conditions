@@ -233,11 +233,27 @@ function shape(t: FishType, cid: string): React.ReactNode {
   }
 }
 
+// A few hand-drawn silhouettes don't fill the 40x26 viewBox as fully as the
+// rest, so they render visibly smaller. Scale just those up about the box center
+// so every species reads at roughly the same size.
+const SCALE_FIX: Partial<Record<FishType, number>> = {
+  panfish: 1.14, grouper: 1.18, triggerfish: 1.20, flatfish: 1.12,
+};
+function fitTransform(t: FishType): string | undefined {
+  const s = SCALE_FIX[t];
+  if (!s) return undefined;
+  const cx = 18, cy = 13; // box center-ish
+  return `translate(${(cx * (1 - s)).toFixed(2)} ${(cy * (1 - s)).toFixed(2)}) scale(${s})`;
+}
+
 export default function SpeciesIcon({ name, size = 30 }: { name: string; size?: number }) {
   const cid = 'fi-' + useId().replace(/:/g, '');
+  const t = classify(name);
+  const tf = fitTransform(t);
+  const inner = shape(t, cid);
   return (
     <svg width={size} height={Math.round(size * 0.65)} viewBox="0 0 40 26" fill="currentColor" aria-hidden="true">
-      {shape(classify(name), cid)}
+      {tf ? <g transform={tf}>{inner}</g> : inner}
     </svg>
   );
 }
