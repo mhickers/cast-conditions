@@ -38,15 +38,32 @@ const SPOTS_DATA  = path.join(__dirname, '..', 'content', 'spots.json');
 
 const tipLinks = require('./tip-links');
 
+// Spot list for species -> spot cross-links. Preferred source: the TOWNS array
+// already maintained in generate-seo-pages.js (single source of truth). Falls
+// back to content/spots.json, then to a CTA if neither is available.
 let SPOTS = [];
 try {
-  if (fs.existsSync(SPOTS_DATA)) {
-    SPOTS = JSON.parse(fs.readFileSync(SPOTS_DATA, 'utf8'));
-    if (!Array.isArray(SPOTS)) SPOTS = [];
+  const seo = require('./generate-seo-pages');
+  if (seo && Array.isArray(seo.TOWNS)) {
+    SPOTS = seo.TOWNS.map((t) => ({
+      name: t.name,
+      url: `/fishing/${seo.slugify(t.name)}/`,
+      state: (t.name.split(',').pop() || '').trim(),
+      water: t.type // 'coastal' | 'inland' — normalized inside tip-links
+    }));
   }
 } catch (e) {
-  console.warn('Could not read spots data (' + SPOTS_DATA + '): ' + e.message);
-  SPOTS = [];
+  // fall back to spots.json below
+}
+if (!SPOTS.length) {
+  try {
+    if (fs.existsSync(SPOTS_DATA)) {
+      const j = JSON.parse(fs.readFileSync(SPOTS_DATA, 'utf8'));
+      if (Array.isArray(j)) SPOTS = j;
+    }
+  } catch (e) {
+    SPOTS = [];
+  }
 }
 
 // --------------------------- small helpers ---------------------------------
@@ -240,7 +257,7 @@ footer.site{border-top:1px solid var(--rule);margin-top:40px;padding:22px 0 48px
 function siteHeader() {
   return `<header class="site"><div class="wrap">
   <a href="${APP_URL}">${BRAND}</a>
-  <nav><a href="${SECTION_URL}">${escapeHtml(NAV_LABEL)}</a><a href="${APP_URL}">Live conditions</a></nav>
+  <nav><a href="${SECTION_URL}">${escapeHtml(NAV_LABEL)}</a><a href="${APP_URL}">Live Conditions</a></nav>
 </div></header>`;
 }
 
@@ -396,37 +413,43 @@ function renderIndex() {
   }
 
   const welcome = grabSection(/^## Welcome to the water/);
-  const rationale = grabSection(/^## The 25 species/);
 
-  // Index ToC: three "### category" groups with numbered links
+  // Index ToC: three "### category" groups with numbered links.
+  // Collect each group, then emit "Reading Conditions" first.
   const idxLines = grabSection(/^## Index/).split('\n');
-  let toc = '';
+  const groups = [];
   let i = 0;
   while (i < idxLines.length) {
     const l = idxLines[i];
     if (/^### /.test(l)) {
-      toc += `<h2>${inlineMd(l.replace(/^###\s+/, ''))}</h2>\n<ul class="cards">\n`;
+      const heading = l.replace(/^###\s+/, '');
+      let items = '';
       i++;
       while (i < idxLines.length && !/^### /.test(idxLines[i])) {
         const m = idxLines[i].match(/^\d+\.\s+\[([^\]]+)\]\(([^)]+)\)/);
-        if (m) toc += `  <li><a href="${rewriteLink(m[2])}">${escapeHtml(m[1])}</a></li>\n`;
+        if (m) items += `  <li><a href="${rewriteLink(m[2])}">${escapeHtml(m[1])}</a></li>\n`;
         i++;
       }
-      toc += `</ul>\n`;
+      groups.push({ heading, items });
     } else {
       i++;
     }
+  }
+  // Reading/Conditions group leads, the rest keep their order.
+  groups.sort((a, b) => {
+    const ac = /conditions|reading/i.test(a.heading) ? 0 : 1;
+    const bc = /conditions|reading/i.test(b.heading) ? 0 : 1;
+    return ac - bc;
+  });
+  let toc = '';
+  for (const g of groups) {
+    toc += `<h2>${inlineMd(g.heading)}</h2>\n<ul class="cards">\n${g.items}</ul>\n`;
   }
 
   let body = '';
   body += `<h1>${escapeHtml(PAGE_TITLE)}</h1>\n`;
   body += bodyToHtml(welcome).replace('<p>', '<p class="lede">'); // first para as lede
   body += `\n${toc}\n`;
-  if (rationale) {
-    body += `<section class="rationale"><h2>The 25 species, and why each made the list</h2>\n`;
-    body += bodyToHtml(rationale);
-    body += `</section>\n`;
-  }
 
   return pageShell({
     title: `${PAGE_TITLE} | ${BRAND}`,

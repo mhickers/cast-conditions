@@ -110,18 +110,34 @@ function spotsForSpecies(speciesSlug, allSpots, opts) {
   const species = SPECIES_TIPS.filter(function (s) { return s.slug === speciesSlug; })[0];
   if (!species || !Array.isArray(allSpots)) return [];
 
-  const out = [];
-  for (let i = 0; i < allSpots.length && out.length < limit; i++) {
+  // collect every matching spot
+  const matches = [];
+  for (let i = 0; i < allSpots.length; i++) {
     const spot = allSpots[i] || {};
     const st = (spot.state ? String(spot.state) : "").toUpperCase();
     const w = normWater(spot.water);
-
-    // water filter (only if the spot declares one)
     if (w && w !== "both" && w !== species.water) continue;
-    // state filter (only if the spot declares one and the species is regional)
     if (st && species.states.indexOf("*") === -1 && species.states.indexOf(st) === -1) continue;
+    matches.push(spot);
+  }
 
-    out.push(spot);
+  // round-robin by state so a nationwide species shows a spread, not 8 from one state
+  const byState = {};
+  const order = [];
+  for (const s of matches) {
+    const st = (s.state ? String(s.state) : "??").toUpperCase();
+    if (!byState[st]) { byState[st] = []; order.push(st); }
+    byState[st].push(s);
+  }
+  const out = [];
+  let pass = 0;
+  while (out.length < limit) {
+    let added = false;
+    for (const st of order) {
+      if (byState[st][pass]) { out.push(byState[st][pass]); added = true; if (out.length >= limit) break; }
+    }
+    if (!added) break;
+    pass++;
   }
   return out;
 }
