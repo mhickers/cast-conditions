@@ -1163,7 +1163,7 @@ export default function App() {
 
         <section className="section">
           <div className="ai-card">
-            <div className="ai-header">✦ AI fishing guide</div>
+            <div className="ai-header">✦ Real-time fishing guide</div>
             <p className="ai-text">{aiSummary}</p>
           </div>
         </section>

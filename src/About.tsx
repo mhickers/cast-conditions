@@ -20,7 +20,7 @@ export default function About({ onClose }: Props) {
           <h3>What it shows</h3>
           <ul>
             <li><strong>Fishing score</strong> — a 1–10 rating based on wind, waves, pressure, tide, moon, and water temp combined</li>
-            <li><strong>AI guide</strong> — a plain-English summary of today's conditions and what to target</li>
+            <li><strong>Real-time guide</strong> — a plain-English summary of today's conditions and what to target</li>
             <li><strong>Atmosphere & water</strong> — live wind speed/direction, air temp, barometric pressure, water temp, wave height, and wave period</li>
             <li><strong>Tides</strong> — today's high/low tide times with a visual chart and current tide level</li>
             <li><strong>Moon phase</strong> — current phase and its effect on feeding activity</li>
