@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const tipLinks = require('./tip-links');
 
 const SITE = 'https://fishcondish.com';
 
@@ -844,6 +845,14 @@ ${reportSection}
 <p>It's free, works on your phone, and installs like an app.</p>
 <a class="cta" href="${appLink}">Check the ${esc(town.name)} fishing score →</a>
 ${faqSection}
+${(() => {
+  const { species: sp, conditions } = tipLinks.tipsForSpot({ state: stateAbbrOf(town), water: town.type }, { limit: 6 });
+  const items = sp.concat(conditions);
+  return items.length ? `<h2>Fishing tips for ${esc(town.name)}</h2>
+<p>New to these waters? Start with these beginner-friendly guides:</p>
+<div class="nearby">
+${items.map(t => `<a href="/fishing-tips/${t.slug}/">${esc(t.title)}</a>`).join('\n')}
+</div>` : ''})()}
 <h2>Nearby spots</h2>
 <div class="nearby">
 ${nearby.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(t.name)}</a>`).join('\n')}
@@ -1020,7 +1029,8 @@ if (require.main === module) {
 
   // sitemap.xml (homepage + hubs + all town pages)
   const today = new Date().toISOString().slice(0, 10);
-  const urls = [`${SITE}/`, ...hubs.map(h => `${SITE}${h.path}`), ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`)];
+  const tipUrls = [`${SITE}/fishing-tips/`, ...tipLinks.SPECIES_TIPS.map(t => `${SITE}/fishing-tips/${t.slug}/`), ...tipLinks.CONDITIONS_TIPS.map(t => `${SITE}/fishing-tips/${t.slug}/`)];
+  const urls = [`${SITE}/`, ...hubs.map(h => `${SITE}${h.path}`), ...TOWNS.map(t => `${SITE}/fishing/${slugify(t.name)}/`), ...tipUrls];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
