@@ -391,14 +391,13 @@ canvas { max-width: 100%; }
 [data-theme='dark'] .clarity-stained .clarity-icon, [data-theme='dark'] .clarity-stained .clarity-level { color: #E0A23E; }
 [data-theme='dark'] .clarity-muddy .clarity-icon, [data-theme='dark'] .clarity-muddy .clarity-level { color: #C08A5A; }
 
-/* Fishing Tips nav link in the header */
+
+/* Fishing Tips nav link — clean text link, far right of the header */
+.header-right { display: flex; align-items: center; }
 .header-right a.nav-tips {
-  display: inline-flex;
-  align-items: center;
-  width: auto;
-  height: auto;
+  order: 999;
+  margin-left: 16px;
   padding: 0;
-  margin-right: 14px;
   background: none;
   border: none;
   color: #dce8f5;
@@ -409,11 +408,3 @@ canvas { max-width: 100%; }
   line-height: 1;
 }
 .header-right a.nav-tips:hover { color: #ffffff; }
-
-/* Move Fishing Tips link to the far right, after the icons */
-.header-right { display: flex; align-items: center; }
-.header-right a.nav-tips {
-  order: 999;
-  margin-right: 0;
-  margin-left: 16px;
-}
