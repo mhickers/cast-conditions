@@ -143,6 +143,30 @@ const REGION_POPULARITY: Record<string, Record<string, number>> = {
   midatlantic: {
     'Red drum': 4,
   },
+  northeast: {
+    // New England + Atlantic Canada (NS/NB): groundfish and bluefin rank higher here.
+    'Cod': 8, 'Pollock': 6, 'Tuna (bluefin)': 6,
+  },
+  southeast: {
+    // SE Atlantic structure-and-beach staples.
+    'Sheepshead': 8, 'Spanish mackerel': 7,
+  },
+  gulf: {
+    // The Gulf inshore slam leads: trout / redfish / sheepshead / black drum / pompano.
+    'Speckled trout': 9, 'Sheepshead': 8, 'Black drum': 7, 'Pompano': 7,
+  },
+  pacific: {
+    // US West Coast + BC: cold-water bottomfish rank alongside salmon.
+    'Rockfish': 8, 'Lingcod': 7,
+  },
+  inland_north: {
+    // Great Lakes, Ontario/Quebec, the Prairies: walleye/pike/lake trout/muskie country.
+    'Walleye': 10, 'Northern pike': 8, 'Lake trout': 7, 'Muskie': 7,
+  },
+  inland_pacific: {
+    // BC interior + PNW: rainbow (Kamloops) trout water.
+    'Rainbow trout': 10, 'Lake trout': 7,
+  },
 };
 
 function popularityFor(region: string, name: string): number {

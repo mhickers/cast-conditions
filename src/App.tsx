@@ -139,6 +139,7 @@ export default function App() {
   const [windOpen, setWindOpen] = useState(false);
   const [precipOpen, setPrecipOpen] = useState(false);
   const [showWindModels, setShowWindModels] = useState(false);
+  const [windCursor, setWindCursor] = useState<number | null>(null);
   const [windModels, setWindModels] = useState<WindModelSeries | null>(null);
   const [windLoading, setWindLoading] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
@@ -902,15 +903,48 @@ export default function App() {
                     </div>
                     <div className="chart-block">
                       <div className="chart-yaxis"><span>{Math.round(convWind(windChart.yMax, units))} {windLabel(units)}</span><span>{Math.round(convWind(windChart.yMax / 2, units))}</span><span>0</span></div>
-                      <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
-                        {bandPath && <path d={bandPath} className="wind-band" />}
-                        {showWindModels && windModels && windModels.models.map((m, mi) => (
-                          <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
-                            points={m.speed.slice(0, N).map((v, i) => v != null ? `${xx(i).toFixed(1)},${yy(v).toFixed(1)}` : '').filter(Boolean).join(' ')} />
-                        ))}
-                        <polyline className="wind-gust-line" vectorEffect="non-scaling-stroke" points={gustPts} />
-                        <polyline className="wind-mean-line" vectorEffect="non-scaling-stroke" points={meanPts} />
-                      </svg>
+                      <div
+                        className="wind-chart-wrap"
+                        onPointerDown={(e) => {
+                          e.currentTarget.setPointerCapture?.(e.pointerId);
+                          const r = e.currentTarget.getBoundingClientRect();
+                          setWindCursor(Math.max(0, Math.min(N - 1, Math.round(((e.clientX - r.left) / r.width) * (N - 1)))));
+                        }}
+                        onPointerMove={(e) => {
+                          const r = e.currentTarget.getBoundingClientRect();
+                          setWindCursor(Math.max(0, Math.min(N - 1, Math.round(((e.clientX - r.left) / r.width) * (N - 1)))));
+                        }}
+                        onPointerLeave={() => setWindCursor(null)}
+                      >
+                        <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
+                          {bandPath && <path d={bandPath} className="wind-band" />}
+                          {showWindModels && windModels && windModels.models.map((m, mi) => (
+                            <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
+                              points={m.speed.slice(0, N).map((v, i) => v != null ? `${xx(i).toFixed(1)},${yy(v).toFixed(1)}` : '').filter(Boolean).join(' ')} />
+                          ))}
+                          <polyline className="wind-gust-line" vectorEffect="non-scaling-stroke" points={gustPts} />
+                          <polyline className="wind-mean-line" vectorEffect="non-scaling-stroke" points={meanPts} />
+                          {windCursor != null && pts[windCursor] && (
+                            <line x1={xx(windCursor)} y1="0" x2={xx(windCursor)} y2="40" className="wind-cursor-line" vectorEffect="non-scaling-stroke" />
+                          )}
+                        </svg>
+                        {windCursor != null && pts[windCursor] && (() => {
+                          const cp = pts[windCursor]!;
+                          const lp = xx(windCursor);
+                          const tp = (yy(cp.mean) / 40) * 100;
+                          const labelLeft = Math.max(16, Math.min(84, lp));
+                          return (
+                            <>
+                              <div className="wind-cursor-dot" style={{ left: `${lp}%`, top: `${tp}%` }} />
+                              <div className="wind-cursor-readout" style={{ left: `${labelLeft}%` }}>
+                                <strong>{fmtHour(windCursor)}</strong>
+                                <span>{fmtWind(cp.mean, units)}{cp.gust != null ? ` · gust ${Math.round(convWind(cp.gust, units))}` : ''}</span>
+                                <span className="wind-cursor-range">range {Math.round(convWind(cp.min, units))}–{Math.round(convWind(cp.max, units))} {windLabel(units)}</span>
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
                       <div className="chart-below">
                         <div className="wind-arrows" aria-hidden="true">
                           {arrowIdx.map(i => {

@@ -34,14 +34,21 @@ function wx(url: string): string {
 
 // Fetch JSON with retry; returns null instead of throwing so one flaky
 // source (or an ad blocker) can't take down the whole dashboard.
-async function fetchJson(url: string, tries = 2): Promise<any | null> {
+async function fetchJson(url: string, tries = 2, timeoutMs = 8000): Promise<any | null> {
   for (let i = 0; i < tries; i++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { signal: ctrl.signal });
       // Parse the body even on errors — Open-Meteo returns { error, reason }
       // which tells us exactly what went wrong instead of failing silently.
       return await res.json();
-    } catch {}
+    } catch {
+      // Aborted timeout, network failure, or bad JSON — fall through to retry,
+      // so one slow/hanging source can never freeze "Loading conditions."
+    } finally {
+      clearTimeout(timer);
+    }
     await new Promise(r => setTimeout(r, 400));
   }
   return null;
