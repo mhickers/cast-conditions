@@ -390,3 +390,22 @@ canvas { max-width: 100%; }
 [data-theme='dark'] .clarity-clear .clarity-icon, [data-theme='dark'] .clarity-clear .clarity-level { color: #34C9B5; }
 [data-theme='dark'] .clarity-stained .clarity-icon, [data-theme='dark'] .clarity-stained .clarity-level { color: #E0A23E; }
 [data-theme='dark'] .clarity-muddy .clarity-icon, [data-theme='dark'] .clarity-muddy .clarity-level { color: #C08A5A; }
+
+/* Fishing Tips nav link in the header */
+.header-right a.nav-tips {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin-right: 14px;
+  background: none;
+  border: none;
+  color: #dce8f5;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  line-height: 1;
+}
+.header-right a.nav-tips:hover { color: #ffffff; }
