@@ -761,7 +761,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
       headline: `${town.name} Fishing Report`,
       description: report.paragraphs[0].slice(0, 200),
       articleBody: report.paragraphs.join('\n\n'),
-      image: [`${SITE}/og.png`],
+      image: [`${SITE}/og.png?v=2`],
       url,
       mainEntityOfPage: url,
       ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
@@ -784,7 +784,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png"/>
+<meta property="og:image" content="${SITE}/og.png?v=2"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
@@ -938,6 +938,20 @@ function hubHtml(hub) {
   const cityName = (n) => n.replace(/, [A-Z]{2}$/, '');
   const spotLinks = hub.spots.map(t => `<a href="/fishing/${slugify(t.name)}/">${esc(cityName(t.name))}</a>`).join('\n');
   const regionLinks = (hub.regions || []).map(r => `<a href="${r.path}">${esc(r.name)}</a>`).join('\n');
+  // Cross-link the hub to the Fishing Tips library: union the species tips that
+  // are relevant to this hub's states/waters, plus the conditions-reading guides.
+  const hasCoast = hub.spots.some(t => t.type === 'coastal');
+  const hasInland = hub.spots.some(t => t.type !== 'coastal');
+  const hubWaters = (hasCoast && hasInland) ? ['coastal', 'inland'] : (hasCoast ? ['coastal'] : ['inland']);
+  const hubStates = [...new Set(hub.spots.map(t => stateAbbrOf(t)))];
+  const tipMap = new Map(); const condMap = new Map();
+  for (const ab of hubStates) for (const w of hubWaters) {
+    const { species, conditions } = tipLinks.tipsForSpot({ state: ab, water: w }, { limit: 8 });
+    species.forEach(t => tipMap.set(t.slug, t));
+    conditions.forEach(t => condMap.set(t.slug, t));
+  }
+  const hubTipLinks = [...[...tipMap.values()].slice(0, 8), ...condMap.values()]
+    .map(t => `<a href="/fishing-tips/${t.slug}/">${esc(t.title)}</a>`).join('\n');
   const graph = [
     { '@type': 'CollectionPage', name: title, description: desc, url, isPartOf: { '@type': 'WebSite', name: 'FishCondish', url: SITE } },
     { '@type': 'BreadcrumbList', itemListElement: [
@@ -959,7 +973,7 @@ function hubHtml(hub) {
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png"/>
+<meta property="og:image" content="${SITE}/og.png?v=2"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
@@ -1000,6 +1014,7 @@ footer a{color:var(--ocean)}
 ${spotLinks}
 </div>
 ${regionLinks ? `<h2>Popular regions</h2>\n<div class="nearby">\n${regionLinks}\n</div>` : ''}
+${hubTipLinks ? `<h2>Fishing tips for ${esc(hub.name)}</h2>\n<div class="nearby">\n${hubTipLinks}\n</div>` : ''}
 <p>Every spot links to a live page with a 1–10 fishing score, an hourly best-times timeline, ${hub.kind === 'region' ? 'tides or river flow' : 'tides and water temperature or river flow'}, pressure trend, moon phase, and a species bite forecast — all free and updated in real time.</p>
 </main>
 <footer>© ${new Date().getFullYear()} FishCondish · <a href="/">Open the live dashboard</a></footer>
