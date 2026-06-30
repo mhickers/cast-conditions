@@ -409,3 +409,11 @@ canvas { max-width: 100%; }
   line-height: 1;
 }
 .header-right a.nav-tips:hover { color: #ffffff; }
+
+/* Move Fishing Tips link to the far right, after the icons */
+.header-right { display: flex; align-items: center; }
+.header-right a.nav-tips {
+  order: 999;
+  margin-right: 0;
+  margin-left: 16px;
+}
