@@ -408,3 +408,8 @@ canvas { max-width: 100%; }
   line-height: 1;
 }
 .header-right a.nav-tips:hover { color: #ffffff; }
+
+/* Hide Fishing Tips link on phones to avoid header crowding */
+@media (max-width: 768px) {
+  .header-right a.nav-tips { display: none; }
+}
