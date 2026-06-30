@@ -9,9 +9,9 @@
 
 ## Welcome to the water
 
-Catching fish is less about secret lures and more about paying attention. Where the fish are sitting, what they're eating, how the water feels that day — read those three things and you'll out-fish someone with twice your tackle.
+Catching fish is less about secret lures and more about being perceptive. Being able to understand where the fish hang out, what they're feeding on, and how the water conditions are that day are far more important than having the most expensive tackle.
 
-These guides are written for anglers who are still figuring it out, and for the in-between angler who catches fish but wants to understand *why*. Each one tells you where a species lives, when it bites, what to throw, how to work it, and the mistakes that quietly cost beginners their first fish. Two longer pieces at the end teach you to read freshwater and saltwater conditions, which is the skill that ties everything else together.
+These guides are written for anglers who are still figuring it out, and for the in-between angler who catches fish but wants to understand *why*. Each one tells you where a species lives, when it bites, what to throw, how to work it, and the mistakes that can cost beginners their first fish.
 
 One ground rule before you go: **we never print size limits, bag limits, slot sizes, or season dates.** Those change constantly and differ by state, water body, and sometimes by the week. Always check your current state regulations before you keep a fish — it's the law, and it's how the fishing stays good.
 
