@@ -742,6 +742,7 @@ export default function App() {
             <span className="logo-tagline">Know when to fish before you go</span>
           </div>
           <div className="header-right">
+            {!isNative() && <a className="btn-icon nav-tips" href="/fishing-tips" title="Fishing Tips">Fishing Tips</a>}
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
             <button className="btn-icon" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>
