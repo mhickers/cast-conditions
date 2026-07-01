@@ -24,6 +24,7 @@ import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { isNative, getCurrentPositionNative, remindAtDawn } from './native';
+import { READING_CONDITIONS, FRESHWATER_SPECIES, SALTWATER_SPECIES } from './data/tipsMenu';
 import { crossCheckWeather } from './utils/crosscheck';
 import { findNearestStation, findNearbyStations, NearestStation } from './utils/stations';
 import './App.css';
@@ -141,6 +142,7 @@ export default function App() {
   const [showWindModels, setShowWindModels] = useState(false);
   const [windCursor, setWindCursor] = useState<number | null>(null);
   const [navOpen, setNavOpen] = useState(false);
+  const [navSection, setNavSection] = useState<string | null>(null);
   const [windModels, setWindModels] = useState<WindModelSeries | null>(null);
   const [windLoading, setWindLoading] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
@@ -749,10 +751,46 @@ export default function App() {
               <button className="btn-icon nav-menu-btn" onClick={() => setNavOpen(o => !o)} aria-label="Menu" aria-expanded={navOpen} title="Menu"><Menu size={16} /></button>
               {navOpen && (
                 <>
-                  <div className="nav-menu-backdrop" onClick={() => setNavOpen(false)} />
-                  <div className="nav-menu-dropdown" role="menu">
-                    <a href="/fishing-tips/" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
-                  </div>
+                  <div className="nav-menu-backdrop" onClick={() => { setNavOpen(false); setNavSection(null); }} />
+                  <nav className="nav-menu-dropdown" role="menu">
+                    <a className="nav-menu-link" href="/fishing-tips/" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
+
+                    <button className="nav-menu-section" aria-expanded={navSection === 'reading'} onClick={() => setNavSection(s => s === 'reading' ? null : 'reading')}>
+                      <span>Reading Fishing Conditions</span>
+                      <ChevronDown size={15} className={`nav-chev${navSection === 'reading' ? ' open' : ''}`} />
+                    </button>
+                    {navSection === 'reading' && (
+                      <div className="nav-submenu">
+                        {READING_CONDITIONS.map(t => (
+                          <a key={t.slug} href={`/fishing-tips/${t.slug}/`} onClick={() => setNavOpen(false)}>{t.title}</a>
+                        ))}
+                      </div>
+                    )}
+
+                    <button className="nav-menu-section" aria-expanded={navSection === 'fresh'} onClick={() => setNavSection(s => s === 'fresh' ? null : 'fresh')}>
+                      <span>Freshwater Species Tips</span>
+                      <ChevronDown size={15} className={`nav-chev${navSection === 'fresh' ? ' open' : ''}`} />
+                    </button>
+                    {navSection === 'fresh' && (
+                      <div className="nav-submenu">
+                        {FRESHWATER_SPECIES.map(t => (
+                          <a key={t.slug} href={`/fishing-tips/${t.slug}/`} onClick={() => setNavOpen(false)}>{t.title}</a>
+                        ))}
+                      </div>
+                    )}
+
+                    <button className="nav-menu-section" aria-expanded={navSection === 'salt'} onClick={() => setNavSection(s => s === 'salt' ? null : 'salt')}>
+                      <span>Saltwater Species Tips</span>
+                      <ChevronDown size={15} className={`nav-chev${navSection === 'salt' ? ' open' : ''}`} />
+                    </button>
+                    {navSection === 'salt' && (
+                      <div className="nav-submenu">
+                        {SALTWATER_SPECIES.map(t => (
+                          <a key={t.slug} href={`/fishing-tips/${t.slug}/`} onClick={() => setNavOpen(false)}>{t.title}</a>
+                        ))}
+                      </div>
+                    )}
+                  </nav>
                 </>
               )}
             </div>
