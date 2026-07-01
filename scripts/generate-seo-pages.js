@@ -14,6 +14,10 @@ const path = require('path');
 const tipLinks = require('./tip-links');
 
 const SITE = 'https://fishcondish.com';
+// Safari Smart App Banner (funnels search visitors to the App Store). Emitted
+// only when REACT_APP_APP_STORE_URL is set in the build env (Vercel).
+const _smartId = (process.env.REACT_APP_APP_STORE_URL || '').match(/id(\d+)/);
+const SMART_BANNER = _smartId ? `<meta name="apple-itunes-app" content="app-id=${_smartId[1]}"/>\n` : '';
 
 // AI-generated local reports (optional). Produced by scripts/generate-ai-reports.js
 // and cached in scripts/ai-reports.json so the BUILD never calls the API — it just
@@ -832,7 +836,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>${SMART_BANNER}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}"/>
 <link rel="canonical" href="${url}"/>
@@ -1021,7 +1025,7 @@ function hubHtml(hub) {
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>${SMART_BANNER}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}"/>
 <link rel="canonical" href="${url}"/>

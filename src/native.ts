@@ -9,6 +9,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { InAppReview } from '@capacitor-community/in-app-review';
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
 
@@ -76,4 +77,43 @@ export async function remindAtDawn(label: string, sunriseISO: string | null | un
 export async function hapticTap(): Promise<void> {
   if (!isNative()) return;
   try { await Haptics.impact({ style: ImpactStyle.Light }); } catch {}
+}
+
+// --- App Store review prompt (SKStoreReviewController via the plugin) ---------
+// Call noteGoodMoment() at genuinely positive moments (saved a spot, saw a great
+// score, shared). We only ever prompt on native, never on the very first action,
+// spaced well apart, and within Apple's ~3-per-365-days cap (which we mirror so
+// we don't waste asks). Apple itself decides whether the sheet actually appears.
+const REVIEW_KEY = 'fcReviewState';
+interface ReviewState { good: number; asked: number; last: number }
+function loadReviewState(): ReviewState {
+  try { return { good: 0, asked: 0, last: 0, ...JSON.parse(localStorage.getItem(REVIEW_KEY) || '{}') }; }
+  catch { return { good: 0, asked: 0, last: 0 }; }
+}
+function saveReviewState(s: ReviewState): void {
+  try { localStorage.setItem(REVIEW_KEY, JSON.stringify(s)); } catch {}
+}
+
+export async function noteGoodMoment(): Promise<void> {
+  if (!isNative()) return;
+  try {
+    const s = loadReviewState();
+    s.good = (s.good || 0) + 1;
+    const now = Date.now();
+    const DAY = 86_400_000;
+    if (s.last && now - s.last > 365 * DAY) s.asked = 0; // new yearly window
+
+    const enoughMoments = s.good >= 2;                    // never on the first action
+    const underYearlyCap = (s.asked || 0) < 3;            // mirror Apple's yearly cap
+    const spacedOut = !s.last || now - s.last > 120 * DAY;
+
+    if (enoughMoments && underYearlyCap && spacedOut) {
+      s.asked = (s.asked || 0) + 1;
+      s.last = now;
+      saveReviewState(s);
+      try { await InAppReview.requestReview(); } catch {}
+    } else {
+      saveReviewState(s);
+    }
+  } catch {}
 }

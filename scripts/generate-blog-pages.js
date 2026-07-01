@@ -49,6 +49,10 @@ const tackleSearchUrl = (q) => {
   return AMAZON_TAG ? `${base}&tag=${AMAZON_TAG}` : base;
 };
 
+// Safari Smart App Banner: emitted only when REACT_APP_APP_STORE_URL is set.
+const _smartId = (process.env.REACT_APP_APP_STORE_URL || '').match(/id(\d+)/);
+const SMART_BANNER = _smartId ? `<meta name="apple-itunes-app" content="app-id=${_smartId[1]}">` : '';
+
 // Spot list for species -> spot cross-links. Preferred source: the TOWNS array
 // already maintained in generate-seo-pages.js (single source of truth). Falls
 // back to content/spots.json, then to a CTA if neither is available.
@@ -299,6 +303,7 @@ function pageShell({ title, description, canonical, bodyHtml, jsonLd }) {
     '<head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    SMART_BANNER,
     '<meta name="theme-color" content="#0C2340">',
     '<link rel="icon" href="/favicon.ico">',
     `<title>${escapeHtml(title)}</title>`,
