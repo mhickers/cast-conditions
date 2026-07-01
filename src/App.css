@@ -449,6 +449,23 @@ canvas { max-width: 100%; }
 .nav-submenu a:hover { color: var(--text); background: var(--sky); }
 .nav-menu-backdrop { position: fixed; inset: 0; z-index: 40; }
 @media (max-width: 768px) { .nav-menu { display: block; } }
+/* On compact widths the menu takes over: fold units + About off the header to declutter */
+@media (max-width: 768px) {
+  .header-right .btn-units, .header-right .btn-about { display: none; }
+}
+.nav-menu-divider { height: 1px; background: rgba(0, 0, 0, 0.08); margin: 6px 6px; }
+.nav-menu-toggle, .nav-menu-plain {
+  display: flex; align-items: center; width: 100%;
+  padding: 10px 12px; border-radius: 8px; border: 0; background: none;
+  font: inherit; font-size: 15px; font-weight: 600; color: var(--text);
+  cursor: pointer; text-align: left; white-space: nowrap;
+}
+.nav-menu-toggle { justify-content: space-between; gap: 12px; }
+.nav-menu-toggle:hover, .nav-menu-plain:hover { background: var(--sky); }
+.nav-menu-value {
+  font-weight: 700; color: var(--ocean); font-size: 13px;
+  border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 6px; padding: 2px 9px;
+}
 /* On phones, keep the wordmark but shrink it and let it truncate (never push the icons off-screen) */
 @media (max-width: 640px) {
   .logo { flex-shrink: 1; min-width: 0; }

@@ -790,14 +790,21 @@ export default function App() {
                         ))}
                       </div>
                     )}
+
+                    <div className="nav-menu-divider" />
+                    <button className="nav-menu-toggle" role="menuitem" onClick={toggleUnits} aria-label="Toggle units (imperial / metric)">
+                      <span>Units</span>
+                      <span className="nav-menu-value">{units === 'metric' ? '°C' : '°F'}</span>
+                    </button>
+                    <button className="nav-menu-plain" role="menuitem" onClick={() => { setNavOpen(false); setNavSection(null); setShowAbout(true); }}>About &amp; how it works</button>
                   </nav>
                 </>
               )}
             </div>
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
-            <button className="btn-icon" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>
-            <button className="btn-icon" onClick={() => setShowAbout(true)} title="About">?</button>
+            <button className="btn-icon btn-units" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>
+            <button className="btn-icon btn-about" onClick={() => setShowAbout(true)} title="About">?</button>
             <button className="btn-icon" onClick={() => loadData(lon, lat, locationLabel, selectedDate, selectedTime)} title="Refresh"><RefreshCw size={15} /></button>
           </div>
         </div>
