@@ -414,5 +414,325 @@
     ],
     "model": "claude (in-session, grounded)",
     "updated": "2026-06-18T15:01:09.373Z"
+  },
+  "guadalupe-river-tx": {
+    "paragraphs": [
+      "The Guadalupe tailwater below Canyon Dam is primarily a trout fishery, with rainbow and brown trout thriving in the cold, oxygen-rich releases year-round. Winter and early spring bring peak trout activity as flows stay cool and consistent. Smallmouth bass pick up in the rocky upper stretches through late spring and summer, while largemouth move into slower, warmer bends downstream toward New Braunfels. Channel catfish and flatheads are reliable all year in deeper holes, and pan fishers find sunfish and white bass throughout. Walleye and chain pickerel appear occasionally but aren't primary targets here — treat them as a surprise bonus.",
+      "Trout stack in the seams and tailouts below riffles when dam releases are steady and water temps hold in the low-to-mid 50s — drift small San Juan Worms, midge nymphs, or PowerBait under an indicator for consistent results. When flows spike, fish drop into slower eddy pockets behind boulders; when flows drop, wade carefully and work the deeper runs. Smallmouth love the rocky ledges mid-river and respond well to crawfish-imitating soft plastics or small hair jigs. Catfish settle into outside bends and deeper scour holes; cut shad or chicken liver fished on the bottom after dark produces well in warmer months. Monitor USGS gauge data before your trip — flow changes dramatically affect fish positioning and wading safety on this river."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:47:36.748Z"
+  },
+  "lake-lyndon-b-johnson-tx": {
+    "paragraphs": [
+      "Lake LBJ is a Highland Lakes constant-level reservoir on the Llano River arm and Colorado River channel, making it one of the more predictable fisheries in the region. Largemouth dominate the shallow coves and grass edges, most aggressively in spring when water climbs into the upper 50s and 60s and fish push onto flats to spawn. Catfish — both channel and blue — hold along the deeper river channel bends year-round, peaking in summer nights. Panfish like crappie and sunfish stack in submerged timber and dock pilings. Smallmouth, walleye, chain pickerel, and trout are not reliably established populations in LBJ, so targeting them here would likely disappoint.",
+      "For largemouth, work rocky points and submerged cedar and mesquite with Texas-rigged soft plastics in green pumpkin or watermelon — this clear Highland Lakes water rewards downsizing. In summer, fish drop off the main-lake humps and channel ledges early morning before surface temps push past 85 degrees. Follow the thermocline depth on your sonar and slow-roll a swimbait or drag a shaky head along rock transitions. Catfish respond well to cut perch or chicken liver fished on the bottom of the river channel at night. When flow increases after upstream releases, baitfish concentrate at current breaks near tributary mouths — that movement triggers feeding across most species."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:47:47.076Z"
+  },
+  "devils-river-tx": {
+    "paragraphs": [
+      "Devils River runs cold and clear off the Edwards Plateau, and that spring-fed character shapes everything. Largemouth and smallmouth bass are the main draw, with smallmouth responding especially well in the canyon runs and rocky shoals where the current stays honest. Warmer months push catfish into deeper pools and undercut limestone ledges, while panfish — sunfish and the like — scatter across shallower flats and grassy pockets. Trout do appear in the colder spring-fed reaches, particularly in cooler months when water temps drop, though they're not a primary quarry. Chain pickerel and walleye are present but opportunistic; walleye tend to favor low-light windows and deeper transitional water.",
+      "For bass in the canyon runs, work crayfish-pattern crankbaits and soft plastics tight to the limestone walls — smallmouth in particular stack near current seams where they can ambush drifting prey without burning energy. When flow is high and water is stained, switch to darker, higher-contrast soft plastics or spinnerbaits that push water. In clear, low-flow conditions the river fishes technical, so drop down to lighter line and finesse presentations. Catfish respond to cut bait or stink bait fished on bottom in the slower, deeper pools, especially after rain pushes organic material downstream. Read water temperature as your primary trigger — below 60 degrees, slow down everything."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:47:57.110Z"
+  },
+  "o-h-ivie-reservoir-tx": {
+    "paragraphs": [
+      "O.H. Ivie is a big, semi-arid impoundment on the Colorado River, and its sheer size and fluctuating water levels define how fish use it. Largemouth dominate the shallow creek arms and standing timber year-round, while the deeper main-lake humps and points concentrate fish during summer heat and winter cold. Catfish — blues and flatheads — run heavy through the submerged river channel and are the reservoir's most reliable all-season target. Walleye and chain pickerel are present but opportunistic; don't plan a trip around them. Panfish school tight to timber, and trout holdovers sometimes appear in cooler, deeper water during winter.",
+      "For bass, work the standing timber with Texas-rigged plastics and swimbaits when water temps climb into the upper 70s, and drop finesse rigs straight down onto humps when fish go deep in summer. In spring, staging fish stack on secondary creek-arm points before pushing shallow — follow warming water by working shallower as temps rise past 60 degrees. Catfish respond well to cut shad drifted along the old river channel bottom. When lake levels drop and creek arms narrow, fish compress near the last remaining timber and deeper bends — that concentration effect is your best friend on this water."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:48:06.426Z"
+  },
+  "lake-livingston-tx": {
+    "paragraphs": [
+      "Lake Livingston is a large East Texas reservoir on the Trinity River, and its warm, tannic waters shape everything about how fish behave here. Catfish — both blue and channel — are the bread-and-butter quarry year-round, with flatheads lurking the deeper river channel structure. Largemouth bass dominate the shallows and creek mouths, particularly around flooded timber and grass edges, and they fish best in spring and fall when water temps swing through the mid-60s. Crappie and bluegill round out consistent panfish action. It's worth being straight with you: Livingston does not have wild populations of smallmouth bass, trout, walleye, or chain pickerel — those species simply aren't established here, so targeting them would be a wasted trip.",
+      "For largemouth, work creek mouth transitions where darker tributary water meets the main lake, especially in spring when bass stage ahead of the spawn. Shallow wood cover and submerged brush hold fish; Texas-rigged soft plastics and spinnerbaits in crawfish or shad colors produce reliably. When summer heat pushes surface temps into the upper 80s, fish move deeper along the Trinity River channel breaks — that's catfish country, and fresh cut shad or live perch on bottom rigs near channel edges is the proven approach. In fall, watch for shad schools pushed against creek mouths by cooling water; bass and crappie both stack there, and a small jig or shad-imitating swimbait will get bit."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:48:18.921Z"
+  },
+  "belton-lake-tx": {
+    "paragraphs": [
+      "Belton Lake rewards anglers who understand that its stair-step terrain — bluff rock points dropping into the main channel, flooded creek arms, and open clear-water flats — creates distinct seasonal windows for multiple species. Largemouth dominate the creek arms and woody cover during spring spawn, then push deeper onto main-lake structure through summer heat. Smallmouth, less abundant but present along the rockier bluff faces, feed most aggressively in cooler water during fall and early spring. The Leon River arm above the lake and tailwater below the dam hold stocked trout in winter, while catfish — both channel and blue — run actively on deeper channel edges year-round. Crappie and bluegill stack in brush and timber when water temps stabilize in the 60s, and walleye, though sparse, can surprise anglers working points after dark.",
+      "Work bluff points by dropping Texas-rigged plastics or football jigs tight to the rock faces and letting them fall along the contour breaks, as bass suspend along those ledges when forage pushes them vertical. In the creek arms, shallow crankbaits and chatterbaits cover water efficiently in spring, but transition to drop-shots on main-lake humps once surface temps climb above 80 degrees and fish go deep. Rising lake levels pull largemouth into newly flooded timber — work it slow with flipping gear. For catfish, fresh cut shad fished on the bottom near channel bends is hard to beat any season. When the lake pulls clear and flow from the Lampasas or Leon arms stirs up a slight stain, that turbidity edge often concentrates baitfish and predators alike — run that color line hard."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:48:31.462Z"
+  },
+  "lewisville-lake-tx": {
+    "paragraphs": [
+      "Lewisville Lake is primarily a largemouth bass fishery, with fish pushing onto the shallow flats and into flooded timber near the dam as water temperatures climb through spring. Summer sees bass go deep along creek channel edges, where catfish also stack up on structure. The reservoir does receive seasonal trout stockings during cooler months, making winter and early spring productive near the dam tailwater area. Walleye and chain pickerel show up as bonus catches — walleye relating to deeper channel transitions, pickerel ambushing baitfish along weed and timber edges. Panfish like crappie and bluegill are consistent year-round, peaking in spring spawning shallows.",
+      "When water temps drop below 55 degrees, slow down and work jigs and blade baits along channel breaks adjacent to timber near the dam. Spring bass on the flats respond well to shallow-running crankbaits and Texas-rigged plastics worked through submerged wood. In summer heat, Carolina rigs and deep-diving crankbaits along the main creek channels produce largemouth and the occasional walleye. Crappie hold tight to standing timber year-round — vertical jigging with small tubes or live minnows right against the wood is more productive than casting past it. Watch for shad activity on the surface; bass and pickerel both telegraph their position that way."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:48:41.036Z"
+  },
+  "padre-island-tx": {
+    "paragraphs": [
+      "Padre Island's surf and Laguna Madre offer a rotating cast of species tied closely to water temperature and seasonal baitfish movement. Redfish and speckled trout dominate most conversations, but the beachfront guts also hold pompano, whiting, and kingfish year-round, with Spanish mackerel and jack crevalle pushing through on warmer months. Bluefish show up seasonally along the surf during baitfish migrations, and flounder — what many call fluke further north — stage in the sloughs and at Laguna passes, especially in fall when they move toward the Gulf to spawn. Black sea bass, tautog, weakfish, and striped bass are genuinely rare to absent in this South Texas water; anglers targeting those should know they're fishing well outside those species' core range.",
+      "For the surf, focus on troughs and cuts that run parallel to the beach — these guts concentrate bait and push fish within easy casting range, especially during an incoming tide with light onshore wind churning the water green and slightly milky. Fish sand fleas, fresh-cut mullet, or shrimp on the bottom for kingfish and pompano, while small spoons and live finger mullet work well for flounder holding along structure where current breaks. In the Laguna, the hypersaline, clear shallows demand a stealthier approach — wade quietly and cast ahead of tailing or cruising redfish. Water temperatures below 50°F slow everything dramatically and push fish to deeper Laguna channels, while the 68-to-80-degree range triggers the most aggressive feeding across all species."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:48:53.020Z"
+  },
+  "laguna-madre-tx": {
+    "paragraphs": [
+      "Laguna Madre is Texas redfish and speckled trout country through and through — not the northeast Atlantic, so striped bass, fluke, bluefish, black sea bass, tautog, weakfish, and kingfish simply don't live here. What you're actually targeting are spotted seatrout, redfish, and flounder as the bread-and-butter species, with sheepshead stacking on structure year-round. Spring and fall bring the best trout fishing on the shallow grass flats as water temperatures sit in the sweet spot. Summer pushes fish deeper or into moving water near the ICW where oxygen levels stay higher. Winter concentrates redfish in tighter schools along deeper edges and spoil bank drop-offs.",
+      "Read the wind before anything else on Laguna Madre — sustained southerly winds push water off the flats and shut down shallow fishing fast, while northers can clear the water to gin clarity, triggering excellent sight-casting to reds. Wade the windward edges of grass flats where baitfish pile up. Weedless gold spoons and soft-plastic paddle tails on light jig heads are workhorses here. On higher tides, push skinny water for tailing reds. Low tides concentrate fish near ICW cuts and spoil island pockets — work popping corks over submerged grass or freelined live shrimp along bottom transitions."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:02.746Z"
+  },
+  "wasatch-mountains-ut": {
+    "paragraphs": [
+      "The Wasatch high country offers a genuinely diverse fishery that shifts dramatically with elevation and season. Alpine lakes and freestone streams hold cutthroat and brook trout as their bread-and-butter species, with brown and rainbow trout filling the canyon reservoirs and lower reaches. Those same reservoirs also support warmwater species — largemouth and smallmouth bass move into shallow coves through spring, walleye patrol deeper structure after ice-out, and channel catfish become active once summer water temps push into the mid-60s. Panfish — perch and bluegill especially — school predictably near submerged timber. Chain pickerel are uncommon here and not a realistic target in Wasatch waters.",
+      "For trout in streams, focus on seams behind boulders and undercut banks during runoff when flows run high and turbid — weighted nymphs like hare's ear or stonefly patterns fished tight to structure outperform dries until flows drop and clear, typically midsummer at elevation. In reservoirs, smallmouth relate to rocky points and transitions where gravel meets deeper water; finesse jigs and drop-shot rigs work well. Bass and walleye both respond to jerkbaits worked along those same depth transitions at dawn and dusk. As summer wanes and water cools into fall, cutthroat in alpine lakes become aggressive toward small streamers and spinners near inlet streams where they stage before winter."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:12.882Z"
+  },
+  "provo-river-ut": {
+    "paragraphs": [
+      "The Provo River tailwater below Jordanelle and through the Heber Valley corridor is primarily a trout fishery, with wild browns and rainbows being the main draw year-round. Spring runoff pushes fish tight to softer seams while summer low-water periods concentrate them in deeper pools and shaded undercuts. Come fall, brown trout staging for the spawn become notably aggressive. While trout dominate, the lower Provo transitioning toward Utah Lake introduces warmwater species — smallmouth bass work current edges, catfish and panfish hold in slower outside bends, and the occasional walleye shows up near confluence zones where the river slackens.",
+      "Watch your water temperature closely — trout feed most actively when temps sit between 45 and 60 degrees, and nymphing dead-drifted beneath an indicator through bubble lines and current seams consistently outperforms any other method. Small Prince Nymphs, Hare's Ears, and midge patterns cover most situations, while streamer fishing along cut banks pulls larger browns, especially in lower light. Smallmouth respond well to small jigs and crayfish imitations worked along rocky transitions where current meets slower water. When flows spike, move to inside bends and slower pockets — that's where trout stack to escape the push."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:21.997Z"
+  },
+  "utah-lake-ut": {
+    "paragraphs": [
+      "Utah Lake is a large, shallow freshwater fishery sitting at about 4,490 feet elevation, and that altitude means ice-out can linger into early spring, delaying fish activity compared to lower-elevation waters. Channel catfish and white bass dominate the warm months and draw serious numbers of local anglers, but you'll also find walleye working the shallower flats at dusk, largemouth tucked into reed edges and the quieter harbor pockets, and panfish — particularly white perch and yellow perch — schooling heavily near the river inlet deltas where the Spanish Fork and Provo River push in nutrients and cooler oxygenated water. Trout are present but cycle seasonally with stocking, and chain pickerel show up opportunistically, especially near dense vegetation. Smallmouth, while less abundant than largemouth here, use rockier transitional bottom near inlet mouths.",
+      "When river inflows are running strong in late spring and early summer, position yourself just outside the main current seam where it fans into the lake — walleye and catfish stage there, and a slow-rolled jig or live nightcrawler on a slip sinker rig consistently produces. Largemouth key on warming shallows first when water climbs past 55 degrees, so work soft plastics and shallow crankbaits along reed margins and harbor structure. In summer heat, fish move earlier and later, and mid-lake flats over soft bottom concentrate catfish overnight on cut shad or stink bait. Watch for wind-driven turbidity on this shallow lake — cleaner water near inflows often holds the most active fish after a blow."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:33.775Z"
+  },
+  "south-platte-river-co": {
+    "paragraphs": [
+      "The South Platte tailwater below Cheesman and Eleven Mile reservoirs is primarily trout country — brown and rainbow trout dominate, with some brook trout mixed in the colder upper reaches. Winter and early spring bring the best dry-fly action as midge hatches fire consistently in the canyon. Late spring through summer, Blue-Winged Olives and caddis bring fish to the surface. Trout hold year-round here, but cold tailwater temps keep them active even in summer heat. The other species you mentioned — bass, walleye, catfish, chain pickerel, panfish — aren't realistic targets in this particular tailwater canyon environment, which runs cold and swift.",
+      "Focus on seams where fast water meets slow, especially downstream of boulders and along undercut banks. Nymphing with midges, Pheasant Tails, and Zebra Midges under an indicator produces consistently when fish aren't rising. Match your presentation to flow — higher water pushes fish tight to structure and banks, low clear water demands longer leaders and smaller flies, often size 20-22. Water temperature around 50-58°F activates aggressive feeding. Drifting streamers like Sculpins or Woolly Buggers through deeper pools moves larger browns, especially in fall when they stage pre-spawn."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:43.602Z"
+  },
+  "frying-pan-river-co": {
+    "paragraphs": [
+      "The Frying Pan below Ruedi is almost entirely a trout fishery — rainbow and brown trout dominate, with midsummer crowds targeting large, selective fish in crystal-clear, cold water. Spring runoff can blow flows out temporarily, but as releases stabilize the fishing often picks up dramatically. Fall is prime time for big browns moving into spawning behavior, making them aggressive and catchable. Winter fishing can be surprisingly productive given the regulated tailwater temperatures, though flows and fish activity slow considerably. Unlike warmwater fisheries where you'd target largemouth or smallmouth bass, walleye, chain pickerel, catfish, or panfish, this stretch runs too cold and fast for those species year-round.",
+      "Focus on seams between fast and slow current, undercut banks, and deeper pools below riffles — that's where browns stack. Midges and Blue-Winged Olives are foundational fly patterns here; match the hatch carefully because these fish see heavy pressure and reject poorly presented flies. Nymphing tight to the bottom with split shot is consistently effective when surface activity is absent. Monitor water temperature closely — trout feed most aggressively between roughly 45 and 60 degrees. When releases from the reservoir spike flows, fish tend to push toward slower margin water near banks. Low, clear conditions demand lighter tippet and stealthy approaches."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:49:53.636Z"
+  },
+  "gunnison-river-co": {
+    "paragraphs": [
+      "The Gunnison gorge and the gold medal tailwater below the dams are predominantly a brown and rainbow trout fishery, and that's what most serious anglers come for. The tailwater stays cold and relatively consistent year-round, which keeps trout feeding even in summer when freestone streams go slack. Browns move shallow and become aggressive in fall as spawn behavior kicks in. Smallmouth bass show up in the warmer canyon stretches and can be genuinely excellent through summer. Walleye, catfish, and panfish are incidental players in slower, deeper pools, and chain pickerel are rare enough here that treating one as a bonus catch is the honest framing.",
+      "In the gorge, fish hold tight to seams behind midstream boulders and along undercut walls where cold oxygenated current meets slower water. Euro-nymphing with small Pat's Rubber Legs, RS2s, or Zebra Midges under an indicator covers the technical water well. Watch flows carefully — releases from upstream dams can push fish off feeding lies quickly, so fish early before afternoon generation ramps up. Streamer fishing big weighted sculpins and woolly buggers draws aggressive strikes from larger browns in low-light periods. When water temps drop below 45 degrees, slow your drift and go small. For smallmouth in the canyon, crayfish-pattern soft plastics worked along rocky shelves in mid-summer heat are hard to beat."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:03.777Z"
+  },
+  "blue-mesa-reservoir-co": {
+    "paragraphs": [
+      "Blue Mesa is Colorado's largest body of water and fishes very differently from a typical warmwater lake. Kokanee salmon and rainbow, brown, and lake trout dominate the cold, clear depths, and these are the bread-and-butter species most anglers target. Walleye hold strong here too, particularly through the Gunnison arm's slower water. Smallmouth bass thrive along rocky structure, while panfish, catfish, and chain pickerel occupy shallower, weedy pockets when water temps climb into summer. Spring brings the most aggressive feeding as snowmelt-cooled water pushes fish shallow; by midsummer fish suspend deep chasing kokanee schools.",
+      "In the Gunnison arm, slower current and softer bottom draw walleye — drift a jig-and-minnow combo along transition edges at dawn. For smallmouth, work points and rip-rap with tube jigs or drop-shot rigs when surface temps sit in the low 60s. Lakers and browns respond to trolled Rapala-style minnow baits run deep over main-basin structure. Watch your electronics for temperature breaks around 50 to 55 degrees — that's where kokanee and their predators stack. Inflow areas near tributary mouths concentrate fish after spring runoff clears, and those same spots hold catfish and panfish on warm summer evenings with cut bait near bottom."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:13.608Z"
+  },
+  "aurora-reservoir-co": {
+    "paragraphs": [
+      "Aurora Reservoir holds a surprisingly diverse fishery for a Front Range urban water. Trout dominate cold-water periods — winter through early spring and again in late fall — and the clear, deep open water rewards patient trollers and deep-structure anglers. As water temps climb through late spring, walleye and chain pickerel become more active along transitional edges, while largemouth and smallmouth bass move up onto the shoreline shelves and swim-beach flats to spawn and feed. Catfish and panfish stay active through the summer heat when bass fishing slows midday.",
+      "Watch water temperature carefully — trout stack in the 15-to-25-foot band when surface temps push above 65°F, making drop-shot rigs and small spoons the smart play. Bass hold on any hard bottom change along the swim-beach flats early and late in the day; weightless soft plastics and shallow crankbaits work those transitions well. Walleye and pickerel hunt the deeper shelf edges at dawn and dusk — slow-rolled swimbaits and live-bait rigs both produce. In summer, catfish move into flatter shoreline areas after dark, responding well to cut bait fished on the bottom."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:22.516Z"
+  },
+  "cherry-creek-reservoir-co": {
+    "paragraphs": [
+      "Cherry Creek is a genuine multi-species fishery where your target changes dramatically with the calendar. Spring runoff pushes nutrients into the creek inlet flats, drawing walleye and trout into surprisingly shallow water while largemouth and smallmouth begin staging on the main lake points. Summer heats the shallows fast in this semi-arid Front Range reservoir, pushing trout deep and concentrating catfish along the softer bottom structure after dark. Chain pickerel stay tucked in any remaining weedy cover, and panfish school tight to submerged transitions year-round.",
+      "Work the creek inlet flats with slow-rolled soft plastics or small jigs when water temperatures are still cool and flow is pushing in — walleye and trout actively feed upcurrent during these windows. Once temps climb into the mid-60s, shift to the deeper sides of main lake points for smallmouth using finesse drop-shots or shaky heads, while largemouth key on whatever sparse weed edges develop in the shallower coves. Catfish respond well to cut bait fished on the bottom during warm nights. Watch the thermocline depth in summer; if you mark fish suspended rather than bottom-hugging, you've found suspended trout relating to cooler water, and a slow-trolled spoon or small crankbait at that depth will produce."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:31.936Z"
+  },
+  "gallatin-river-mt": {
+    "paragraphs": [
+      "The Gallatin Canyon is brown trout and rainbow trout water through and through — that is the honest answer. Whitefish fill out the mix in winter when trout get lockjawed in the cold slots. If you came here expecting largemouth bass, smallmouth, walleye, chain pickerel, catfish, or panfish, you are on the wrong drainage entirely. Those species live in warmer, slower systems and do not exist in this high-gradient freestone canyon. Trout fishing runs best in late spring before runoff peaks, again in late summer as flows drop and stabilize, and through fall when big browns move shallow and aggressive ahead of spawn.",
+      "Read water temperature carefully — trout feed most actively between roughly 45 and 65 degrees Fahrenheit. In pocket water, fish hold in the seam where fast current meets the cushion behind boulders and in the soft tongue below each rapid. Dead-drift nymphs like hare's ears and stonefly patterns under an indicator through those seams, or swing soft hackles at the end of your drift. In summer, afternoon hopper patterns fished tight to grassy cutbanks produce well. When flows are high and off-color, heavier weighted rigs and larger attractor patterns help fish find your fly in the turbulence."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:41.939Z"
+  },
+  "yellowstone-river-mt": {
+    "paragraphs": [
+      "The Yellowstone through Paradise Valley is primarily a blue-ribbon trout fishery, with wild brown and rainbow trout as the main draw across all seasons. Spring runoff pushes fish tight to banks and into slower side channels, while summer's clearer, lower flows concentrate trout in the deep glides and shaded undercuts. Fall is prime time — browns move aggressively pre-spawn, and big fish that stayed hidden all summer become catchable. Walleye appear in the lower reaches and deeper pools, especially after dark in warmer months. Catfish and panfish are occasional surprises in slower backwater eddies, and while bass and chain pickerel aren't the focus here, smallmouth occasionally show in warmer, rocky stretches downstream.",
+      "Watch water temperature closely — trout feed most actively between 50 and 65 degrees, and once temperatures push into the 70s, fish drop into the deepest, coldest slots and stop eating hard. During higher flows, dead-drift large stonefly nymphs and Pat's Rubber Legs along seam lines where fast water meets slow. In clear summer conditions, switch to smaller caddis and PMD patterns, fishing the head and tail of riffles at dawn and dusk. Streamer fishing the long undercut banks produces the largest browns, especially in low light. Always read the seams — that's where Yellowstone trout stack up and feed."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:50:52.008Z"
+  },
+  "missouri-river-mt": {
+    "paragraphs": [
+      "The Missouri River tailwater below Holter Dam is genuine trout water, with rainbow and brown trout being the primary draw year-round. Spring runoff can push flows and slightly color the water, but the dam regulation keeps this stretch more fishable than free-flowing rivers when conditions elsewhere deteriorate. Summer sees trout becoming selective and moving to deeper, cooler slots as water warms. Fall triggers aggressive brown trout feeding ahead of spawning, often the best dry-fly window of the year. While trout dominate, do not overlook the warmwater species that show up further downstream as the tailwater influence fades — smallmouth bass, walleye, and channel catfish all become legitimate targets.",
+      "Trout hold tight to current seams, undercut banks, and the softer water behind mid-channel boulders. Nymphing with sowbugs, midge larvae, and Pat's Rubber Legs produces consistently, especially when flows are higher. When surface temperatures drop into the low fifties and below, trout feed more aggressively and streamer fishing with woolly buggers or sculpin patterns can find larger browns. Watch your thermometer — water too warm in August pushes fish deep and midday fishing suffers. For smallmouth and walleye in transitional water, work slower outside bends with jigs and soft plastics near the bottom. Read the seams, match your depth to the season, and let the current do the work."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:02.088Z"
+  },
+  "henrys-lake-id": {
+    "paragraphs": [
+      "Henrys Lake is a high-elevation fishery in eastern Idaho sitting around 6,470 feet, and that altitude shapes everything. The primary targets here are cutthroat trout, brook trout, and cutbow hybrids — not bass, walleye, pickerel, catfish, or panfish, which simply are not present in this water. The lake's cold, productive environment supports trophy-sized trout that grow fat on scuds, leeches, and damselfly nymphs. Early season after ice-out, fish push aggressively into the shallow inlet flats and spring seeps. Midsummer finds them relating to weed edges in the 6-to-12-foot zone. Come fall, cooling water draws fish back shallow ahead of freeze-up.",
+      "For tactics, concentrate on the weedy shallows and spring inflows where subsurface temps stay cooler and food concentrates. Slow-stripped leech patterns in olive or black, Woolly Buggers, and scud imitations in pink or tan consistently produce on fly. Spin anglers do well with small jigs tipped with worm near weed edges and bottom near springs. Watch water clarity and surface temps — when temps push into the low 60s, fish drop slightly deeper and slow their feeding. Early mornings and overcast days keep fish active in the shallows longest."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:11.979Z"
+  },
+  "payette-lake-id": {
+    "paragraphs": [
+      "Payette Lake runs cold and clear at elevation, and that shapes everything. Rainbow and lake trout dominate, with rainbows most active in spring near the surface and lake trout dropping deep into thermoclines through summer. Smallmouth bass patrol the rocky drop-offs and boulder fields better than largemouth here — the clear, cold water favors them. Walleye are present but less abundant than in lower-elevation Idaho waters, so treat them as a bonus. Chain pickerel, catfish, and most panfish are minimal or essentially absent in this mountain lake environment, so focus your expectations on the trout and bass that genuinely thrive.",
+      "Work the points and submerged rock shelves where smallmouth stage in low-light hours using tube jigs or drop-shot rigs with finesse plastics — clear water demands lighter line and natural colors. For rainbows, drift Rapala-style minnow baits or suspend small spoons near the creek inlets, especially where cold tributary flow meets warmer surface water in late spring. When surface temps climb into the mid-60s, lake trout push toward 40-60 feet — jig heavy spoons vertically over those deeper basin edges. Watch your electronics for the thermocline; fish stack just above it when summer stratification tightens."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:21.394Z"
+  },
+  "clearwater-river-id": {
+    "paragraphs": [
+      "The Clearwater is first and foremost a steelhead and salmon river, with B-run steelhead pushing through in good numbers once water temperatures drop into the upper 40s through low 50s Fahrenheit in fall. Spring chinook runs bring serious action in the lower canyon stretches before flows typically peak and color up with snowmelt. While most visiting anglers focus on the anadromous runs, resident smallmouth bass thrive in the warmer tailouts and rocky mid-river structure through summer, with trout — particularly cutthroat — holding in cooler tributary confluences. Catfish and panfish round out the warm-season fishery in slower, softer-bottomed inside bends.",
+      "For steelhead, concentrate on the tailouts and soft seams along the edges of fast runs where fish stack to rest — these holding lies change with flow, so watch your gauge. When water is off-color, fish swing bright pink or orange spoons and spinners through the bottom third of the water column; clear, low conditions call for float-and-bead rigs or small jigs drifted naturally. Summer smallmouth respond well to crayfish-pattern crankbaits worked along cobble shelves. Temperature is your best guide — steelhead become sluggish and tight to the bottom below 38 degrees, so slow down your presentation accordingly and fish methodically through the bucket."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:31.328Z"
+  },
+  "pecos-river-nm": {
+    "paragraphs": [
+      "The upper Pecos is fundamentally a wild trout fishery — brown and rainbow trout are your primary targets in these cold, boulder-strewn runs above around 7,000 feet. Snowmelt-swollen flows in late spring push trout tight to slower seams and undercut banks, while summer low water concentrates them in deeper pools and shaded pocket water. As you drop toward the canyon stretches and transition zones, smallmouth bass appear in warmer reaches, and catfish and occasional panfish work the slower bends. Walleye, largemouth, chain pickerel, and panfish become more relevant farther downstream where gradient flattens and water warms considerably.",
+      "For trout, match the hatch when you can — elk hair caddis and parachute adams cover most summer dry-fly situations, while weighted nymphs like hare's ear or pheasant tail produce when fish are holding deep during high flows or midday heat. Drift a nymph tight along any current seam adjacent to a boulder or root wad; that transition between fast and slow water is where fish feed. Water temp is your guide: trout feed most actively between roughly 50 and 65 degrees, so fish early morning in summer. For smallmouth lower down, small crawfish-pattern crankbaits and finesse plastics worked along rocky shelves are consistently productive."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:41.283Z"
+  },
+  "colorado-river-az": {
+    "paragraphs": [
+      "Below Davis Dam, the cold tailwater releases keep trout active nearly year-round, with rainbow and brown trout feeding most aggressively when flows are steady and water temperatures stay in the mid-40s to low 50s. As you move downstream into warmer backwaters and main channel structure, largemouth bass dominate the slower, vegetated edges while smallmouth push onto rocky points and current seams. Walleye and chain pickerel are underrated here — walleye stage near deeper channel drop-offs during cooler months, while pickerel ambush prey in reedy backwater shallows. Catfish and panfish fill in the warmwater stretches all summer, with channel cats running bigger after nightfall.",
+      "For trout in the tailwater, small midge patterns, San Juan Worms, and light jigs in natural colors outperform most other presentations when flows are steady. Watch your thermometer — once surface temps climb past 65 degrees downstream, shift focus to bass. Largemouth hold tight to tule beds and submerged structure; work soft plastics slowly along bottom transitions. Smallmouth respond well to finesse rigs and small crayfish-imitating crankbaits near rocky breaks. Walleye bite best during low-light periods on swimbaits and jigging spoons near deeper ledges. In summer heat, catfish take cut bait anchored in current edges after dark, and crappie stack under any shaded overhang you can find."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:51:51.746Z"
+  },
+  "redondo-beach-ca": {
+    "paragraphs": [
+      "Redondo Beach fishes differently than most Southern California spots because the submarine canyon comes in close, pulling cool, nutrient-rich water near the pier and harbor mouth year-round. Halibut and calico bass dominate warm months, while white seabass and yellowtail push through during late spring and early fall. Bonito flood the pier in summer and make for fast, light-tackle action. Rockfish and sculpin hold the kelp edges and rocky structure through winter when surface action slows. Sharks, rays, and shovelnose guitarfish are consistent from the surf through warmer months, and sand bass stack in the harbor basin nearly all year.",
+      "For pier fishing, live anchovies or small swim baits worked near the pilings at mid-depth catch the most bass and halibut. On the surf, fresh-cut squid or mackerel soaked on the bottom during an incoming tide, especially on a moderate swell, draws rays and the occasional halibut. Water temperature between 62 and 68 degrees is your best window for pelagics near the canyon edge. Early morning on a rising tide with light offshore wind keeps the surface clean and fish active along the kelp lines. Drop tungsten jigs to the canyon shelf for rockfish when surface action dies."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:02.124Z"
+  },
+  "trinity-river-ca": {
+    "paragraphs": [
+      "Below Lewiston Dam, the Trinity runs cold and clear year-round, making it prime tailwater habitat for wild steelhead and king salmon rather than warmwater species like largemouth bass, smallmouth, walleye, chain pickerel, catfish, or panfish — those fish simply don't establish here in this freestone-style cold release. Steelhead move through fall into late winter, with the best numbers typically showing after early rains push flows and trigger upstream migration. Spring Chinook follow their own run timing, while summer offers resident rainbow trout that hold in cooler pockets near the dam.",
+      "Watch your flow gauge closely — rising water after dam releases moves fish off their lies and into slack edges and seams behind boulders. Drift fishing with roe, beads, or yarn under a float covers those holding lies effectively, while swinging soft hackles and small streamers on a spey or single-hand rod works well when fish are active. In low, clear summer conditions, drop to lighter tippet and small nymphs. Water temperature below 50°F triggers the best steelhead aggression; once summer warms flows above 55°F, focus on early morning and evening near shaded, deeper runs."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:15.504Z"
+  },
+  "lake-balboa-ca": {
+    "paragraphs": [
+      "Lake Balboa is a small urban park lake in the San Fernando Valley that gets regular trout plants from late fall through early spring when water temps drop into the comfortable 50s — that's the time to focus on trout along the shallower shoreline flats. Largemouth bass are your primary warm-season target here, peaking in spring and again in early fall as temperatures ease off the summer highs. Panfish like bluegill and crappie are present year-round and often congregate near any structure. Catfish become most active from late spring through summer, especially after dark. Walleye, chain pickerel, and smallmouth bass are less commonly targeted here and populations are limited in this type of managed urban impoundment.",
+      "Work the grassy shoreline edges and any submerged structure near the park's fishing areas — largemouth hold tight to reed margins and shallow drop-offs, especially in morning and evening. For stocked trout, small inline spinners, PowerBait on a slip-sinker rig, or a simple worm under a bobber fished near planting zones produces well. Catfish respond to chicken liver or nightcrawlers on the bottom after the water warms past 65 degrees. Panfish will hit small jigs or red worms near any visible structure. When surface temps climb into the upper 70s, push bass presentations deeper or fish the shaded northern banks during midday."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:25.226Z"
+  },
+  "puddingstone-reservoir-ca": {
+    "paragraphs": [
+      "Puddingstone is a small, heavily pressured impoundment tucked in the San Gabriel Valley foothills, and understanding how it fishes through the seasons matters more here than on bigger, more forgiving water. Largemouth bass dominate and respond well spring through early summer when shallower coves warm fastest. Catfish and panfish stay active through the heat of summer when bass go deep or nocturnal. The reservoir receives regular trout plants from fall through early spring, and those stocked fish concentrate pressure near the dam and open water. Walleye and chain pickerel are not established species here, so targeting them would be a wasted effort on this water.",
+      "For largemouth, focus on the brushy, shallower ends of the main coves early and late in the day, working Texas-rigged plastics or small swimbaits along submerged structure and any rocky transitions near the dam face. During trout plants, inline spinners, PowerBait, and small spoons near the dam and deeper open water produce consistently. As surface temps push into the mid-70s and beyond, move to finesse tactics — drop shots and shaky heads in 10 to 18 feet near the dam's deeper edge. Catfish respond to cut bait or chicken liver fished on bottom in the calmer cove pockets after dark."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:35.278Z"
+  },
+  "lake-superior-mn": {
+    "paragraphs": [
+      "Lake Superior's North Shore is primarily a trout fishery, with lake trout, steelhead, and brown trout drawing most serious anglers. Steelhead and browns stage heavily at river mouths during spring snowmelt and again in fall when water temps drop into the low 40s, pushing up into tributary systems. Smallmouth bass thrive in rocky nearshore structure from midsummer through early fall, and walleye show up in harbors and river-mouth slack water during low-light periods. Chain pickerel, catfish, largemouth, and panfish are largely secondary here, more common in warmer inland bays and connecting waters than in the cold main lake itself.",
+      "For trout at river mouths, work current seams where cold tributary flow meets the lake with small spoons, egg imitations, and soft plastics bounced along the bottom. Smallmouth stack on submerged boulders and cobble points in 8 to 20 feet when water temps hit the upper 50s to mid-60s — drop-shot rigs and tube jigs in natural colors are reliable. Watch surface temp breaks; fish often hold just inside the warmer side of a thermal edge. Walleye favor low-light feeding windows in harbors, responding well to jig-and-minnow presentations near structure where river current dissipates into calmer water."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:45.165Z"
+  },
+  "toccoa-river-ga": {
+    "paragraphs": [
+      "The Toccoa below Blue Ridge Dam is primarily a trout fishery, with rainbow and brown trout stocked through the delayed harvest section and wild fish holding in the tailwater year-round. Winter and early spring are prime time as cold, consistent releases keep temperatures in the trout's sweet spot. Come summer, trout fishing slows in the delayed harvest water but improves near the dam where releases stay cold. Further downstream as the river warms and slows, smallmouth bass become the main draw, with largemouth, chain pickerel, catfish, and panfish mixing in. Walleye are present but less commonly targeted and tend to show best during low-light periods in spring.",
+      "Wade anglers should focus on seams behind mid-current boulders and soft edges where fast water meets slow for trout. Small nymphs like pheasant tails and zebra midges under an indicator consistently produce, and inline spinners work well when water is slightly off-color after generation. Watch release schedules closely — rising flows push trout tight to bank eddies and slack pockets. In warmer months downstream, work crayfish-pattern soft plastics and small crankbaits along rocky transitions and woody cover for smallmouth. When water temperatures climb above 68 degrees, shift focus toward shaded structure and early morning windows."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:57:54.518Z"
+  },
+  "soque-river-ga": {
+    "paragraphs": [
+      "The Soque runs cold and clear through the Habersham valley, and its freestone character shapes everything about how fish behave here. Rainbow and brown trout are the headliners, holding in cold upper reaches year-round but feeding most aggressively during spring hatches and again in fall as water temperatures drop back into the low 50s. Downstream as the river widens and warms, smallmouth bass move into current seams through summer while largemouth push into slower backwater pockets. Chain pickerel lurk in woody debris through all seasons. Catfish and panfish — bluegill and redbreast sunfish mostly — fill the deeper, slower bends, and walleye are occasionally taken in low-light runs near transitional depth changes.",
+      "When water temperatures climb above 68 degrees, trout retreat to spring-fed tributaries and deeper shaded pools — work those areas with small nymphs, soft-hackles, or lightweight spinners early and late. In cooler months, drift egg patterns and midge larvae through slower tail-outs where browns stage. Smallmouth respond well to crayfish-imitating crankbaits and tube jigs bounced along cobble runs during higher summer flows. Watch the gauge — after rain, the Soque colors up quickly, and that's when catfish and pickerel move shallow and bite hard on cut bait or slow-rolled swimbaits near submerged structure. Read the seams where fast water meets slow and you'll find fish stacked regardless of season."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:58:12.126Z"
+  },
+  "golden-isles-ga": {
+    "paragraphs": [
+      "The Golden Isles offer year-round action across an ever-changing seasonal rotation. Striped bass push into the sounds and tidal creeks during cooler months, while weakfish work the same corridors in spring before the heat drives them off. Summer brings fluke settling onto sandy bottom transitions near inlet mouths, and bluefish slashing through schools of baitfish along the beachfront. Kingfish move into the surf in warmer months, making them a reliable target from the beach. Black sea bass and tautog tend to hold on nearshore structure when water temperatures allow, though both species thin out considerably during the hottest stretches.",
+      "Tides are everything here. Falling water pulls bait out of the marsh grass and concentrates fish along deeper creek edges and at the mouths where creeks dump into larger sounds. Position yourself at those transitions during the last two hours of outgoing tide for the most reliable action. Fluke respond well to drifting gulp-style baits or live finger mullet along sandy bottom transitions. Stripers and weakfish favor suspending plugs or soft plastics worked slowly in lower light. Bluefish will hit nearly anything metal or fast-moving in the surf. When water temperatures spike into the upper eighties, push toward deeper sound water or fish early morning before the heat kills the bite."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:58:21.543Z"
+  },
+  "schuylkill-river-pa": {
+    "paragraphs": [
+      "The Schuylkill runs a mix of wadeable riffles, deep pools, and productive dam tailouts that hold fish year-round if you know the season. Smallmouth bass are the backbone of warm-weather fishing, peaking through summer in the faster runs and rocky structure. Largemouth push into the slower backwater stretches and flatter pool edges. Trout are stocked through the cooler months and hold well in the deeper, oxygenated tailout water below dams. Walleye and chain pickerel are underrated here, showing up in transitional seasons when water temps sit in the 50s. Channel catfish own the deep summer holes, and panfish — bluegill and crappie — stay active almost anytime.",
+      "Read the river by flow and temperature. When water runs clear and low in summer, smallmouth stack on submerged rock and ledge structure — finesse plastics, small tubes, and ned rigs outfish big presentations. Walleye favor the deeper tailouts at low light; twister-tail jigs and slow-rolled swimbaits cover that water well. Trout in tailouts respond to small spinners, soft plastics, and natural bait like worms and minnows when flows are steady post-stocking. Pickerel lurk near slack-water edges and woody debris — a quick-retrieved spinnerbait or a weedless swimbait draws strikes. Rising spring flows signal fish activity; stable, moderating temps in the 55 to 65 degree range consistently produce across all species."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:58:31.908Z"
+  },
+  "tillamook-bay-or": {
+    "paragraphs": [
+      "Tillamook Bay is primarily a salmon, steelhead, and sturgeon fishery — and I have to be straight with you: striped bass, fluke, bluefish, black sea bass, tautog, weakfish, and kingfish are East Coast and Mid-Atlantic species that do not live in or migrate through Tillamook Bay or Oregon coastal waters. Putting those species in a Tillamook report would be fiction, and fiction gets hooks set in the wrong place or gets you skunked on a trip you paid real money for.",
+      "What I can tell you is that Tillamook Bay genuinely holds Chinook and coho salmon near the jaws and river mouths during their respective runs, sea-run cutthroat in the tidal channels, white sturgeon year-round in the deeper holes, and dungeness crab worth targeting in the bay flats. If you want an accurate, useful report for Tillamook or a legitimate report covering those Mid-Atlantic species in their actual home water, I am glad to write either one."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:58:38.958Z"
+  },
+  "lake-billy-chinook-or": {
+    "paragraphs": [
+      "Lake Billy Chinook holds a surprisingly diverse fishery across its three arms. The Crooked, Metolius, and Deschutes arms each fish differently — smallmouth bass dominate the rocky canyon walls and boulder fields, especially as water warms into late spring and summer, while largemouth tuck into any available structure near the warmer, shallower coves. Kokanee and bull trout cruise the cold, clear Metolius arm year-round, with kokanee running shallower in spring before dropping deep by midsummer. Walleye move through the main lake basin and transition zones. Channel catfish hold in softer-bottomed areas near the Deschutes arm, and crappie, bluegill, and perch fill out the panfish bite around any wood or dock structure.",
+      "For smallmouth, work the vertical canyon walls with drop-shot rigs, tube jigs, or finesse swimbaits, paying close attention to depth transitions between 15 and 35 feet as temperatures fluctuate. When surface temps climb into the low 70s, bass push shallow at dawn before retreating to shaded ledges. Troll leaded line or downriggers for kokanee in the cold-water column of the Metolius arm using small Wedding Ring spinners tipped with shoepeg corn. Walleye respond best to slow-rolled jigs or bottom bouncers dragged across gravel flats at low-light hours. Watch inflow current from the Metolius especially — that cold, clear water creates a thermal layer that concentrates trout and draws predators to the boundary edge."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:58:51.342Z"
+  },
+  "wallowa-lake-or": {
+    "paragraphs": [
+      "Wallowa Lake is primarily a trout fishery, with kokanee salmon and rainbow trout drawing the most attention in this deep, glacier-carved basin. Spring and fall are peak seasons as fish move shallower and feed aggressively near the inlet where the Wallowa River pushes cool, oxygenated water into the lake. Summer stratification pushes trout and kokanee down into the thermocline, often 30 to 60 feet deep, making depth-finding essential. Panfish work the warmer shallows year-round, and while bass, walleye, chain pickerel, and catfish are sometimes mentioned by visiting anglers, they are not established populations here — targeting them will leave you frustrated and fishless.",
+      "For trout and kokanee, troll wedding ring spinners or small flasher-and-worm rigs along the thermocline in summer, adjusting depth until your sonar shows fish. Near the inlet, drift eggs or small spinners during spring runoff when rainbows stack up in the current seam. Shoreline drop-offs hold fish at dawn and dusk when surface temps cool; cast Kastmasters or small Rapalas parallel to the bank. Watch water clarity — Wallowa runs exceptionally clear, so drop to 4- or 6-pound fluorocarbon and downsize your presentation whenever fishing slows."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:59:00.676Z"
+  },
+  "crane-prairie-reservoir-or": {
+    "paragraphs": [
+      "Crane Prairie is primarily a trophy rainbow and brown trout fishery built around the flooded timber and the Deschutes and Cultus river channels, but largemouth bass have established a strong presence in the shallower weedy flats and make up a meaningful part of the catch. True smallmouth, walleye, chain pickerel, and catfish are not established species here — that mix belongs to different Oregon or Midwest waters. Panfish, particularly yellow perch, do show up in the warmer shallows. Trout fishing peaks in spring and again in fall when cooler water temperatures push fish shallow and active into the channel edges and around standing timber.",
+      "In summer, trout drop deeper into the old river channel where cooler water concentrates them — troll a leech pattern or small Woolly Bugger along the channel edges at depth. Bass work the submerged stumps and weed margins best on early morning topwater and slow-fished plastic crawfish or worms once the sun climbs. Perch school tight to submerged structure and respond well to small jigs and worms fished vertically. Watch water temperature closely — once surface temps exceed the low 70s, shift your focus toward channel drop-offs and shaded timber edges where trout stack up waiting for the cool season to return."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:59:09.673Z"
+  },
+  "kent-lake-mi": {
+    "paragraphs": [
+      "Kent Lake is a productive impoundment on the Huron River system in Milford, and the mix of species keeps things interesting year-round. Largemouth dominate the shallow flats and weed edges through summer, while smallmouth favor the rockier points and the transition zones near the inlet. Chain pickerel show up wherever dense vegetation meets open water, particularly in spring and fall. Walleye are present but underrated here — they stack up near the inlet current during cooler months. Trout anglers focus effort near the inlet in early spring when flows are cold and dissolved oxygen is high. Catfish and panfish round out summer nights and slow stretches between weed beds.",
+      "Start at the Huron River inlet whenever there's visible current — flow concentrates baitfish and draws walleye, smallmouth, and trout into tight feeding lanes along seams and bottom structure. In warmer months, largemouth and pickerel bury themselves in submerged vegetation on the flats; fish slower presentations like weedless Texas-rigged plastics or spinnerbaits along edges. When surface temps climb above 75 degrees, push toward deeper structure or fish low-light windows. Panfish and catfish respond well to live bait fished near woody debris and dock pilings. As water cools into fall, compress your search — predators stack tight, reaction baits like swimbaits and blade lures become especially effective near the inlet mouth."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-01T22:59:19.514Z"
   }
 }

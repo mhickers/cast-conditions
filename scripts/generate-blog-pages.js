@@ -38,6 +38,17 @@ const SPOTS_DATA  = path.join(__dirname, '..', 'content', 'spots.json');
 
 const tipLinks = require('./tip-links');
 
+// Affiliate: reuse the app's Amazon Associates tag (REACT_APP_AMAZON_TAG). Set it
+// in your shell when running this generator so the baked-in tips links are
+// monetized; unset = plain Amazon search links (still useful, no commission).
+// Note: the tag is baked into the committed HTML at generate time — re-run this
+// script after changing the tag.
+const AMAZON_TAG = (process.env.REACT_APP_AMAZON_TAG || '').trim();
+const tackleSearchUrl = (q) => {
+  const base = `https://www.amazon.com/s?k=${encodeURIComponent(q + ' fishing')}`;
+  return AMAZON_TAG ? `${base}&tag=${AMAZON_TAG}` : base;
+};
+
 // Spot list for species -> spot cross-links. Preferred source: the TOWNS array
 // already maintained in generate-seo-pages.js (single source of truth). Falls
 // back to content/spots.json, then to a CTA if neither is available.
@@ -249,6 +260,13 @@ code{background:#fff;border:1px solid var(--rule);padding:1px 5px;border-radius:
 .applink{margin-top:26px;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--ocean);border-radius:10px;padding:16px 20px}
 .applink p{margin:0}
 .applink a{color:var(--ocean);font-weight:700}
+.gear{margin-top:30px;border-top:1px solid var(--rule);padding-top:14px}
+.gear h2{margin-top:0}
+.gear-links{margin:0;font-size:14px;line-height:1.95}
+.gear-links a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--rule)}
+.gear-links a:hover{color:var(--ocean);border-color:var(--ocean)}
+.gear-sep{color:var(--rule)}
+.gear-disclosure{margin:10px 0 0;font-size:12px;color:var(--muted);opacity:.85}
 footer.site{border-top:1px solid var(--rule);margin-top:42px;padding:22px 0 50px;color:var(--muted);font-size:14px}
 footer.site a{color:var(--ocean)}
 .cards{list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0}
@@ -326,9 +344,18 @@ function renderPost(post) {
   body += `<h1>${escapeHtml(post.title)}</h1>\n`;
   body += bodyToHtml(post.bodyLines.join('\n'));
 
-  // affiliate categories: invisible note for later monetization, not shown to readers
+  // Recommended gear — understated affiliate section (content stays primary).
   if (post.affiliate) {
-    body += `\n<!-- Recommended gear (add affiliate links here): ${escapeHtml(post.affiliate)} -->\n`;
+    const cats = post.affiliate.replace(/\.\s*$/, '').split(',').map((s) => s.trim()).filter(Boolean);
+    if (cats.length) {
+      const links = cats
+        .map((c) => `<a href="${tackleSearchUrl(c)}" target="_blank" rel="noopener noreferrer sponsored">${escapeHtml(c)}</a>`)
+        .join('<span class="gear-sep"> · </span>');
+      body += `\n<section class="gear"><h2>Gear that helps</h2>\n`;
+      body += `<p class="gear-links">${links}</p>\n`;
+      if (AMAZON_TAG) body += `<p class="gear-disclosure">Affiliate links &mdash; we may earn a small commission at no extra cost to you.</p>\n`;
+      body += `</section>\n`;
+    }
   }
 
   // related guides — guarantee the matching "reading conditions" guide is linked
