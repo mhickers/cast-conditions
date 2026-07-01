@@ -123,7 +123,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .species-chevron { flex: none; color: var(--text-muted); transition: transform 0.2s ease; }
 .species-open .species-chevron { transform: rotate(180deg); }
 .species-detail { margin-top: 2px; }
-.species-icon { display: inline-flex; align-items: center; color: var(--ocean); }
+.species-icon { display: inline-flex; align-items: center; color: var(--ocean); flex-shrink: 0; }
+.species-icon svg { flex-shrink: 0; }
 .species-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
 .bite-label { font-size: 11px; font-weight: 600; }
 .bite-bar-wrap { height: 4px; background: #E1EFF8; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
@@ -419,3 +420,19 @@ canvas { max-width: 100%; }
 @media (max-width: 768px) {
   .header-right a.nav-tips { display: none; }
 }
+
+/* Mobile overflow menu — holds Fishing Tips (and future nav links) */
+.nav-menu { position: relative; display: none; order: 999; margin-left: 10px; }
+.nav-menu-dropdown {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  min-width: 160px; background: var(--surface); border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); padding: 6px; z-index: 50;
+  display: flex; flex-direction: column;
+}
+.nav-menu-dropdown a {
+  display: block; padding: 9px 12px; border-radius: 7px; color: var(--text);
+  text-decoration: none; font-size: 15px; font-weight: 600; white-space: nowrap;
+}
+.nav-menu-dropdown a:hover { background: var(--sky); }
+.nav-menu-backdrop { position: fixed; inset: 0; z-index: 40; }
+@media (max-width: 768px) { .nav-menu { display: block; } }

@@ -12,6 +12,10 @@
     {
       "path": "/api/check-alerts",
       "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/regen-seo",
+      "schedule": "0 8 * * 1"
     }
   ]
 }

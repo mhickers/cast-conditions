@@ -18,7 +18,7 @@ import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown, Navigation,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, Menu,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
@@ -140,6 +140,7 @@ export default function App() {
   const [precipOpen, setPrecipOpen] = useState(false);
   const [showWindModels, setShowWindModels] = useState(false);
   const [windCursor, setWindCursor] = useState<number | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
   const [windModels, setWindModels] = useState<WindModelSeries | null>(null);
   const [windLoading, setWindLoading] = useState(false);
   const [theme, setTheme] = useState<string>(() => {
@@ -744,6 +745,19 @@ export default function App() {
           </div>
           <div className="header-right">
             {!isNative() && <a className="btn-icon nav-tips" href="/fishing-tips" title="Fishing Tips">Fishing Tips</a>}
+            {!isNative() && (
+              <div className="nav-menu">
+                <button className="btn-icon nav-menu-btn" onClick={() => setNavOpen(o => !o)} aria-label="Menu" aria-expanded={navOpen} title="Menu"><Menu size={16} /></button>
+                {navOpen && (
+                  <>
+                    <div className="nav-menu-backdrop" onClick={() => setNavOpen(false)} />
+                    <div className="nav-menu-dropdown" role="menu">
+                      <a href="/fishing-tips" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
             <button className="btn-icon" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>
