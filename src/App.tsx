@@ -745,19 +745,17 @@ export default function App() {
           </div>
           <div className="header-right">
             {!isNative() && <a className="btn-icon nav-tips" href="/fishing-tips" title="Fishing Tips">Fishing Tips</a>}
-            {!isNative() && (
-              <div className="nav-menu">
-                <button className="btn-icon nav-menu-btn" onClick={() => setNavOpen(o => !o)} aria-label="Menu" aria-expanded={navOpen} title="Menu"><Menu size={16} /></button>
-                {navOpen && (
-                  <>
-                    <div className="nav-menu-backdrop" onClick={() => setNavOpen(false)} />
-                    <div className="nav-menu-dropdown" role="menu">
-                      <a href="/fishing-tips" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+            <div className="nav-menu">
+              <button className="btn-icon nav-menu-btn" onClick={() => setNavOpen(o => !o)} aria-label="Menu" aria-expanded={navOpen} title="Menu"><Menu size={16} /></button>
+              {navOpen && (
+                <>
+                  <div className="nav-menu-backdrop" onClick={() => setNavOpen(false)} />
+                  <div className="nav-menu-dropdown" role="menu">
+                    <a href="/fishing-tips/" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
+                  </div>
+                </>
+              )}
+            </div>
             {lastUpdated && <span className="updated-txt">Updated {lastUpdated} · {locationLabel}</span>}
             <button className="btn-icon" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle dark mode">{theme === 'dark' ? <Sun size={15} /> : <MoonIcon size={15} />}</button>
             <button className="btn-icon" onClick={toggleUnits} title="Toggle units (imperial / metric)" aria-label="Toggle units">{units === 'metric' ? '°C' : '°F'}</button>

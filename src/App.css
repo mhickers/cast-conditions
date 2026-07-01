@@ -422,7 +422,7 @@ canvas { max-width: 100%; }
 }
 
 /* Mobile overflow menu — holds Fishing Tips (and future nav links) */
-.nav-menu { position: relative; display: none; order: 999; margin-left: 10px; }
+.nav-menu { position: relative; display: none; margin-left: 10px; }
 .nav-menu-dropdown {
   position: absolute; right: 0; top: calc(100% + 8px);
   min-width: 160px; background: var(--surface); border: 1px solid rgba(0, 0, 0, 0.08);
