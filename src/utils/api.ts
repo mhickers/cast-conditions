@@ -338,7 +338,7 @@ export async function fetchAIAdvice(prompt: string): Promise<string | null> {
 }
 
 // 7-day outlook: one daily score per day (midday conditions + pressure trend)
-export async function fetchWeekOutlook(lat: number, lon: number): Promise<Array<{ date: string; score: number }>> {
+export async function fetchWeekOutlook(lat: number, lon: number, waterTempF?: number | null): Promise<Array<{ date: string; score: number }>> {
   const start = localToday();
   const endD = new Date(); endD.setDate(endD.getDate() + 6);
   const end = localToday(endD);
@@ -358,6 +358,10 @@ export async function fetchWeekOutlook(lat: number, lon: number): Promise<Array<
       waveFt: m?.hourly?.wave_height?.[idx] ?? undefined,
       pressureMb: w.hourly.surface_pressure?.[idx],
       pressureTrend: trend,
+      // Water temp moves slowly over a week, so applying the current reading to
+      // every day lets the outlook share the same productive-water-temp factor
+      // the top-of-page score uses — keeping the two scores in line.
+      waterTempF: waterTempF ?? undefined,
     } as any, new Date(dateStr + 'T12:00:00'));
     out.push({ date: dateStr, score });
   }

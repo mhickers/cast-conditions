@@ -19,7 +19,7 @@ import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown, Navigation,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, Menu, ShoppingBag,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, ChevronLeft, ChevronRight, Menu, ShoppingBag,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
@@ -310,10 +310,12 @@ export default function App() {
       setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       setLoading(false);
 
-      fetchWeekOutlook(la, lo).then(ws => { if (seq === loadSeq.current) setWeekScores(ws); }).catch(() => {});
-
       const extra = await stationsChain;
       if (seq !== loadSeq.current) return;
+
+      // Week outlook shares the current water temp so its daily scores line up
+      // with the top-of-page score (which also factors water temp in).
+      fetchWeekOutlook(la, lo, extra?.waterTemp ?? null).then(ws => { if (seq === loadSeq.current) setWeekScores(ws); }).catch(() => {});
 
       // AI summary in the background — never blocks the page
       const dayMoon = getMoonPhase(new Date(dateStr + 'T12:00:00'));
@@ -500,6 +502,15 @@ export default function App() {
     let time = selectedTime;
     if (newDate !== todayStr && selectedTime === 'now') { time = 12; setSelectedTime(12); }
     loadData(lon, lat, locationLabel, newDate, time);
+  };
+
+  // Step the forecast date one day at a time, clamped to the allowed range.
+  const shiftDate = (delta: number) => {
+    const d = new Date(selectedDate + 'T12:00:00');
+    d.setDate(d.getDate() + delta);
+    const ns = localToday(d);
+    if (ns < todayStr || ns > maxDateStr) return;
+    handleDateChange(ns);
   };
 
   // ---- Search with suggestions, errors, and geolocation ----
@@ -834,15 +845,35 @@ export default function App() {
           {searchError && <div className="search-error">{searchError}</div>}
           <div className="date-row">
             <label className="date-label">Date:</label>
-            <input
-              className="search-input date-input"
-              type="date"
-              value={selectedDate}
-              min={todayStr}
-              max={maxDateStr}
-              onChange={e => handleDateChange(e.target.value)}
-              aria-label="Forecast date"
-            />
+            <div className="date-stepper">
+              <button
+                type="button"
+                className="date-arrow"
+                onClick={() => shiftDate(-1)}
+                disabled={selectedDate <= todayStr}
+                aria-label="Previous day"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <input
+                className="search-input date-input"
+                type="date"
+                value={selectedDate}
+                min={todayStr}
+                max={maxDateStr}
+                onChange={e => handleDateChange(e.target.value)}
+                aria-label="Forecast date"
+              />
+              <button
+                type="button"
+                className="date-arrow"
+                onClick={() => shiftDate(1)}
+                disabled={selectedDate >= maxDateStr}
+                aria-label="Next day"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
             <label className="date-label">Time:</label>
             <select
               className="search-input time-input"

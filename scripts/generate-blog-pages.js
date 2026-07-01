@@ -291,7 +291,7 @@ function pageShell({ title, description, canonical, bodyHtml, jsonLd }) {
     description ? `<meta property="og:description" content="${escapeHtml(description)}">` : '',
     `<meta property="og:url" content="${canonical}">`,
     `<meta property="og:site_name" content="${BRAND}">`,
-    `<meta property="og:image" content="${SITE_URL}/og.png?v=3">`,
+    `<meta property="og:image" content="${SITE_URL}/og.png?v=4">`,
     `<meta name="twitter:card" content="summary_large_image">`,
     jsonLd ? `<script type="application/ld+json">${jsonLd}</script>` : '',
     '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">',

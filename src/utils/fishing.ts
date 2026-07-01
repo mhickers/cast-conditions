@@ -65,7 +65,7 @@ export function calcFishingScore(d: Partial<Conditions>, forDate?: Date): Fishin
   else if (d.tideDirection === 'falling') add('Outgoing tide', 0.2);
 
   s = Math.min(10, Math.max(1, Math.round(s * 10) / 10));
-  const label = s >= 7.5 ? 'Great conditions' : s >= 5.5 ? 'Decent day' : s >= 3.5 ? 'Fair conditions' : 'Tough conditions';
+  const label = s >= 7.5 ? 'Great conditions' : s >= 5.5 ? 'Decent conditions' : s >= 3.5 ? 'Fair conditions' : 'Tough conditions';
   return { score: s, tips: factors.map(f => f.label.toLowerCase()), label, factors };
 }
 

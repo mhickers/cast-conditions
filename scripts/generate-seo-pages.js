@@ -665,6 +665,62 @@ const TOWNS = [
   { name: 'Happy Valley-Goose Bay, NL', lat: 53.3017, lon: -60.3260, type: 'inland', water: 'the Labrador rivers', species: 'brook trout, Atlantic salmon, and northern pike' },
   // --- Prince Edward Island ---
   { name: 'Charlottetown, PE', lat: 46.2382, lon: -63.1311, type: 'coastal', water: 'the north shore and bays', species: 'striped bass, mackerel, and white perch' },
+
+  // --- Added batch: requested inland + coastal fisheries (apostrophe-free water strings) ---
+  // Texas
+  { name: 'Guadalupe River, TX', lat: 29.8700, lon: -98.2000, type: 'inland', water: 'the tailwater trout runs below Canyon Dam and the river near New Braunfels' },
+  { name: 'Lake Lyndon B. Johnson, TX', lat: 30.5500, lon: -98.3600, type: 'inland', water: 'the Highland Lakes coves, points, and main-lake structure' },
+  { name: 'Devils River, TX', lat: 29.9400, lon: -100.9900, type: 'inland', water: 'the spring-fed pools, canyon runs, and the reach above Amistad' },
+  { name: 'O.H. Ivie Reservoir, TX', lat: 31.5500, lon: -99.6800, type: 'inland', water: 'the main-lake humps, creek arms, and standing timber' },
+  { name: 'Lake Livingston, TX', lat: 30.7000, lon: -95.1300, type: 'inland', water: 'the open main lake, river channel, and creek mouths' },
+  { name: 'Belton Lake, TX', lat: 31.1500, lon: -97.4800, type: 'inland', water: 'the bluff points, creek arms, and clear main-lake water' },
+  { name: 'Lewisville Lake, TX', lat: 33.1000, lon: -96.9800, type: 'inland', water: 'the flats, creek channels, and timber near the dam' },
+  { name: 'Padre Island, TX', lat: 27.4200, lon: -97.3000, type: 'coastal', water: 'the Gulf beachfront surf, the guts, and the Laguna behind the island' },
+  { name: 'Laguna Madre, TX', lat: 26.4000, lon: -97.4000, type: 'coastal', water: 'the shallow grass flats, spoil banks, and the Intracoastal' },
+  // Utah
+  { name: 'Wasatch Mountains, UT', lat: 40.6000, lon: -111.5000, type: 'inland', water: 'the high country streams, alpine lakes, and canyon reservoirs' },
+  { name: 'Provo River, UT', lat: 40.4000, lon: -111.5000, type: 'inland', water: 'the middle and lower tailwater trout sections' },
+  { name: 'Utah Lake, UT', lat: 40.2200, lon: -111.8000, type: 'inland', water: 'the shallow open water, river inlets, and harbor areas' },
+  // Colorado
+  { name: 'South Platte River, CO', lat: 39.2000, lon: -105.2800, type: 'inland', water: 'the tailwater and canyon trout water below the reservoirs' },
+  { name: 'Frying Pan River, CO', lat: 39.3600, lon: -106.8200, type: 'inland', water: 'the gold medal tailwater trout runs below Ruedi Reservoir' },
+  { name: 'Gunnison River, CO', lat: 38.5500, lon: -107.7500, type: 'inland', water: 'the gorge trout water and gold medal runs below the dams' },
+  { name: 'Blue Mesa Reservoir, CO', lat: 38.4500, lon: -107.3300, type: 'inland', water: 'the main basins, points, and the Gunnison arm' },
+  { name: 'Aurora Reservoir, CO', lat: 39.6300, lon: -104.6800, type: 'inland', water: 'the clear open water, shoreline shelves, and swim-beach flats' },
+  { name: 'Cherry Creek Reservoir, CO', lat: 39.6300, lon: -104.8500, type: 'inland', water: 'the main lake, points, and the creek inlet flats' },
+  // Montana
+  { name: 'Gallatin River, MT', lat: 45.4500, lon: -111.1500, type: 'inland', water: 'the freestone riffles and pocket water down the canyon' },
+  { name: 'Yellowstone River, MT', lat: 45.6600, lon: -110.5600, type: 'inland', water: 'the freestone runs, riffles, and long glides through Paradise Valley' },
+  { name: 'Missouri River, MT', lat: 47.0800, lon: -111.9800, type: 'inland', water: 'the gold medal tailwater trout stretch below Holter Dam' },
+  // Idaho
+  { name: 'Henrys Lake, ID', lat: 44.6400, lon: -111.3800, type: 'inland', water: 'the shallow weed edges, springs, and inlet flats' },
+  { name: 'Payette Lake, ID', lat: 44.9200, lon: -116.0800, type: 'inland', water: 'the clear open water, drop-offs, and inlets near McCall' },
+  { name: 'Clearwater River, ID', lat: 46.4200, lon: -116.8000, type: 'inland', water: 'the steelhead and salmon runs, riffles, and holding water' },
+  // New Mexico
+  { name: 'Pecos River, NM', lat: 35.5700, lon: -105.6800, type: 'inland', water: 'the freestone trout runs and pools of the upper river' },
+  // Arizona
+  { name: 'Colorado River, AZ', lat: 35.1300, lon: -114.5700, type: 'inland', water: 'the cold tailwater below Davis Dam, the backwaters, and the main channel' },
+  // California
+  { name: 'Santa Monica Pier, CA', lat: 34.0080, lon: -118.4980, type: 'coastal', water: 'the pier, the surfline, and the nearshore water off the beach' },
+  { name: 'Redondo Beach, CA', lat: 33.8400, lon: -118.3900, type: 'coastal', water: 'the pier, the harbor, and the surf and kelp edges' },
+  { name: 'Trinity River, CA', lat: 40.7200, lon: -122.8000, type: 'inland', water: 'the tailwater salmon and steelhead runs below Lewiston' },
+  { name: 'Lake Balboa, CA', lat: 34.1770, lon: -118.5020, type: 'inland', water: 'the stocked open water and shoreline of the park lake' },
+  { name: 'Puddingstone Reservoir, CA', lat: 34.0900, lon: -117.8100, type: 'inland', water: 'the main lake, coves, and the water near the dam' },
+  // Minnesota / Great Lakes
+  { name: 'Lake Superior, MN', lat: 46.9000, lon: -91.5000, type: 'inland', water: 'the North Shore, harbor mouths, and river-mouth staging areas' },
+  // Georgia
+  { name: 'Toccoa River, GA', lat: 34.8600, lon: -84.2000, type: 'inland', water: 'the delayed harvest and tailwater trout water below the dam' },
+  { name: 'Soque River, GA', lat: 34.6500, lon: -83.5300, type: 'inland', water: 'the private and public trout runs through the Habersham valley' },
+  { name: 'Golden Isles, GA', lat: 31.1500, lon: -81.4000, type: 'coastal', water: 'the sounds, tidal creeks, and beachfront around the barrier islands' },
+  // Pennsylvania
+  { name: 'Schuylkill River, PA', lat: 40.3300, lon: -75.9300, type: 'inland', water: 'the river runs, pools, and dam tailouts through the valley' },
+  // Oregon
+  { name: 'Tillamook Bay, OR', lat: 45.5300, lon: -123.9000, type: 'coastal', water: 'the bay channels, the jaws, and the river mouths feeding in' },
+  { name: 'Lake Billy Chinook, OR', lat: 44.5800, lon: -121.2900, type: 'inland', water: 'the three river arms, canyon walls, and deep main lake' },
+  { name: 'Wallowa Lake, OR', lat: 45.2800, lon: -117.2100, type: 'inland', water: 'the deep clear basin, the inlet, and shoreline drop-offs' },
+  { name: 'Crane Prairie Reservoir, OR', lat: 43.7900, lon: -121.7700, type: 'inland', water: 'the flooded channels, shoals, and the old river bed' },
+  // Michigan
+  { name: 'Kent Lake, MI', lat: 42.5400, lon: -83.6600, type: 'inland', water: 'the impoundment flats, the Huron River inlet, and shoreline structure' },
 ];
 
 const COASTAL_SPECIES = 'striped bass, fluke (summer flounder), bluefish, black sea bass, tautog, weakfish, and kingfish';
@@ -761,7 +817,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
       headline: `${town.name} Fishing Report`,
       description: report.paragraphs[0].slice(0, 200),
       articleBody: report.paragraphs.join('\n\n'),
-      image: [`${SITE}/og.png?v=3`],
+      image: [`${SITE}/og.png?v=4`],
       url,
       mainEntityOfPage: url,
       ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
@@ -784,7 +840,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png?v=3"/>
+<meta property="og:image" content="${SITE}/og.png?v=4"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
@@ -973,7 +1029,7 @@ function hubHtml(hub) {
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png?v=3"/>
+<meta property="og:image" content="${SITE}/og.png?v=4"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>

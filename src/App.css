@@ -191,7 +191,17 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .verified-badge { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 600; color: #0F6E56; background: #E1F5EE; padding: 2px 8px; border-radius: 20px; }
 
 /* Time selector & station note */
-.time-input { flex: 0 0 auto; width: 110px; }
+.time-input { flex: 0 0 auto; width: 92px; }
+.date-stepper { display: inline-flex; align-items: center; gap: 4px; }
+.date-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 38px; flex-shrink: 0;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); color: var(--text); cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+}
+.date-arrow:hover:not(:disabled) { border-color: var(--ocean); color: var(--ocean); }
+.date-arrow:disabled { opacity: 0.35; cursor: default; }
 .station-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
 
 /* Search feedback & suggestions */
