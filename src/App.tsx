@@ -5,6 +5,7 @@ import Feedback from './Feedback';
 import AlertSignup from './AlertSignup';
 import BaitAdvisor from './BaitAdvisor';
 import { getSpeciesForLocation, buildScoreNarrative } from './species';
+import { tackleSearchUrl, AFFILIATE_ACTIVE } from './utils/affiliate';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, PointElement,
@@ -18,7 +19,7 @@ import type { WindModelSeries } from './utils/api';
 import {
   Sun, CloudSun, Cloud, CloudFog, CloudDrizzle, CloudRain, Snowflake, Zap,
   Wind, Thermometer, Gauge, Droplets, Droplet, Waves, Timer, ArrowUpDown, Navigation,
-  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, Menu,
+  Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, Menu, ShoppingBag,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
@@ -1290,12 +1291,25 @@ export default function App() {
                     <div className="species-detail">
                       <p className="species-tip">{sp.tip}</p>
                       <p className="species-lures"><strong>Lures:</strong> {sp.lures}</p>
+                      <a
+                        className="tackle-link"
+                        href={tackleSearchUrl(sp.name)}
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                      >
+                        <ShoppingBag size={12} /> Shop {sp.name.toLowerCase()} tackle
+                      </a>
                     </div>
                   )}
                 </div>
               );
             })}
           </div>
+          {AFFILIATE_ACTIVE && (
+            <p className="affiliate-disclosure">
+              Tackle links are affiliate links — as an Amazon Associate we may earn from qualifying purchases, at no extra cost to you.
+            </p>
+          )}
         </section>
 
         <BaitAdvisor

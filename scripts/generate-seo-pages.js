@@ -761,7 +761,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
       headline: `${town.name} Fishing Report`,
       description: report.paragraphs[0].slice(0, 200),
       articleBody: report.paragraphs.join('\n\n'),
-      image: [`${SITE}/og.png?v=2`],
+      image: [`${SITE}/og.png?v=3`],
       url,
       mainEntityOfPage: url,
       ...(report.updated ? { datePublished: report.updated, dateModified: report.updated } : {}),
@@ -784,7 +784,7 @@ ${faqs.map(f => `<div class="faq-item"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></d
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png?v=2"/>
+<meta property="og:image" content="${SITE}/og.png?v=3"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
@@ -973,7 +973,7 @@ function hubHtml(hub) {
 <meta property="og:title" content="${esc(title)}"/>
 <meta property="og:description" content="${esc(desc)}"/>
 <meta property="og:url" content="${url}"/>
-<meta property="og:image" content="${SITE}/og.png?v=2"/>
+<meta property="og:image" content="${SITE}/og.png?v=3"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="theme-color" content="#0C2340"/>
 <link rel="icon" href="/favicon.ico"/>
