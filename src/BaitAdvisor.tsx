@@ -91,12 +91,11 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
       <h3 className="section-label">Local Bite Report</h3>
       <div className="card">
         <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', margin: '0 0 6px' }}>
-          Scans recent local fishing reports for what&rsquo;s working now.
+          Scans recent local reports for what&rsquo;s biting now.
         </p>
         <p className="alert-desc">
-          Pulls recent public reports near <strong>{locationLabel}</strong> — bait shop report pages,
-          regional report sites, and forums — and blends them with seasonal patterns for this date.
-          Leave it on <strong>Top species</strong> for a quick rundown, or pick one species for a full breakdown of baits, lures, technique, where to fish, and timing.
+          Blends recent public reports near <strong>{locationLabel}</strong> with seasonal patterns for this date.
+          Keep it on <strong>Top species</strong> for a quick rundown, or pick one for a full breakdown.
         </p>
         <div className="add-spot-row">
           <select className="search-input" value={selected} onChange={e => setSelected(e.target.value)} aria-label="Species for bite report">

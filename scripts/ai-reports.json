@@ -734,5 +734,405 @@
     ],
     "model": "claude-sonnet-4-6",
     "updated": "2026-07-01T22:59:19.514Z"
+  },
+  "tampa-fl": {
+    "paragraphs": [
+      "Tampa Bay's flats and passes fish year-round, but the species rotation keeps things interesting. Snook stack in the passes during cooler months, moving onto the shallow grass flats and mangrove edges as water warms into the 70s and 80s. Redfish are reliably found tailing on the flats throughout the year, with fall producing some of the best sight-fishing as schools pod up. Spotted seatrout dominate the deeper grass beds in winter when they congregate in warmer water, while tarpon migrate through the bay each spring and summer, rolling in the passes and along deep channel edges.",
+      "For tactics, outgoing tides are your friend — fish position at flat edges and pass mouths to ambush bait being swept through. Work DOA shrimp or live pilchards under a popping cork for seatrout over grass, and throw suspending twitch baits or weedless swimbaits along mangrove shorelines for snook and reds. Tarpon in the passes respond well to live crabs or threadfin herring drifted naturally in the current. Watch water temperature closely — below 60 degrees pushes snook deep and makes them lethargic. Clear, light-wind mornings are prime for sight-fishing reds on the flats with polarized glasses."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:39:47.481Z"
+  },
+  "destin-fl": {
+    "paragraphs": [
+      "Destin Pass connects Choctawhatchee Bay to the Gulf, and that funneling current makes it one of the most productive corridors on the Emerald Coast. Spring is prime time as cobia begin migrating through, often spotted cruising the surface near rays and buoys — sight-fishing them is as exciting as inshore fishing gets. King mackerel show in good numbers from late spring through fall, stacking on nearshore structure and the edge of the color change. Red snapper and grouper hold on the hard ledges and artificial reefs scattered along the bottom in 60 to 120 feet, with snapper most aggressive during warmer months and grouper fishing improving as water cools into fall and winter.",
+      "Work the pass itself on an outgoing tide when bait gets pushed through — that moving current concentrates everything from flounder to kings near the jetties and channel edges. For snapper and grouper offshore, drop live pinfish, cigar minnows, or cut squid tight to structure and stay close to bottom. Kings respond well to slow-trolled live bait or flashy spoons near the green-blue color change. Water temperature matters: once the Gulf dips below 68 degrees, grouper feed more actively and snapper can get finicky. Clear, blue water pushed by light southwest winds generally signals the best offshore conditions."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:39:57.095Z"
+  },
+  "pensacola-fl": {
+    "paragraphs": [
+      "Pensacola is redfish and speckled trout country at heart, but plenty of northern visitors are surprised by what else shows up here. Bluefish show in the pass and Gulf surf during winter and early spring, slashing through baitfish schools before water temperatures climb. Fluke work the sandy bottom transitions where Pensacola Pass meets the bay, peaking as water warms into summer. Kingfish run the nearshore Gulf bottom spring through fall. Black sea bass stack on the artificial reefs just offshore year-round. Weakfish, tautog, and striped bass are occasional cold-water visitors but are not reliable targets in this far-south Gulf water, so plan your trip around species that genuinely thrive here.",
+      "For bluefish and kingfish, fish moving tides through the pass and along the beach on the Gulf side, working cut mullet or Gotcha plugs near the surface when fish are busting bait. Fluke hold tight where current deflects off the channel edges and sand flats inside the bay, so slow-drag a gulp shrimp or strip bait along bottom during the outgoing tide when water pulls clean and clear. Water temperature is your guide — below 65 degrees slows bay action considerably and pushes fish deeper or out to the Gulf. Wind out of the north drops visibility and shuts down shallow flats fishing fast."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:07.630Z"
+  },
+  "fort-lauderdale-fl": {
+    "paragraphs": [
+      "Fort Lauderdale's offshore reefs and Port Everglades Inlet fish differently than Northeast waters, so anglers need to reset expectations. The warm Gulf Stream proximity means you won't find striped bass, fluke, tautog, weakfish, or black sea bass here with any regularity — these are cool-to-temperate water species that simply don't establish themselves in South Florida's year-round warmth. Bluefish show up seasonally during winter and spring migrations, and kingfish, meaning king mackerel, are the real stars on these reefs, peaking in fall and spring when water temperatures cool slightly and baitfish schools stack up.",
+      "Work the reef edges in 60 to 120 feet where the bottom structure concentrates bait and kingfish cruise the water column. Live pilchards or blue runners freelined or slow-trolled behind a planer consistently outperform artificial presentations. The inlet fishes best on outgoing tides when bait flushes seaward and snook, tarpon, and jack crevalle — the true local targets — stack in the current seams. Wind from the south pushes warmer, clearer water and activates reef fish; a strong north wind muddies things and kills the bite quickly."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:16.488Z"
+  },
+  "marathon-fl": {
+    "paragraphs": [
+      "Marathon sits in the heart of the Florida Keys, and the flats and reef here fish nothing like the Northeast coast where striped bass, fluke, bluefish, weakfish, tautog, black sea bass, and kingfish dominate. Those species simply don't live in these subtropical waters. What you'll actually find on the Marathon flats are permit, bonefish, and tarpon in warmer months, with snook, redfish, and spotted seatrout mixed in along mangrove edges. The reef holds grouper, snapper, cobia, and genuine kingfish — the king mackerel variety common to Gulf Stream and Atlantic waters here.",
+      "On the flats, fish movement tracks water temperature and tidal flow tightly. Bonefish and permit push onto shallow grass flats on a rising tide, especially when water hits the mid-70s or warmer, and they spook easily in low clear water, so long leaders and accurate casts with live shrimp or crab imitations matter. Tarpon stage in deeper channels on outgoing tides. Reef fishing with cut bait, live pilchards, or jigs fished near structure on the down-current side produces grouper and snapper consistently. Northeast winds push dirty water and slow things down; calm southeast winds usually mean cleaner, more fishable conditions."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:25.617Z"
+  },
+  "st-petersburg-fl": {
+    "paragraphs": [
+      "Tampa Bay and the Gulf near St. Petersburg hold snook, redfish, spotted seatrout, tarpon, flounder, sheepshead, Spanish mackerel, and cobia as your core targets — these are the species that define fishing here. Spring and fall are prime time for trout and reds on the flats, while summer brings tarpon rolling through the passes and Spanish mackerel tearing up the nearshore Gulf. Snook stack in passes and around lit docks through warmer months, then push into deeper bay water when temperatures drop. Note that striped bass, fluke, bluefish, black sea bass, tautog, weakfish, and kingfish are primarily Northeast Atlantic species and are not reliably present in Tampa Bay or local Gulf waters.",
+      "For practical success, focus on grass flats at mid-depth during moving tides — both incoming and outgoing current concentrates baitfish and triggers feeding. Popping corks with live shrimp remain deadly for trout, while weedless soft plastics on light jigheads cover flounder holding along sandy edges adjacent to grass. Work mangrove shorelines on an incoming tide for snook using live pinfish or a slow-rolled paddle tail. Wind from the east typically flattens the bay and improves sight-fishing conditions. Watch water temperature closely — trout and redfish become sluggish in winter but school predictably in deeper channel edges where you can slow-roll jigs or soak cut bait effectively."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:35.393Z"
+  },
+  "clearwater-fl": {
+    "paragraphs": [
+      "Clearwater's Gulf beaches and passes fish differently than the Atlantic coast species list you might expect. Striped bass, fluke, bluefish, black sea bass, tautog, weakfish, and kingfish don't define this fishery — they're simply not the primary residents here in the Gulf. What you'll actually find seasonally includes Spanish mackerel and kingfish running the beaches spring through fall, snook holding in the passes and along sandy edges, redfish and trout in the backwater edges near the passes, pompano cruising the surf, and tarpon staging in the passes during warmer months. Cooler winter months push sheepshead and black drum into the passes around structure.",
+      "For tactics, focus your effort on tidal movement through passes like the ones connecting the intracoastal to the Gulf — outgoing tides concentrate baitfish and trigger feeding. Work jigs, live shrimp, and small baitfish imitations near the edges of channel drops and around any hard structure. In the surf, pompano respond well to sand flea imitations and small jigs bounced along the bottom. Clearer water usually means lighter leaders and a slower presentation. Wind-driven water pushing baitfish against points or beach cuts is your best visual cue for active fish."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:43.890Z"
+  },
+  "cocoa-beach-fl": {
+    "paragraphs": [
+      "The Banana River lagoon and Cocoa Beach surf fish quite differently from northeastern inlets, so the target mix surprises some visitors. Redfish, snook, and seatrout dominate the lagoon through the warmer months, but the surf and nearshore Atlantic side draws a legitimate mix of migratory species. Bluefish push through in fall and again briefly in spring, often showing right in the wash. Weakfish show up in cooler months along grassy lagoon edges and nearshore structure. Kingfish run the surf reliably in fall. Black sea bass and fluke work the nearshore reefs in summer, while tautog hold on that same hard bottom in winter. Striped bass are rare this far south but occasionally follow bait schools through in the coldest months.",
+      "Read the tides carefully — moving water, especially an outgoing tide flushing bait from the lagoon through the inlets, concentrates everything from bluefish to weakfish near the mouth. For surf kingfish, fish the trough closest to shore with fresh shrimp or sand fleas on a bottom rig during a moderate northeast wind that stirs the water slightly. Fluke and black sea bass on nearshore ledges respond well to bucktail jigs tipped with cut squid, worked slowly near bottom. In the lagoon, water temperature below 65 degrees pushes snook and trout deep to grass edges and dock pilings, where slow-sinking lures or live shrimp under a popping cork consistently outperform fast retrieves."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:40:54.543Z"
+  },
+  "jupiter-fl": {
+    "paragraphs": [
+      "Jupiter Inlet is one of South Florida's most productive pieces of water, and what you're chasing shifts hard with the seasons. Snook stack in and around the inlet year-round, but they're most aggressive in warmer months when they push up onto the beach at night and stage near structure during falling tides. Mangrove snapper are reliable throughout the year on nearshore ledges and the inlet's rock piles. Sailfish are the big draw from late fall through spring, when the Gulf Stream pushes tight to the Palm Beach coastline and bait concentrations go off just a few miles out.",
+      "For snook, work the jetties and rock edges on a strong outgoing tide with live pilchards or a DOA shrimp on a light jig. When water temperatures drop into the low 60s, snook go lethargic, so slow your presentation way down. Snapper respond to fresh-cut bait fished tight to the bottom with minimal weight. Offshore, watch for frigate birds and temperature breaks in the 74-80 degree range to locate sailfish; pitch live goggle-eyes or pilchards on kite rigs or flat lines. A strong southeast wind tends to push bait and predators shallower and closer to the beach."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:03.669Z"
+  },
+  "sanibel-fl": {
+    "paragraphs": [
+      "Sanibel's passes and surrounding grass flats are primarily snook, redfish, trout, and tarpon country — the waters here are subtropical and don't support cold-water species like striped bass, fluke, bluefish, tautog, weakfish, or kingfish in any meaningful way. Forcing those fish into this report would give you flat-out bad advice. What actually cycles through depends on season: snook push shallow in summer heat and spawn near the passes in June and July, redfish school on the flats from fall through winter, and trout are most active in cooler months when water drops into the low 60s.",
+      "Work the edges of Blind Pass and San Carlos Bay where current concentrates baitfish. On incoming tides, reds and snook slide onto the grass flats to feed — watch for nervous water and mullet pushing. Soft-plastic paddle tails on light jigheads, DOA shrimp under a popping cork, and live pilchards are the workhorses here. Northerly winds in winter push cleaner, cooler water through the passes and fire up trout action noticeably. When water clarity is poor after rain, slow down and work structure tight."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:12.492Z"
+  },
+  "fort-myers-fl": {
+    "paragraphs": [
+      "The Caloosahatchee and Pine Island Sound are snook, redfish, and tarpon country at their core. Snook stack around bridges, passes, and mangrove edges through the warm months, then push into deeper river holes when water temperatures drop below the mid-60s. Redfish are resident year-round, schooling on the shallow flats in fall before scattering to oyster bars and creek mouths in winter. Spotted seatrout follow a similar rhythm, running the grass flats hard in cooler months. Tarpon move through the Sound in spring and early summer. Note that the species listed like striped bass, fluke, bluefish, tautog, weakfish, and kingfish are northeastern and mid-Atlantic fish and do not naturally occur in this Southwest Florida fishery.",
+      "For snook and reds, work the outgoing tide hard along mangrove shorelines with DOA shrimp, weedless paddle tails, or live pinfish. Low light periods at dawn and dusk consistently outperform midday. Trout favor deeper grass flats on cooler, calm mornings — a slow-sinking twitchbait or popping cork over live shrimp gets bites. When wind lays down and water clarity improves, sight-fishing shallow shell bars for redfish with a gold spoon or weedless jig is extremely effective. Avoid fishing grass flats when water temps dip below 60, as fish become lethargic and move to deeper, slower current."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:22.905Z"
+  },
+  "panama-city-fl": {
+    "paragraphs": [
+      "St. Andrews Bay and the pass fish year-round, with the mix shifting noticeably by season. Flounder — what locals call fluke — stack up in the pass and along grass flat edges from late spring through fall, while bluefish push through in aggressive blitzing schools during spring and fall migrations. Black sea bass hold on the rocky structure and jetty base most of the year and are reliable targets when offshore trips aren't practical. Kingfish — Spanish and cero — show up in warmer months chasing bait near the surface around the pass mouth. Weakfish pop up in cooler months near deeper grass edges, though they run smaller here than up the Atlantic coast. Tautog and striped bass are honest catches but less consistent this far south — occasional fish rather than reliable targets.",
+      "Work the outgoing tide hard through the pass, especially where the channel edge meets shallower shell bottom — that's where flounder ambush baitfish getting swept through. For flounder, slow-drag a buck-tail or paddle-tail grub along the bottom, or fish a live mud minnow under a popping cork near the jetty rocks. Bluefish need fast retrieves with wire-leader rigs or you'll lose tackle. Black sea bass respond well to cut squid or shrimp fished on bottom near the jetties. When water temps drop into the low 60s, move to deeper bay holes for weakfish using soft plastics on light jig heads. On windy days with dirty water, the bay side of the jetties offers cleaner water and concentrated fish."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:33.656Z"
+  },
+  "crystal-river-fl": {
+    "paragraphs": [
+      "Crystal River's Nature Coast flats are built around a mix of shallow grass beds, oyster bars, and spring-fed creeks that hold redfish and spotted seatrout year-round, though the fishing shifts dramatically with water temperature. In summer, trout push deep into channels during midday heat and move onto the grass at dawn and dusk, while redfish tail and push visibly across shallow flats. Winter is when this fishery really shines — warm spring heads draw both species tight to the springs, and that congregating behavior makes sight fishing exceptionally productive for anglers willing to pole quietly in cold weather.",
+      "For tactics, focus your efforts around oyster bars and the edges of seagrass beds on a falling tide, which pushes baitfish into predictable ambush points. Trout hit soft plastic paddletails and suspending twitch baits worked slowly over the grass, while redfish in thin water respond well to weedless gold spoons and live pinfish. Northeast winds dirty inshore water fast here, so a wind shift from that direction means considering the nearshore hard bottom, where gag grouper hold in surprisingly accessible depths and will take live pinfish or cut bait while inshore visibility recovers."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:42.569Z"
+  },
+  "sebastian-inlet-fl": {
+    "paragraphs": [
+      "Sebastian Inlet is one of Florida's most consistent snook fisheries year-round, with the inlet's fast current and rocky jetties concentrating fish in predictable spots. Snook dominate warm months, stacking on the jetties and washing out into the lagoon as water cools in fall. Redfish are present all year in the lagoon's shallow grass flats, oyster bars, and back coves, with fall and winter offering some of the best sight-fishing as schools push into skinny water. Spanish mackerel run the inlet and nearshore zones during spring and fall migrations, often mixed with bluefish and jacks in open water.",
+      "For snook and redfish, work the outgoing tide hard — fish position at the inlet mouth and along the north and south jetty rocks to ambush baitfish being flushed through. Live finger mullet, threadfin herring, or pilchards rigged on a light jighead or freelined are tough to beat. In the lagoon, weedless gold spoons and soft-plastic paddle tails on light jigheads cover grass flat ground efficiently. Spanish mackerel respond well to fast-retrieved silver spoons or small gotcha plugs cast ahead of birds working the surface. Water temperature below 65 degrees pushes snook deep and off feed, so concentrate on redfish in those conditions."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:41:51.985Z"
+  },
+  "boston-ma": {
+    "paragraphs": [
+      "Boston Harbor and the islands offer a solid three-season fishery built around striped bass, bluefish, and winter flounder. Bass show up in the harbor as water temperatures climb through the low 50s in spring, moving in from Cape Cod Bay to feed on herring, sand eels, and harbor pollock around the islands and harbor mouth. Bluefish typically arrive later, in early summer, and can push bait schools into a frenzy around the outer harbor. Flounder are a cold-water fish here — your best shots come in spring before water warms and again in fall when temperatures drop back down into the 50s.",
+      "Current seams and tide transitions are everything in this harbor. Stripers stack on the down-tide edges of rocky points and rip-rap shorelines around the islands, especially during the first two hours of an outgoing tide draining the harbor. Work soft-plastic paddle tails, bucktail jigs, or live eels along these edges. Bluefish will slash surface poppers and metal spoons over open water near the harbor mouth when surface temps hit the mid-60s and you see birds working. For flounder, anchor in sandy channels between the islands and fish cut sea worms or clams on a bottom rig — slack tide keeps your bait in the strike zone longer."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:01.283Z"
+  },
+  "nantucket-ma": {
+    "paragraphs": [
+      "Nantucket's rips and flats offer a full seasonal parade of gamefish. Striped bass show first in spring, pushing through the rips off the south shore as water climbs through the low 50s. Bluefish flood in behind them as temperatures warm, often tearing up the same rip lines. Fluke arrive when bottom temps reach the mid-50s and settle onto sandy flats and drop-offs, staying productive through summer. Black sea bass stack up on the rougher bottom throughout the warmer months. Tautog favor rocky structure in spring and fall. Weakfish and kingfish show unpredictably in the warmer months, often near inlet areas and sandy flats inside the harbor.",
+      "Work the rips on a moving tide, especially the first two hours of the outgoing, when current pulls bait over structure and stripers and blues stack on the downcurrent edge. Bucktails and soft plastics dressed with a paddle tail get fluke off the bottom in sandy cuts; bounce them slow and stay in contact with the bottom. For stripers in the rips, chunking bunker or throwing large swimbaits and heavy metal jigs covers both depth and distance. Bluefish rarely need coaxing — wire leaders save gear. Watch the wind against tide situations, which steepen rip faces and concentrate bait. Cooler water in fall pushes big stripers close to shore along the south side."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:11.222Z"
+  },
+  "marthas-vineyard-ma": {
+    "paragraphs": [
+      "Martha's Vineyard's kettle ponds and surrounding rips offer a progression of species through the warmer months. Striped bass move into the ponds and estuary mouths in late spring, working baitfish against shallow flats before the heat of summer pushes them deeper or into moving water. By midsummer the bluefish show in force, crashing bait through the rips off the island's south and east faces. Come early fall, anglers shift focus to false albacore and bonito, two of the most coveted targets on the island, as both species push tightly along rip edges and around bait schools before water temperatures drop them off the shelf.",
+      "For bass in the ponds, focus on outflow channels on an outgoing tide when baitfish funnel through narrow cuts — that's when a soft plastic on a light jig head or a slow-rolled white bucktail will consistently draw strikes. At the rips, work surface irons and small epoxy jigs on the current seam rather than fighting the full flow. False albacore are notoriously leader-shy, so drop to lighter fluorocarbon and throw small, fast-sinking slim jigs or sparsely tied flatwing flies. Wind pushing into a rip concentrates bait and predators both; a northeast wind stacking against an outgoing tide typically sets up the most productive surface action."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:21.066Z"
+  },
+  "newport-ri": {
+    "paragraphs": [
+      "Newport sits where Narragansett Bay meets the open Atlantic, giving you a genuinely diverse fishery. Striped bass arrive in spring as water temps climb through the low 50s, with the bite improving steadily into summer. Bluefish show up not far behind and will push bait to the surface along the oceanfront ledges. Fluke move into the bay shallows and nearshore rips as summer settles in, while black sea bass stack on any hard bottom you can find. Tautog are a year-round anchor here — spring and fall are prime — and weakfish and kingfish make quieter appearances in warmer months, often overlooked but well worth targeting in the lower bay.",
+      "Read the tides carefully, because Newport's rocky points and current-swept rips are where fish feed, not open water. An outgoing tide draining the bay concentrates bait and predators alike at narrows and channel edges. For stripers and blues, cast plugs or soft plastics upgcurrent and work them through the rip. Fluke want a slow drift with bucktail tippers or Gulp-style baits along sandy transitions near structure. Tog demand patience on the rocks with green crabs fished tight to the bottom. When northeast wind muddies the oceanfront, move inside the bay where water stays cleaner and weakfish and kingfish cruise the softer bottom."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:31.511Z"
+  },
+  "wilmington-nc": {
+    "paragraphs": [
+      "The Cape Fear River and its nearshore waters fish differently than most Mid-Atlantic spots because of that tannic, fast-moving river current mixing with saltwater. Striped bass push upriver in cooler months, staging near bridge pilings and deep channel bends as water temperatures drop into the 50s. Summer belongs to fluke drifting the nearshore ledges and inlet mouths, while bluefish roam the surface from spring through fall. Black sea bass and tautog work the nearshore structure and rock piles through cooler seasons. Weakfish appear sporadically in spring and fall, especially in the lower river, and kingfish run the surf and nearshore shallows during warmer months.",
+      "Tide movement is everything here — fish the last two hours of outgoing through the first hour of incoming for most species, when current concentrates baitfish at channel edges and structure transitions. For fluke, slow-drift Carolina rigs with Gulp or fresh cut bait along sandy bottom transitions just outside the inlet. Stripers respond well to bucktails and swimbaits worked along deep current seams near pilings. Bluefish will hit anything flashy trolled or cast on a fast retrieve. Tautog and black sea bass demand bottom rigs with fiddler or green crabs worked right on the structure. Watch water temperature closely — fish activity drops sharply during rapid temperature swings following heavy rain or strong northwest winds."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:41.036Z"
+  },
+  "wrightsville-beach-nc": {
+    "paragraphs": [
+      "Masonboro Inlet fishes differently than most Carolina spots because the deep channel cuts close to the beach and creates reliable structure year-round. Spring run striped bass push through the inlet mouth and along the ICW shoals, often mixed with early bluefish that arrive in waves through April and May. Fluke stack up in the inlet throat and inner sloughs from late spring through summer, then black sea bass and tautog take over the jetty rocks as water cools in fall. Weakfish show unpredictably but late spring nights in the inlet are your best shot. Kingfish own the surf from late spring into early fall, especially after storms kick up the bottom.",
+      "Work the tide hard here because the inlet current does most of your work. Incoming tide pushes bait into the inlet and concentrates flounder on the downcurrent edges of the channel drop — a four-inch white or chartreuse Gulp on a quarter-ounce jig dragged slowly is tough to beat. Bluefish and stripers respond to fast-retrieved metals and poppers when baitfish are pushed to the surface by current seams. For surf kingfish, a small bottom rig with fresh bloodworms or sand fleas fished in the trough behind the first sandbar does consistent work. Cooler water below 55 degrees moves the bite toward tautog on the jetty rocks — green crab is the right bait, and patience matters more than distance."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:42:55.680Z"
+  },
+  "myrtle-beach-sc": {
+    "paragraphs": [
+      "The Grand Strand offers year-round action, but knowing when each species moves through makes all the difference. Striped bass push through the surf during cooler months, often in good numbers right after a cold front. Bluefish show up aggressively from late spring through fall, sometimes in frenzied surface schools. Fluke move into the nearshore zone as water warms into the sixties, hanging through summer before pulling back offshore in fall. Kingfish run surprisingly well along the wash during warmer months and are often underrated here. Tautog and black sea bass favor cooler water and structure, making pier pilings productive in spring and again in fall. Weakfish are inconsistent but show occasionally in the fall surf when conditions align.",
+      "Fish the trough closest to the first sandbar — that depression is where bait concentrates and predators cruise. For fluke, work a bucktail with a Gulp shrimp along any hard bottom near pier pilings, drifting with the current. Bluefish and stripers respond well to metal spoons and cut mullet in the suds. Incoming tides push bait toward structure, generally your most reliable window. Kingfish hit best with small hooks and fresh sand fleas or bloodworms fished right in the white water. Cooler water below sixty degrees tends to slow the bite considerably, so watch temperature drops after strong northerly winds and focus effort on midday when the sun warms the shallows."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:06.123Z"
+  },
+  "san-diego-ca": {
+    "paragraphs": [
+      "San Diego's kelp beds and offshore banks fish differently depending on time of year, and knowing the rhythm matters. Calico bass are a year-round staple holding tight to the kelp canopy, with their best topwater action in warmer months. Yellowtail push inshore to the kelp edges in late spring through fall, following bait schools and warmer blue water. When the current pushes warm water north from Baja, bluefin and albacore tuna show up on the offshore banks anywhere from late spring into autumn. Rockfish are available year-round on the deeper rocky structure, and they hold steady when surface conditions make everything else difficult.",
+      "For yellowtail in the kelp, live sardines or mackerel fly-lined without a sinker is hard to beat, but iron jigs worked fast near the surface trigger aggressive strikes when fish are actively feeding. Calico bass respond well to swimbait presentations worked slowly through the canopy edges, especially during incoming tides when baitfish push into the kelp. Tuna offshore want a fast troll or surface iron in blue water with good current, and a sharp temperature break between cooler green and warmer blue water is exactly where to focus. Calm mornings with light wind let you read the kelp lines and spot bird activity, which often marks the fish before you mark them on sonar."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:16.057Z"
+  },
+  "san-francisco-ca": {
+    "paragraphs": [
+      "San Francisco Bay and the Farallones offer year-round action that shifts dramatically by season. Spring and early summer bring chinook salmon staging outside the Gate, followed by striped bass moving into the bay on their spawning run, with fish pushing into the shallows around the South Bay and Central Bay structure. Halibut are a bay staple from late spring through fall, settling into sandy flats as water warms. When conditions allow runs offshore to the Farallones, rockfish are the consistent target year-round, with lingcod joining them in cooler months.",
+      "For halibut, drift sandy bottom along the main channel edges on a moderate incoming tide using live anchovies or swimbaits worked just off the bottom. Stripers respond well to topwater plugs and soft plastics around rocky structure and current seams at first light. Salmon offshore want trolled hoochies or whole anchovies at depth — watch your sonar and work the temperature breaks. At the Farallones, rockfish stack on deep rocky pinnacles; drop heavy jigs or baited rigs straight down and fish close to structure. Incoming tides generally move fish; outgoing can concentrate halibut on channel edges. Avoid offshore runs when northwest winds exceed about 15 knots."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:24.963Z"
+  },
+  "monterey-ca": {
+    "paragraphs": [
+      "Monterey Bay offers a rotating cast of species that keeps serious anglers busy year-round. Winter and early spring focus on rockfish and lingcod over the offshore pinnacles and rocky structure along the bay's edges, with lingcod becoming particularly aggressive as they move shallow to spawn. As water temperatures warm through late spring, Chinook salmon push into the bay following anchovies and squid, making the area around the canyon edges and submarine canyons especially productive. By midsummer, Pacific halibut become a real target, laying flat over sandy bottom areas inside the bay where baitfish concentrate.",
+      "For rockfish and lingcod, work vertical jigs or swimbaits tight to rocky relief in 100 to 300 feet, dropping during slack tide when fish suspend predictably rather than hugging bottom. For halibut, drift live anchovies or soft plastic swimbaits slowly across sandy flats on an incoming tide, which pushes bait onto shallower shelves and activates fish. Watch the upwelling cycles carefully — when strong northwest winds have been blowing for several days, cold, green upwelled water pushes in and surface fishing slows dramatically. A temperature break where that cold water meets warmer blue water is exactly where salmon stack up, so running parallel to those color lines while trolling anchovies or hoochies is often your best move."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:35.059Z"
+  },
+  "santa-barbara-ca": {
+    "paragraphs": [
+      "The Channel Islands hold world-class rockfish, lingcod, white seabass, yellowtail, and calico bass year-round, but the fishery shifts dramatically with water temperature. Winter and early spring bring cooler upwelling conditions ideal for lingcod and large rockfish over deep structure. As surface temps climb through late spring, white seabass move into kelp edges around the islands, and yellowtail push in from offshore. Midsummer through fall is peak season when warm water pulls in pelagic species, and calico bass fishing in the kelp canopy hits its stride. Note that striped bass, fluke, bluefish, tautog, weakfish, and kingfish are East Coast species and simply do not inhabit these waters.",
+      "Work the kelp lines and rocky pinnacles carefully. For white seabass, live squid drifted just above the kelp canopy on a slow troll or free-line outperforms almost everything. Yellowtail respond well to iron jigs worked fast near the surface when fish are breaking, or live mackerel fished deeper when marks show on the meter. Lingcod sit tight to structure in 80 to 200 feet, so drop heavy leadhead jigs to bottom and work them slowly. Fish incoming tides over shallow rocky points for calico bass with swimbaits and surface iron. Avoid dirty green water and seek the blue-green transition lines where baitfish concentrate."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:46.607Z"
+  },
+  "seattle-wa": {
+    "paragraphs": [
+      "Puget Sound's fishery revolves around five salmon species, with chinook being the crown jewel and coho close behind. Spring and early summer bring feeder chinook scattered throughout the Sound's deeper channels, while late summer and fall concentrate both chinook and coho as they stage near river mouths before heading upriver. Winter transitions anglers toward bottomfish — lingcod and rockfish, including copper, quillback, and black rockfish — which hold year-round on the Sound's rocky reefs, kelp edges, and structure-heavy points throughout the central and south Sound.",
+      "For salmon, work the tide lines and current seams where baitfish stack, trolling hoochies or herring at depth on a downrigger. Incoming tides push baitfish and salmon into predictable ambush points near points and drop-offs, making tide movement your most important planning tool. Lingcod and rockfish respond well to jigs and soft plastics worked slowly along rocky bottom structure. Cooler water in fall and winter tends to concentrate bottomfish tighter to structure, while surface temperature drops are a reliable signal that coho are moving through."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:43:55.274Z"
+  },
+  "homer-ak": {
+    "paragraphs": [
+      "Kachemak Bay and the outer Inlet give you a legitimate shot at three very different fisheries depending on the season. King salmon push through the Inlet in late spring and into early summer, staging in the deeper water before heading up river systems, and that window is relatively short — miss it and you're waiting until next year. Halibut are the workhorse fishery here, available from late spring through early fall, with bigger fish showing up in deeper water offshore while smaller \"chicken\" halibut hang closer to the bay structure. Rockfish — mostly black and yelloweye — stack up on rocky pinnacles and steep drop-offs year-round and offer consistent action when other fishing slows.",
+      "For halibut, fish the deeper offshore grounds on the outgoing tide when current carries scent and keeps bait near bottom without excessive drift; circle hooks with whole herring or large octopus pieces outfish most artificial options. Kings respond well to trolled herring or spoons worked at depth with downriggers along current seams where tidal flow meets calmer water. Rockfish are dead simple — drop a jig or baited hook to the bottom on any rocky structure and work it slowly. Watch your water temperature closely; halibut feed more aggressively in the 46 to 52 degree range, and a hard southeast wind will blow the bay out fast, turning the water murky and pushing fish off their patterns. Calm, clear mornings on a moderate outgoing tide consistently produce the best action here."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:06.091Z"
+  },
+  "sitka-ak": {
+    "paragraphs": [
+      "Sitka Sound and the outer coast offer a genuine mixed bag through the season. Kings show first, typically staging near deep nearshore structure during the cooler months before their river push, with the outer coast producing larger fish as summer approaches. Coho arrive mid-to-late summer and run strong into fall, often schooling in the protected bays and kelp edges of the sound itself. Halibut are present year-round in deeper water but become much more accessible and active as water temperatures climb into the high 40s and low 50s Fahrenheit. Rockfish stack on nearly any hard bottom structure and offer consistent action throughout the season, especially useful on slower days.",
+      "For kings and coho, fish the tide rips and current seams that form around points and islands — baitfish concentrate there and salmon follow. Herring, either whole or plug-cut, produces reliably for kings at depth; coho often respond well to hoochies and spoons trolled shallower and faster. Halibut favor the mud-sand transition zones off deeper rocky structure, and a circle-hooked herring or octopus bait bounced near bottom on a strong tidal exchange outperforms most other presentations. Avoid flat calm outer coast days with low swell — fish the incoming tide on moderate wind days when there is still enough chop to break up surface light but conditions remain safe offshore."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:16.574Z"
+  },
+  "galveston-tx": {
+    "paragraphs": [
+      "Galveston's jetties, bay, and surf offer a solid mix year-round, but the fishing shifts noticeably with the seasons. Redfish and speckled trout dominate the bay and jetty edges in fall when cooling water pulls them shallow and feeding becomes aggressive before winter. Summer pushes trout deep into the ship channel and grass-flat edges, while redfish school on the flats and along marsh drains. Flounder stage heavily around the jetties during their fall offshore migration — one of the most reliable windows of the year. Red snapper concentrate around the jetty rocks in warmer months and are worth targeting if you have a longer rod arm and patience.",
+      "For jetty fishing, work the rocks themselves with gulp shrimp or live shrimp under a popping cork during incoming tides when cleaner gulf water pushes through. Redfish root along oyster reefs and spartina grass edges in the back bay — a weedless gold spoon or a carolina-rigged crab imitation gets bit there. Flounder hug structure transitions, so slow-drag a paddle tail along the bottom where the rocks meet sand. In the surf, speckled trout and redfish move with gut channels and troughs; learn to read those parallel depressions and fish them on a rising tide with moderate onshore wind pushing bait in. North winds in fall concentrate trout in deeper, protected cuts — that cold push is a trigger, not a deterrent."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:27.226Z"
+  },
+  "port-aransas-tx": {
+    "paragraphs": [
+      "Port Aransas and Aransas Pass host a strong mix of species that shift with the seasons. Speckled trout and redfish dominate local conversation, but the jetties and pass also hold surprising variety. Flounder stack up in the pass during fall as water cools and baitfish move toward open Gulf, making it one of the best fluke runs on the Texas coast. Bluefish show up in late fall and winter chasing glass minnows along the rocks. Kingfish work the surf and jetty base year-round but peak in spring. Weakfish mix with specks in cooler months, often overlooked. Black sea bass and tautog hold tight to the deeper jetty structure, while striped bass occasionally push through during winter cold snaps.",
+      "Read the tides religiously here. An outgoing tide pulls baitfish through the pass and concentrates predators along the jetty rock edges and in the scour holes just off the granite. Wade or drift the east side of the rocks on the drop. For flounder, slow-drag a live finger mullet or mud minnow along the bottom where the rock meets sand. Bluefish and weakfish hit white or chartreuse spoons and small swim shads worked fast near the surface on morning incoming tides. For tautog and black sea bass, drop fiddler crabs or shrimp tight to the base of the jetty in ten to eighteen feet. Water temperatures below 65 degrees push the better bottom fish action noticeably closer to the rocks."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:37.772Z"
+  },
+  "south-padre-island-tx": {
+    "paragraphs": [
+      "The Lower Laguna Madre is one of the shallowest, clearest, most productive estuaries on the Texas Gulf Coast, built around speckled trout, redfish, and flounder as your bread-and-butter targets. Fluke, or summer flounder, move into the system in good numbers when water temps climb through late spring and summer, ambushing prey along drop-offs and shell pads. Kingfish run the nearshore Gulf surf year-round but concentrate heavily in spring and fall. Bluefish show unpredictably, usually in cooler months, tearing up baitfish schools near passes. Weakfish appear as occasional fall and winter guests in the deeper channels. Tautog and black sea bass are not native residents here, and striped bass are largely absent from this subtropical water, so chasing those species will mean a very long run north.",
+      "Work the Laguna's skinny backwater flats at moving tides, especially the first two hours of an incoming tide pushing clean, warmer water over turtle grass. Flounder stack on the hard edges where grass meets sand; drag a soft-plastic paddle tail or live piggy perch slowly along those transitions. For surf kingfish, small cut bait on a simple bottom rig fished in the first trough beyond the breakers produces well. Avoid fishing when southeast winds muddy the flats and water temps drop below the mid-50s Fahrenheit, as trout and flounder become lethargic and move deep into main channels. Clear green water and a steady breeze under 15 knots makes for the best wading days."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:49.239Z"
+  },
+  "corpus-christi-tx": {
+    "paragraphs": [
+      "Corpus Christi Bay and the Laguna Madre are year-round fisheries built around redfish, speckled trout, and black drum. In cooler months, trout stack in deeper channels and boat basins, while reds and drum root along grass flats and shell pads. As water warms through late spring and summer, trout push shallower at dawn and dusk, and redfish flood the ultra-shallow back lakes and spoil island flats of the Upper Laguna. Fall is prime time across the board — fish are fat, feeding aggressively, and moving predictably between the flats and deeper water before winter.",
+      "Wind and tide drive everything here. An east or southeast wind pushing water onto the Laguna's vast grass flats concentrates reds and drum in ankle-deep water where you can sight-cast to them with a weedless gold spoon or soft plastic. Falling tides pull fish off flats into nearby guts and drains — work those transitions hard. Water temperature below 50 degrees moves trout deep; look for them around warm-water discharges and deeper Intercoastal edges with slow-sinking paddletails or suspending twitch baits. For black drum, live or cut crab and shrimp on the bottom near shell and oyster structure rarely fails."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:44:58.760Z"
+  },
+  "venice-la": {
+    "paragraphs": [
+      "The Mississippi Delta passes offer a remarkable mix of inshore and offshore action within a short run. Redfish and speckled trout hold in the marsh edges and shallow grass flats year-round, though trout push deeper into the passes during winter cold fronts and concentrate near warm-water discharges when temperatures drop hard. Spring and fall are prime time as both species feed aggressively on the flats. Come late spring through summer, the game changes dramatically offshore — cobia start cruising the pass mouths and nearshore rigs, and yellowfin tuna become accessible surprisingly close to the delta as the Loop Current pushes warm blue water toward the Mississippi outflow.",
+      "Fish incoming tides hard when cleaner Gulf water pushes into the passes, as redfish and trout stack on current seams along marsh points and oyster-shell bottom. For trout, work soft-plastic paddle tails or suspending twitch baits through the water column, varying retrieves until fish show a preference. Redfish respond well to weedless gold spoons and crab-imitation plastics worked slow near structure. When targeting cobia, live eels or large blue crabs drifted near floating debris and weed lines are hard to beat. Watch water temperature closely — speckled trout get lockjaw below roughly 50 degrees, so focus on the deepest pass channels when cold snaps hit."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:45:08.796Z"
+  },
+  "grand-isle-la": {
+    "paragraphs": [
+      "Grand Isle sits at the edge of the Gulf, and the fishing here runs differently than mid-Atlantic or Northeast waters, so drop any preconceptions about targeting striped bass, fluke, weakfish, tautog, or bluefish in the surf — those species don't reliably show up in Louisiana's warm Gulf waters. What does thrive here are redfish, speckled trout, flounder (Gulf flounder, not summer flounder), sheepshead, cobia, Spanish mackerel, and offshore species around the rigs. Kingfish, the small surf whiting, are a genuine exception and one of the best legitimate surf targets, especially in cooler months when they school tight to the beach in the wash.",
+      "Work the surf for kingfish with fresh shrimp or sand fleas on a simple bottom rig, casting just beyond the first gut where the sandbars create current seams. The rigs offshore hold sheepshead and mangrove snapper year-round — fiddler crabs and fresh shrimp worked on tight line near structure produce well. Cooler water from late fall through early spring pushes flounder and specks into the passes; outgoing tides concentrate bait and predators alike at pass mouths. Onshore winds dirty the surf fast, so watch water color — clear to slightly green water dramatically improves bite quality everywhere here."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:45:18.466Z"
+  },
+  "gulf-shores-al": {
+    "paragraphs": [
+      "Gulf Shores surf and back bays fish differently than most of the Gulf Coast. Pompano, redfish, and speckled trout dominate local conversation, but the species mix shifts with the seasons in interesting ways. Kingfish run the surf hard in spring and again in fall, often in big schools. Bluefish crash baitfish pods from late fall through winter, when cooler water pulls them inshore. Fluke show up in the passes and grass flat edges during warmer months, ambushing from sandy pockets. Weakfish turn up inconsistently but are worth targeting in the back bays during spring.",
+      "Wade the gut lines where troughs run parallel to the beach for kingfish, using small pieces of fresh shrimp or cut squid on a high-low bottom rig. For fluke in the passes, drift live finger mullet or mud minnows along sandy drop-offs near grass edges during an outgoing tide, when baitfish get swept through. Bluefish will hit fast-moving metal spoons worked through breaking water. Tides matter more in the back bays than the surf — moving water activates nearly everything. Cooler water below 60 degrees concentrates fish in deeper bay channels, while warmer water pushes action onto shallow flats at dawn."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:45:27.538Z"
+  },
+  "orange-beach-al": {
+    "paragraphs": [
+      "Perdido Pass and the nearshore Gulf reefs around Orange Beach fish best when you understand the seasonal rotation. Bluefish show up in serious numbers during spring and fall migrations, often pushing bait balls right through the pass itself. Striped bass are caught in the pass and along the beach during cooler months when water temps drop into the low 60s and below. Summer brings flounder stacking on the grass and sand transitions inside the pass, while black sea bass dominate the nearshore artificial reefs from late spring through fall. Kingfish run the surf and nearshore zones in warmer months. Weakfish and tautog are less common here than further up the Atlantic coast but do appear, tautog especially around hard structure in cooler water.",
+      "Work the pass on outgoing tides when bait flushes out — that current seam is where stripers and bluefish ambush. For flounder, slow-drag a live finger mullet or Gulp shrimp along the sandy drop-offs inside the jetties. On the reefs, drop chicken rigs or jigs for black sea bass, targeting the concrete rubble and natural ledges in 40 to 80 feet. Wind from the south stacks warm blue water closer to the beach and pushes baitfish up against structure. When water temps climb above 80 degrees, fish early morning or target deeper reef structure where fish hold cooler. Kingfish respond well to light-tackle bottom rigs with small cut bait right in the surf zone."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:45:37.897Z"
+  },
+  "biloxi-ms": {
+    "paragraphs": [
+      "The Mississippi Sound and barrier islands offer a mix of inshore and nearshore action that shifts dramatically through the year. Speckled trout and redfish dominate local conversation, but anglers targeting structure and open-water species find real variety here. Bluefish crash baitfish schools along the island beaches from late spring through fall, while fluke bury into sandy bottom near the barrier island passes during warmer months. Kingfish work the surf zones and shallow sandy flats in summer. Black sea bass and tautog hold tight to the artificial reefs and hard bottom scattered through the Sound, with tautog best in cooler months when they feed most aggressively on crabs and mussels. Weakfish show inconsistently but favor the same grassy edges and sandy drop-offs as speckled trout. Striped bass are genuinely uncommon in these Gulf waters and should not be a primary target here.",
+      "Read the tides carefully around the barrier island passes — Horn, Petit Bois, and Ship Island area cuts funnel tremendous bait movement, and fluke, bluefish, and kingfish all stack on the downcurrent side waiting for an easy meal. Incoming tides push cleaner Gulf water and tend to fire feeding activity. When winds blow from the south, visibility improves and artificial lures produce better; northerly winds often muddy inshore water and push fish tighter to structure or deeper. Water temperature crossing 68 degrees in spring activates most species. For fluke, slow-drift belly strips or paddle-tail swimbaits bounced along sandy bottom near pass edges is hard to beat. Bluefish and kingfish respond well to cut mullet or fast-retrieved spoons along the beach fronts."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:45:49.348Z"
+  },
+  "lake-of-the-ozarks-mo": {
+    "paragraphs": [
+      "Lake of the Ozarks is a deep, reservoir-style impoundment with long main-channel arms, countless creek coves, and dramatic rocky bluffs — structure that supports a diverse mix of species year-round. Largemouth bass dominate the shallower, brushy cove areas, while spotted bass relate more tightly to deep rocky points and channel edges. Crappie stack in submerged timber and dock pilings through much of the year, going especially active during the spring spawn when they push into coves. White bass show in large, fast-moving schools during their spring upstream run and again in fall when they chase shad on the surface. Flathead and channel catfish hold deep through summer and move shallower on warm nights.",
+      "Watch your surface temperature closely — bass fishing really turns on when water climbs into the low-to-mid 60s in spring, triggering spawning movement into secondary creek arms. Target spotted bass on deep channel points with drop-shot rigs or shaky head worms in the 15 to 30 foot range; largemouth respond to reaction baits like squarebill crankbaits and swim jigs along laydowns in coves. For crappie, vertical jigging small tube jigs or live minnows around dock posts and flooded timber is consistently productive. When white bass are surface-feeding, match the hatch with small chrome lipless crankbaits or white curly-tail grubs. Night fishing live shad or cut bait on bottom brings up the biggest catfish once summer heat sets in."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:00.632Z"
+  },
+  "lake-guntersville-al": {
+    "paragraphs": [
+      "Lake Guntersville is one of the Tennessee River's finest largemouth bass fisheries, and that reputation is well earned. Largemouth thrive in the sprawling grass beds and flooded timber that define this reservoir, and they follow predictable seasonal swings — moving shallow onto hydrilla and milfoil flats to spawn in spring, retreating to deeper grass edges and channel swings as summer heats the shallows, then pushing back shallow in fall when water cools. Crappie stack on submerged brush and dock pilings year-round, with spring spawning runs pulling them very shallow. Catfish — both channel and blue — use the main river channel and deep creek mouths, especially in warmer months.",
+      "For largemouth, work the outside edges of grass beds with a punch rig or frog in summer and a swimbait or spinnerbait along emerging grass in spring. Crappie respond well to small tube jigs and live minnows fished vertically around structure. Watch water temperature closely — largemouth become most active when surface temps sit between 58 and 72 degrees, and low-light periods in summer are critical. Catfish reward patience with cut shad fished on the bottom near channel ledges. When the river is pulling good flow, target eddies and slack water behind points where baitfish and fish concentrate naturally."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:10.341Z"
+  },
+  "lake-fork-tx": {
+    "paragraphs": [
+      "Lake Fork Reservoir is built for trophy largemouth bass, and serious anglers treat it accordingly. The lake's abundant standing timber, flooded creek channels, and expansive hydrilla beds give big bass exactly what they need year-round. Winter concentrates fish in deeper timber along channel edges, and this cold-water period produces some of the heaviest bass of the year on slow presentations. Spring spawning pushes fish shallow into coves and onto flats, offering sight-fishing opportunities for genuine giants. Summer bass retreat to deep hydrilla edges and submerged structure, while fall brings aggressive feeding as fish chase shad into the backs of creeks. Crappie follow similar seasonal migrations, stacking on timber in winter and moving shallow to spawn in early spring.",
+      "Work the hydrilla edges with deep-diving crankbaits or Texas-rigged plastics when water temps climb above 70 degrees. In colder water, slow down dramatically — a big swimbait or shaky head crawled through submerged timber triggers lethargic trophy fish that won't chase. For crappie, vertical jigging small curly-tail grubs or live minnows around standing timber in 15 to 25 feet is consistently productive outside of the spring spawn. Watch your depth finder for the thermocline in summer; bass suspend just above it. Creek channel bends where timber meets structure transitions are classic Fork ambush points worth spending real time on."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:21.091Z"
+  },
+  "lake-okeechobee-fl": {
+    "paragraphs": [
+      "Lake Okeechobee is the beating heart of Florida bass fishing, and largemouth bass are the main draw year-round. Bass spawn in the shallow emergent vegetation along the lake's rim when water temperatures climb into the mid-60s, typically late winter through early spring, drawing fish within easy reach of shore anglers and shallow-running boats. Black crappie, locally called specks, stack up in deeper hydrilla and willow bushe edges during cooler months, then scatter to spawn in slightly shallower cover as things warm. Bluegill run thick through the lily pads and reeds come spring and early summer, going aggressive on beds.",
+      "Target bass by pitching soft plastics, frogs, and swim jigs tight to the edges of hydrilla mats, bonnets, and willow clumps. Rising water pushes fish back into flooded shoreline vegetation, while falling or stable levels concentrate them on defined grass edges where you can work a chatterbait or flipping jig methodically. For specks, vertical jigging small tube jigs or live minnows near submerged brush and vegetation transitions in eight to twelve feet is consistently productive in cooler months. Bluegill respond well to live crickets and small spinners fished right in the pad fields."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:30.003Z"
+  },
+  "lake-champlain-vt": {
+    "paragraphs": [
+      "Lake Champlain is one of the Northeast's premier bass fisheries, and smallmouth are the star of the show. Rocky shoals, points, and boulder fields throughout the main lake hold aggressive smallmouth from late spring through fall, with the bite peaking as water temps climb into the mid-60s. Largemouth favor the warmer, shallower bays and weed edges, particularly in the southern lake and sheltered coves. Come winter and early spring, lake trout dominate the deeper water, often suspended over structure in the main basin. Walleye are present but underrated here — they school along rocky reefs and transition areas, especially during low-light periods in spring and fall.",
+      "For smallmouth, tube jigs, drop-shot rigs with finesse worms, and crayfish-imitating crankbaits worked along rocky points and submerged ledges produce consistently. When water temps push past 70 degrees in summer, go deeper — smallmouth often slide to 18 to 30 feet. Largemouth respond well to soft plastics and topwater early and late in the day near vegetation. For walleye, slow-rolling swimbaits or live-bait rigs along rocky structures at dawn and dusk are your best odds. Lake trout require jigging spoons or trolling deep with flashers when the thermocline sets up in warmer months."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:39.633Z"
+  },
+  "lake-tahoe-ca": {
+    "paragraphs": [
+      "Lake Tahoe's primary targets are mackinaw, rainbow trout, and kokanee, each following distinct seasonal rhythms in this deep, ultra-clear alpine lake. Mackinaw are available year-round but move shallower in winter and early spring when water temps drop and they actively chase baitfish. Kokanee school up through summer and into fall, making them the most predictable warm-season target. Rainbows patrol the upper water column and near-shore structure, peaking in spring and fall when surface temps cool into their comfort range around 55 to 62 degrees.",
+      "For mackinaw, troll deep-diving lures or jig large tube baits and swimbaits straight down in 200 to 400 feet over rocky points and underwater ledges — they hold tight to structure. Kokanee demand finesse: slow-troll small dodger-and-hoochie rigs or Wedding Ring spinners tipped with white shoepeg corn, keeping baits in the thermocline, typically 50 to 120 feet down depending on season. Rainbows respond well to trolled Rapalas or worm-tipped spinners worked along rocky shorelines and submerged boulder fields in early morning. A good fishfinder is non-negotiable here — reading suspended fish marks and locating the thermocline in Tahoe's exceptionally clear water will consistently outperform blind guesswork."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:49.560Z"
+  },
+  "lake-havasu-city-az": {
+    "paragraphs": [
+      "Lake Havasu is a Colorado River reservoir that offers year-round action, but the fish you chase and how you chase them shifts dramatically with the seasons. Largemouth bass dominate the rocky coves and tule edges through spring and fall, while smallmouth prefer the harder structure — points, boulders, and chunk rock along the main channel. Striped bass roam open water and chase shad schools, with surface blitzes most common in fall when bait gets pushed up. Catfish are a consistent option year-round, especially after dark in the warmer months when big channel cats move into flats.",
+      "Water temperature drives everything here. Once surface temps climb into the upper sixties, largemouth move shallow to spawn around flooded brush and rocky pockets; work soft plastics slowly on a shaky head or drop shot. For stripers, watch for diving birds and follow schools with topwaters or swimbaits at dawn. Smallmouth respond well to finesse tactics — drop shots and tube jigs along windswept points. Catfish take cut shad or chicken liver fished on the bottom near channel edges. In summer heat, fish early and late; midday action dies fast when temps push into triple digits."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:46:58.571Z"
+  },
+  "toledo-bend-tx": {
+    "paragraphs": [
+      "Toledo Bend is one of the premier largemouth bass fisheries in the South, and understanding its seasonal rhythm is key. Spring is the crown jewel here — bass move shallow into flooded timber and grass edges to spawn when water temps climb through the 60s. Summer pushes fish deep along creek channel ledges and submerged structure, where they stack in the thermocline. Fall brings a strong shad migration that pulls bass back shallow and firing aggressively. Crappie school tight to timber year-round but are most catchable in spring and fall. Flathead and channel catfish thrive in the deeper channel bends and structure-laden coves throughout the warmer months.",
+      "For bass, work the standing timber with Texas-rigged plastics and slow-rolled swimbaits in summer, then switch to topwaters and crankbaits along shallow cover during fall feeding frenzies. Watch your depth finder for baitfish clouds — bass suspend just below them on ledges in 18 to 30 feet during heat. Crappie hit small jigs and live minnows fished vertically in standing timber, especially when the bite slows and you need to slow down and finesse them. For catfish, cut shad drifted along channel edges after dark rarely disappoints. Water clarity on Toledo Bend can fluctuate with rain and wind, so stained water calls for slower, bulkier presentations with more vibration."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:08.503Z"
+  },
+  "kentucky-lake-ky": {
+    "paragraphs": [
+      "Kentucky Lake is a Tennessee River impoundment that runs long and deep, giving anglers a genuine mixed bag through the seasons. Largemouth dominate the shallow bays and flooded timber when spring warms the shallows into the low 60s, while smallmouth push onto rocky points and riprap banks where current sweeps through. Crappie stack tight to brush piles and dock pilings during the pre-spawn run, often in surprisingly shallow water. By midsummer the fishing goes deep — bass slide to submerged creek channel edges and timber, crappie suspend at depth near structure, and flathead and channel catfish become most productive after dark along current-swept flats and deeper holes.",
+      "Watch your surface temperature and focus transitions — the edge where 58-degree water meets warming shallows in spring is where you find active bass. Soft plastics like creature baits and crawfish imitations work the rock for smallmouth, while spinnerbaits and shallow crankbaits cover the flooded timber flats for largemouth. Crappie consistently respond to small jigs and live minnows fished tight to vertical structure. As summer sets in, drop-shotting or Carolina-rigging deeper channel bends produces. For catfish, cut shad or fresh bluegill fished on the bottom in moving water near main-lake points is a reliable approach any warm month."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:18.232Z"
+  },
+  "bull-shoals-lake-ar": {
+    "paragraphs": [
+      "Bull Shoals is a big, clear Ozark reservoir with dramatic depth swings and rocky structure that shapes how every species behaves. Largemouth stack in the upper creek arms and around wood cover, especially in spring and fall when water temps hit the mid-50s to mid-60s. Smallmouth and spotted bass dominate the main lake and are most active when clear, cool water pushes them onto rocky points and bluff ends in spring and again after the first cold fronts of fall. Below the dam, the tailwater trout fishery runs year-round, though generation schedules from the dam dictate everything.",
+      "Learn to read the bluff walls and chunk rock points — smallmouth and spots suspend along these features at varying depths depending on season and clarity. In summer, fish go deep; target them with drop shots, shakey heads, and finesse tubes in 20 to 40 feet. Spring and fall call for reaction baits like crankbaits and swimbaits worked over submerged points. In the upper arms, flip jigs and soft plastics around laydowns for largemouth. Below the dam, nymphs and streamers work well for trout when generation is light, but coordinate your wade fishing around release times for safety."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:27.755Z"
+  },
+  "lake-powell-az": {
+    "paragraphs": [
+      "Lake Powell's main draws are striped bass, largemouth bass, smallmouth bass, and walleye, each following distinct seasonal rhythms across this massive desert reservoir. Stripers dominate much of the fishing calendar, schooling and chasing shad on the surface during cooler months, then pushing deep into the main channel through summer heat. Largemouth relate tightly to the canyon arms, while smallmouth favor rockier points and ledges. Walleye remain an underrated catch here, moving toward sandy flats and creek mouths as water cools in fall and early spring.",
+      "For stripers, match the shad hatch with white swimbaits and umbrella rigs, watching your sonar for suspended baitfish clouds. Largemouth in the canyon arms respond well to Texas-rigged plastics worked against red-rock walls. Smallmouth light up on drop-shot rigs near submerged points in 15 to 30 feet. Walleye prefer slower presentations like curly-tail grubs or live nightcrawlers dragged along sandy transitions near canyon mouths. Watch water temperature closely — striper surface action fires up below 70 degrees, and walleye feed most aggressively when temps drop into the mid-50s or below."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:36.668Z"
+  },
+  "port-clinton-oh": {
+    "paragraphs": [
+      "Western Lake Erie out of Port Clinton is one of the premier walleye fisheries in North America, and the seasonal rhythm here is distinct. Walleye push shallow into the reefs and rocky shoals in early spring to spawn, then scatter to deeper basin water through summer before regrouping on structure in fall. Yellow perch school up over soft bottom and transition zones, with the best action typically coming in late summer and fall when fish stack in predictable depths. Smallmouth bass claim the rocky reef systems hard — Kelleys Island and the surrounding shoals hold good fish once water temperatures climb into the mid-50s and beyond.",
+      "For walleye, trolling crawler harnesses or stickbaits over the reef edges and rocky flats produces consistently, while jigging with a half-ounce leadhead and a soft plastic or live minnow shines when fish are holding tight to bottom structure. Watch surface temperature breaks — walleye often suspend along thermal edges, especially in summer. Perch respond well to spreader rigs with small emerald shiners dropped to the bottom in open basin areas. Smallmouth will crush tube jigs and crayfish-pattern crankbaits worked along rocky reef edges. As water cools in fall, slow down presentations across the board — fish feed aggressively but hold tighter to structure."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:46.293Z"
+  },
+  "mille-lacs-lake-mn": {
+    "paragraphs": [
+      "Mille Lacs is a walleye factory first and foremost, but the lake's massive shallow basin also holds quality smallmouth bass and a solid northern pike population that often gets overlooked. Spring walleye push onto the rocky and sandy shoreline structure soon after ice-out, feeding aggressively in the shallows before dropping to mid-depth reefs and mud transitions as water warms through summer. Smallmouth follow similar early-season shallow patterns on the rocky points and boulder fields scattered around the lake. By late summer, pike roam the remaining weed edges in deeper bays while walleye suspend over open-water mud flats, making them trickier to locate.",
+      "Work the prominent mid-lake reefs for walleye using live-bait rigs with leeches or crawlers — this is classic Mille Lacs technique for good reason. When fish are active, snap jigging with a half-ounce jig and minnow produces hard. Smallmouth respond well to tube jigs and drop-shot rigs near boulder structure. Watch surface temperature closely; walleye tend to go finicky once surface temps push into the upper sixties, pushing you toward slower presentations and longer leaders. Pike favor shallow weedy bays in spring and fall — a large sucker on a quick-strike rig or a big spinnerbait covers water efficiently."
+    ],
+    "model": "claude-sonnet-4-6",
+    "updated": "2026-07-02T00:47:56.425Z"
   }
 }

@@ -24,7 +24,7 @@ import {
 import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
-import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment } from './native';
+import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment, openExternal } from './native';
 import { READING_CONDITIONS, FRESHWATER_SPECIES, SALTWATER_SPECIES } from './data/tipsMenu';
 import { crossCheckWeather } from './utils/crosscheck';
 import { findNearestStation, findNearbyStations, NearestStation } from './utils/stations';
@@ -542,6 +542,18 @@ export default function App() {
     handleDateChange(ns);
   };
 
+  // In the native app the Fishing Tips pages live on the website, so open any
+  // tapped tip link in the in-app browser rather than navigating the app shell.
+  const handleTipsNavClick = (e: React.MouseEvent) => {
+    if (!isNative()) return;
+    const a = (e.target as HTMLElement).closest('a[href^="/fishing-tips"]') as HTMLAnchorElement | null;
+    if (!a) return;
+    e.preventDefault();
+    setNavOpen(false);
+    setNavSection(null);
+    openExternal(a.getAttribute('href') || '/fishing-tips/');
+  };
+
   // ---- Search with suggestions, errors, and geolocation ----
   const handleSearchInput = (v: string) => {
     setSearchInput(v);
@@ -794,7 +806,7 @@ export default function App() {
               {navOpen && (
                 <>
                   <div className="nav-menu-backdrop" onClick={() => { setNavOpen(false); setNavSection(null); }} />
-                  <nav className="nav-menu-dropdown" role="menu">
+                  <nav className="nav-menu-dropdown" role="menu" onClick={handleTipsNavClick}>
                     <a className="nav-menu-link" href="/fishing-tips/" role="menuitem" onClick={() => setNavOpen(false)}>Fishing Tips</a>
 
                     <button className="nav-menu-section" aria-expanded={navSection === 'reading'} onClick={() => setNavSection(s => s === 'reading' ? null : 'reading')}>

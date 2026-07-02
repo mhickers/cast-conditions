@@ -3,6 +3,8 @@ PODS:
     - CapacitorCordova
   - CapacitorApp (7.1.2):
     - Capacitor
+  - CapacitorCommunityInAppReview (7.1.0):
+    - Capacitor
   - CapacitorCordova (7.6.6)
   - CapacitorGeolocation (7.1.8):
     - Capacitor
@@ -20,6 +22,7 @@ PODS:
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
+  - "CapacitorCommunityInAppReview (from `../../node_modules/@capacitor-community/in-app-review`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorGeolocation (from `../../node_modules/@capacitor/geolocation`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
@@ -36,6 +39,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorApp:
     :path: "../../node_modules/@capacitor/app"
+  CapacitorCommunityInAppReview:
+    :path: "../../node_modules/@capacitor-community/in-app-review"
   CapacitorCordova:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorGeolocation:
@@ -52,6 +57,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Capacitor: 961efd309ab0e390a8081b63c561186f61a6714d
   CapacitorApp: f01a913211780e0718dae9750442c3e23f96e106
+  CapacitorCommunityInAppReview: 3756d05524c5cf2eccbc8ed460f77f8f8db6c141
   CapacitorCordova: 3a4e0027a89a59421c918d19aee9d6ba1c7a3556
   CapacitorGeolocation: ab54d708e2fcf99a7bafe0219eaa6f7a932f001a
   CapacitorHaptics: 1b145fa83c622e5383a3bac04ea81e2514f0b0f5
@@ -60,6 +66,6 @@ SPEC CHECKSUMS:
   CapacitorStatusBar: 416e9e53fd6397e668d4a181cd2131617d949bd6
   IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
 
-PODFILE CHECKSUM: 3e707e4d0252c132701662a0a22cbb61296fca34
+PODFILE CHECKSUM: 5f91bacb7e06841eb25a0d420d073ee8b1392fa0
 
 COCOAPODS: 1.16.2

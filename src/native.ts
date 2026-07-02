@@ -10,6 +10,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { InAppReview } from '@capacitor-community/in-app-review';
+import { Browser } from '@capacitor/browser';
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
 
@@ -77,6 +78,18 @@ export async function remindAtDawn(label: string, sunriseISO: string | null | un
 export async function hapticTap(): Promise<void> {
   if (!isNative()) return;
   try { await Haptics.impact({ style: ImpactStyle.Light }); } catch {}
+}
+
+// Open a link in an in-app browser (SFSafariViewController on iOS) instead of
+// navigating the app's own webview. Used for the static Fishing Tips pages,
+// which live on the website — this renders them full and styled with a Done
+// button back to the app, instead of breaking the SPA. Returns false on web so
+// callers can let the normal <a> navigation happen.
+export async function openExternal(path: string): Promise<boolean> {
+  if (!isNative()) return false;
+  const url = path.startsWith('http') ? path : `https://fishcondish.com${path}`;
+  try { await Browser.open({ url }); } catch {}
+  return true;
 }
 
 // --- App Store review prompt (SKStoreReviewController via the plugin) ---------
