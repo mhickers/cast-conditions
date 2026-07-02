@@ -917,7 +917,7 @@ export default function App() {
               ))}
             </select>
             {!isNow && (
-              <button className="btn btn-secondary btn-sm" onClick={() => { setSelectedDate(todayStr); setSelectedTime('now'); loadData(lon, lat, locationLabel, todayStr, 'now'); }}>← Back to now</button>
+              <button className="btn btn-secondary btn-sm back-now" onClick={() => { setSelectedDate(todayStr); setSelectedTime('now'); loadData(lon, lat, locationLabel, todayStr, 'now'); }}>←&nbsp;<span className="bn-long">Back to now</span><span className="bn-short">Now</span></button>
             )}
             <span className="date-actions">
               <button className="btn btn-secondary" onClick={saveSpot}><Heart size={14} fill={isSaved ? 'currentColor' : 'none'} style={{ verticalAlign: '-2px' }} /> {isSaved ? 'Saved' : 'Save spot'}</button>
