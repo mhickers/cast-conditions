@@ -32,6 +32,8 @@
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Fish Condish uses your location to show fishing conditions and forecasts for spots near you.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Fish Condish uses your location to show fishing conditions and forecasts for spots near you.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>

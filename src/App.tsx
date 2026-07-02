@@ -1395,10 +1395,14 @@ export default function App() {
                       return next;
                     })}
                   >
-                    <span className="species-icon"><SpeciesIcon name={sp.name} size={30} /></span>
-                    <span className="species-name">{sp.name}</span>
-                    <span className="bite-label" style={{ color }}>{sp.biteLabel}</span>
-                    <ChevronDown size={16} className="species-chevron" />
+                    <div className="species-title-row">
+                      <span className="species-icon"><SpeciesIcon name={sp.name} size={30} /></span>
+                      <span className="species-name">{sp.name}</span>
+                    </div>
+                    <div className="species-meta-row">
+                      <span className="bite-label" style={{ color }}>{sp.biteLabel}</span>
+                      <ChevronDown size={16} className="species-chevron" />
+                    </div>
                   </button>
                   <div className="bite-bar-wrap">
                     <div className="bite-bar" style={{ width: `${sp.biteScore}%`, background: color }} />
