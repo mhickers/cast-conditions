@@ -23,7 +23,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; height: 56px; gap: 16px; }
 .logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .logo-icon { font-size: 22px; }
-.logo-text { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logo-text { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .logo-tagline { display: none; }
 .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .updated-txt { font-size: 12px; color: rgba(255,255,255,0.6); }
@@ -125,8 +125,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .species-detail { margin-top: 2px; }
 .species-icon { display: inline-flex; align-items: center; color: var(--ocean); flex-shrink: 0; }
 .species-icon svg { flex-shrink: 0; }
-.species-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
-.bite-label { font-size: 11px; font-weight: 600; }
+.species-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow-wrap: break-word; }
+.bite-label { font-size: 11px; font-weight: 600; flex-shrink: 0; white-space: nowrap; }
 .bite-bar-wrap { height: 4px; background: #E1EFF8; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
 .bite-bar { height: 4px; border-radius: 4px; transition: width 0.6s ease; }
 .species-tip { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
@@ -134,8 +134,9 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 /* Spots */
 .spot-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .spot-row:last-of-type { border-bottom: none; }
-.spot-pin { font-size: 14px; }
-.spot-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--text); }
+.spot-pin { font-size: 14px; flex-shrink: 0; }
+.spot-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spot-row .btn, .spot-row .btn-ghost { flex-shrink: 0; }
 .add-spot-row { display: flex; gap: 8px; margin-top: 10px; }
 
 /* Footer */
@@ -513,5 +514,5 @@ canvas { max-width: 100%; }
 @media (max-width: 640px) {
   .logo { flex-shrink: 1; min-width: 0; }
   .logo-img { flex-shrink: 0; }
-  .logo-text { display: inline; font-size: 16px; }
+  .logo-text { display: inline; font-size: 18px; }
 }

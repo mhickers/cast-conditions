@@ -179,6 +179,16 @@ export default function App() {
   }, [locationLabel]);
   const [stationChecked, setStationChecked] = useState(false);
   const [openSpecies, setOpenSpecies] = useState<Set<number>>(() => new Set());
+  // Species grid is 3 columns on desktop, 2 on phones — track it so expanding
+  // one card can expand its whole visual row (no blank stretched neighbor).
+  const speciesColsRef = useRef(3);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const apply = () => { speciesColsRef.current = mq.matches ? 2 : 3; };
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewIsNow = useRef(true);
   const loadSeq = useRef(0);
@@ -1347,8 +1357,14 @@ export default function App() {
                     className="species-header"
                     aria-expanded={open}
                     onClick={() => setOpenSpecies(prev => {
+                      const cols = speciesColsRef.current;
+                      const total = Math.min(6, species.length);
+                      const rowStart = Math.floor(i / cols) * cols;
+                      const willOpen = !prev.has(i);
                       const next = new Set(prev);
-                      if (next.has(i)) next.delete(i); else next.add(i);
+                      for (let k = rowStart; k < rowStart + cols && k < total; k++) {
+                        if (willOpen) next.add(k); else next.delete(k);
+                      }
                       return next;
                     })}
                   >
