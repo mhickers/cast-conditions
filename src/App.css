@@ -144,6 +144,20 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .footer-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .footer-cta { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 6px 0 2px; }
 .footer-cta-txt { font-size: 14px; font-weight: 600; color: var(--text); }
+.footer-cta-actions { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.footer-qr { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.footer-qr-code { background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--border); line-height: 0; }
+.footer-qr-cap { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+
+/* Mobile "get the app" banner — slim, dismissible, pushes content (no overlay) */
+.app-banner { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--ocean-deep, #0C2340); color: #fff; }
+.app-banner-icon { border-radius: 7px; flex-shrink: 0; }
+.app-banner-txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; flex: 1; }
+.app-banner-txt strong { font-size: 13px; font-weight: 700; }
+.app-banner-txt span { font-size: 11.5px; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-banner-cta { flex-shrink: 0; background: #fff; color: var(--ocean, #185FA5); font-size: 13px; font-weight: 700; padding: 6px 16px; border-radius: 999px; text-decoration: none; }
+.app-banner-x { flex-shrink: 0; background: none; border: 0; color: #fff; opacity: 0.7; font-size: 14px; cursor: pointer; padding: 4px 2px; line-height: 1; }
+.app-banner-x:hover { opacity: 1; }
 
 /* Utility */
 .muted { color: var(--text-muted); font-size: 13px; }
@@ -496,6 +510,7 @@ canvas { max-width: 100%; }
 /* On compact widths the menu takes over: fold units + About off the header to declutter */
 @media (max-width: 768px) {
   .header-right .btn-units, .header-right .btn-about { display: none; }
+  .footer-qr { display: none; }
 }
 .nav-menu-divider { height: 1px; background: rgba(0, 0, 0, 0.08); margin: 6px 6px; }
 .nav-menu-toggle, .nav-menu-plain {

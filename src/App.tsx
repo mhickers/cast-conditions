@@ -25,6 +25,7 @@ import CatchLog from './CatchLog';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment, openExternal } from './native';
+import { QRCodeSVG } from 'qrcode.react';
 import { READING_CONDITIONS, FRESHWATER_SPECIES, SALTWATER_SPECIES } from './data/tipsMenu';
 import { crossCheckWeather } from './utils/crosscheck';
 import { findNearestStation, findNearbyStations, NearestStation } from './utils/stations';
@@ -189,6 +190,21 @@ export default function App() {
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
   }, []);
+  // Mobile "get the app" banner. iOS web only (the app is iOS-only), and only in
+  // non-Safari iOS browsers — Safari already shows Apple's Smart App Banner, so
+  // this fills the gap without doubling up. Dismissal is remembered.
+  const [showAppBanner, setShowAppBanner] = useState(() => {
+    try {
+      if (isNative() || !APP_STORE_URL) return false;
+      if (localStorage.getItem('appBannerDismissed') === '1') return false;
+      const ua = navigator.userAgent || '';
+      return /iPad|iPhone|iPod/.test(ua) && /(CriOS|FxiOS|EdgiOS)/.test(ua);
+    } catch { return false; }
+  });
+  const dismissAppBanner = () => {
+    setShowAppBanner(false);
+    try { localStorage.setItem('appBannerDismissed', '1'); } catch {}
+  };
   const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const viewIsNow = useRef(true);
   const loadSeq = useRef(0);
@@ -801,6 +817,17 @@ export default function App() {
 
   return (
     <div className="app">
+      {showAppBanner && (
+        <div className="app-banner">
+          <img src="/logo192.png" alt="" className="app-banner-icon" width="32" height="32" />
+          <div className="app-banner-txt">
+            <strong>FishCondish</strong>
+            <span>Get the app for the best experience</span>
+          </div>
+          <a className="app-banner-cta" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Get</a>
+          <button className="app-banner-x" onClick={dismissAppBanner} aria-label="Dismiss">✕</button>
+        </div>
+      )}
       {showAbout && <About onClose={() => setShowAbout(false)} />}
       <header className="header">
         <div className="header-inner">
@@ -1475,10 +1502,16 @@ export default function App() {
           {!isNative() && APP_STORE_URL && (
             <div className="footer-cta">
               <span className="footer-cta-txt">Fishing on the go? Get the free iOS app.</span>
-              <a className="appstore-badge" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" aria-label="Download FishCondish on the App Store">
-                <svg viewBox="0 0 384 512" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-                <span className="appstore-badge-txt"><small>Download on the</small>App Store</span>
-              </a>
+              <div className="footer-cta-actions">
+                <a className="appstore-badge" href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" aria-label="Download FishCondish on the App Store">
+                  <svg viewBox="0 0 384 512" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                  <span className="appstore-badge-txt"><small>Download on the</small>App Store</span>
+                </a>
+                <div className="footer-qr" aria-hidden="true">
+                  <div className="footer-qr-code"><QRCodeSVG value={APP_STORE_URL} size={88} bgColor="#ffffff" fgColor="#0C2340" level="M" /></div>
+                  <span className="footer-qr-cap">Scan to install</span>
+                </div>
+              </div>
             </div>
           )}
           <div className="footer-row">
