@@ -33,6 +33,7 @@ module.exports = async (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     return res.status(upstream.status).send(body);
   } catch (e) {
-    return res.status(502).json({ error: 'Upstream fetch failed' });
+    console.error('weather proxy upstream fetch failed:', target.toString(), e && e.message, e && e.cause);
+    return res.status(502).json({ error: 'Upstream fetch failed', detail: e && e.message });
   }
 };
