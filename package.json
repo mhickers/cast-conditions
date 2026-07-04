@@ -2,6 +2,9 @@
   "name": "cast-conditions",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
     "@capacitor-community/in-app-review": "^7.1.0",
