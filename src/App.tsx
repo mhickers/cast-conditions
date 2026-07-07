@@ -284,6 +284,9 @@ export default function App() {
     setRivers([]);
     setRiverStation(null);
     setRiverLoading(true);
+    setStationChecked(false);
+    setTideStation(null);
+    setNearbyStations([]);
     setSearchError('');
     setAiSummary('Analyzing conditions with AI...');
     const hour = time === 'now' ? null : time;
