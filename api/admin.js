@@ -3,6 +3,7 @@
 // so the public site can be fully locked down with Row Level Security.
 
 const { createClient } = require('@supabase/supabase-js');
+const WebSocket = require('ws');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -19,7 +20,7 @@ module.exports = async (req, res) => {
     return res.status(401).json({ error: 'Incorrect password' });
   }
 
-  const supa = createClient(supabaseUrl, serviceKey);
+  const supa = createClient(supabaseUrl, serviceKey, { realtime: { transport: WebSocket } });
 
   try {
     if (action === 'login') {

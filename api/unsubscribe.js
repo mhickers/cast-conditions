@@ -2,6 +2,7 @@
 // Linked from every alert email: /api/unsubscribe?id=<alert uuid>
 
 const { createClient } = require('@supabase/supabase-js');
+const WebSocket = require('ws');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -30,7 +31,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const supa = createClient(supabaseUrl, serviceKey);
+    const supa = createClient(supabaseUrl, serviceKey, { realtime: { transport: WebSocket } });
     await supa.from('alerts').delete().eq('id', id);
     res.setHeader('Content-Type', 'text/html');
     return res.status(200).send(page("You're unsubscribed", "You won't receive any more condition alerts for this spot. You can re-subscribe anytime on the site."));

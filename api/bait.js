@@ -3,6 +3,7 @@
 // then blends them with seasonal patterns for the location.
 
 const { createClient } = require('@supabase/supabase-js');
+const WebSocket = require('ws');
 
 const hits = new Map();
 const LIMIT = 10; // searches are pricier than plain summaries
@@ -42,7 +43,7 @@ module.exports = async (req, res) => {
   const cacheKey = `${location}|${species}|${dateLabel}|${detailed ? 'd' : 's'}`.toLowerCase().slice(0, 250);
   const supaUrl = process.env.REACT_APP_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supa = supaUrl && serviceKey ? createClient(supaUrl, serviceKey) : null;
+  const supa = supaUrl && serviceKey ? createClient(supaUrl, serviceKey, { realtime: { transport: WebSocket } }) : null;
   if (supa) {
     try {
       const { data: hit } = await supa.from('bait_cache').select('advice, sources, created_at').eq('key', cacheKey).maybeSingle();
