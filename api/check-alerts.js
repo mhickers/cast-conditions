@@ -2,7 +2,6 @@
 // fishing score for today, and emails subscribers when it crosses their threshold.
 
 const { createClient } = require('@supabase/supabase-js');
-const WebSocket = require('ws');
 
 // See notify.js — set MAIL_FROM in Vercel after verifying the domain in Resend.
 const MAIL_FROM = process.env.MAIL_FROM || 'FishCondish <onboarding@resend.dev>';
@@ -39,7 +38,7 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Env vars not configured' });
   }
 
-  const supa = createClient(supabaseUrl, serviceKey, { realtime: { transport: WebSocket } });
+  const supa = createClient(supabaseUrl, serviceKey);
   const today = new Date().toISOString().slice(0, 10);
 
   const { data: alerts, error } = await supa.from('alerts').select('*').limit(100);

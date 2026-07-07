@@ -160,9 +160,42 @@ const REGION_POPULARITY: Record<string, Record<string, number>> = {
     // US West Coast + BC: cold-water bottomfish rank alongside salmon.
     'Rockfish': 8, 'Lingcod': 7,
   },
+  pacific_northwest: {
+    // WA/OR/northern CA coast: salmon is the marquee target, with rockfish and
+    // lingcod as the year-round bottomfish staples.
+    'Salmon': 10, 'Rockfish': 8, 'Lingcod': 7,
+  },
+  alaska: {
+    // Salmon and halibut co-headline every Alaska trip.
+    'Salmon': 10, 'Halibut': 10, 'Rockfish': 7,
+  },
+  hawaii: {
+    // Ahi and mahi lead offshore, oio (bonefish) leads the flats. Tarpon are an
+    // introduced afterthought here, so they should not float into the top cards.
+    'Yellowfin tuna': 9, 'Mahi-mahi': 8, 'Bonefish': 8, 'Tarpon': 3,
+  },
   inland_north: {
     // Great Lakes, Ontario/Quebec, the Prairies: walleye/pike/lake trout/muskie country.
     'Walleye': 10, 'Northern pike': 8, 'Lake trout': 7, 'Muskie': 7,
+  },
+  inland_west: {
+    // Mountain West (MT/WY/CO/ID/UT): trout country first, with salmon and
+    // steelhead runs on the Columbia/Snake systems.
+    'Rainbow trout': 10, 'Brown trout': 9, 'Steelhead': 9,
+  },
+  inland_southwest: {
+    // Desert reservoirs (Mead/Powell/Havasu): bass and stripers lead, and
+    // catfish rank higher here than the national baseline.
+    'Channel catfish': 8,
+  },
+  inland_southcentral: {
+    // TX/OK/AR/MO: crappie culture is huge, catfish and the white bass /
+    // hybrid run rank above their national numbers.
+    'Crappie': 9, 'Channel catfish': 8, 'Hybrid striper': 7, 'White bass': 6,
+  },
+  inland_southeast: {
+    // The South: crappie (specks), bream, and catfish rank alongside bass.
+    'Crappie': 9, 'Bluegill': 8, 'Channel catfish': 8,
   },
   inland_pacific: {
     // BC interior + PNW: rainbow (Kamloops) trout water.
