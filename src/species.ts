@@ -13,7 +13,7 @@ export interface SpeciesInfo {
 }
 
 export const ALL_SPECIES: SpeciesInfo[] = [
-  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','inland_north','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
+  { name: 'Striped bass',    icon: '🎣', regions: ['northeast','midatlantic','pacific','inland_north','inland_southwest','inland_southcentral','inland_southeast','inland_pacific'],                         tempMin: 45, tempMax: 72, lures: 'Bucktails, swim shads, topwater plugs; clams or bunker chunks', tip: 'Bite best on incoming tide near structure. Dawn and dusk are prime windows.' },
   { name: 'Bluefish',        icon: '🌊', regions: ['northeast','midatlantic','southeast'],              tempMin: 58, tempMax: 82, lures: 'Metal spoons, poppers with wire leaders; cut bait', tip: 'Aggressive surface feeders. Active in choppy conditions. Topwater lures work well.' },
   { name: 'Flounder',        icon: '🐟', regions: ['northeast','midatlantic','southeast','gulf'],       tempMin: 55, tempMax: 80, lures: 'Gulp swimming mullet on bucktails; minnow-and-squid rigs', tip: 'Prefer calmer water. Fish bottom near sandy channels on incoming tide.' },
   { name: 'Weakfish',        icon: '🌙', regions: ['midatlantic'],                                     tempMin: 58, tempMax: 78, lures: 'Pink soft plastics, small jigs; live grass shrimp', tip: 'Night feeders — work tidal creeks and flats after dark on moving water.' },
@@ -29,7 +29,8 @@ export const ALL_SPECIES: SpeciesInfo[] = [
   { name: 'King mackerel',   icon: '⚡', regions: ['southeast','gulf'],                               tempMin: 68, tempMax: 86, lures: 'Slow-trolled live menhaden; drone spoons', tip: 'Fast trolling with live baits near structure. Watch for baitfish schools.' },
   { name: 'Cobia',           icon: '🦈', regions: ['midatlantic','southeast','gulf'],                 tempMin: 65, tempMax: 85, lures: 'Bucktail jigs, live eels; sight-cast swimbaits', tip: 'Follow cownose rays in spring. Often seen cruising near the surface solo.' },
   { name: 'Halibut',         icon: '🧊', regions: ['pacific_northwest','alaska'],                     tempMin: 38, tempMax: 58, lures: 'Whole herring or large jigs bounced on bottom', tip: 'Deep, flat sandy bottom. Heavy jigs or whole herring on the bottom.' },
-  { name: 'Salmon',          icon: '🐡', regions: ['pacific_northwest','alaska','pacific'],            tempMin: 42, tempMax: 62, lures: 'Spoons, spinners, cut-plug herring; roe near river mouths', tip: 'Follow river mouths during runs. Spinners, spoons, and eggs all produce.' },
+  { name: 'Salmon',          icon: '🐡', regions: ['pacific_northwest','alaska','pacific','inland_pacific','inland_west','inland_north'], tempMin: 42, tempMax: 62, lures: 'Spoons, spinners, cut-plug herring; roe near river mouths', tip: 'Follow river mouths during runs. Spinners, spoons, and eggs all produce.' },
+  { name: 'Steelhead',       icon: '🌈', regions: ['inland_pacific','inland_west','inland_north'],       tempMin: 40, tempMax: 62, lures: 'Drifted roe, beads, and egg patterns; spinners and swung streamers', tip: 'Sea-run rainbows hold in cold river runs and tailouts. Drift eggs and beads through deep slots, or swing streamers as the river rises or drops.' },
   { name: 'Rockfish',        icon: '🪨', regions: ['pacific','pacific_northwest'],                    tempMin: 45, tempMax: 62, lures: 'Shrimp flies, metal jigs tipped with squid', tip: 'Rocky reefs and kelp beds. Jigs and live bait near structure at depth.' },
   { name: 'Lingcod',         icon: '🌿', regions: ['pacific','pacific_northwest'],                    tempMin: 42, tempMax: 58, lures: 'Large lead-head jigs with grub tails', tip: 'Aggressive predators on rocky structure. Large jigs or live rockfish work well.' },
   { name: 'Yellowtail',      icon: '💛', regions: ['pacific'],                                        tempMin: 62, tempMax: 80, lures: 'Live sardines; surface iron jigs in current', tip: 'Kelp paddies and offshore structure. Sardines and iron jigs in current.' },
@@ -118,7 +119,7 @@ const POPULARITY: Record<string, number> = {
   'Largemouth bass': 10, 'Rainbow trout': 9, 'Smallmouth bass': 9, 'Walleye': 9,
   'Brown trout': 8, 'Crappie': 8, 'Channel catfish': 7, 'Northern pike': 7,
   'Bluegill': 7, 'Yellow perch': 7, 'Muskie': 6, 'Lake trout': 6,
-  'Hybrid striper': 6, 'White bass': 5,
+  'Hybrid striper': 6, 'White bass': 5, 'Steelhead': 8,
   // saltwater
   'Striped bass': 10, 'Flounder': 9, 'Red drum': 9, 'Salmon': 9, 'Snook': 8,
   'Speckled trout': 8, 'Bluefish': 8, 'Halibut': 8, 'Sea bass': 7, 'Tautog': 7,
