@@ -837,7 +837,7 @@ export default function App() {
           <div className="logo">
             <img src="/logo.svg" alt="" className="logo-img" />
             <span className="logo-text">FishCondish</span>
-            <span className="logo-tagline">Know when to fish before you go</span>
+            <span className="logo-tagline">Know before you go</span>
           </div>
           <div className="header-right">
             {!isNative() && <a className="btn-icon nav-tips" href="/fishing-tips" title="Fishing Tips">Fishing Tips</a>}
