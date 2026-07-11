@@ -123,6 +123,8 @@ export default function App() {
   const [conditions, setConditions] = useState<Partial<Conditions>>({});
   const [tides, setTides] = useState<TideData>({ events: [], curve: [] });
   const [hourly, setHourly] = useState<HourlyForecast | null>(null);
+  const hourStripRef = useRef<HTMLDivElement | null>(null);
+  const [targetSpecies, setTargetSpecies] = useState<string | null>(null);
   const [aiSummary, setAiSummary] = useState('Analyzing conditions...');
   const [loading, setLoading] = useState(true);
   const [tideLoading, setTideLoading] = useState(true);
@@ -261,6 +263,33 @@ export default function App() {
     conditions.waveFt ?? 2, conditions.pressureMb ?? 1013,
     conditions.tideDirection ?? null, moon.phase, isInland
   );
+  const speciesKey = species.map(sp => sp.name).join('|');
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      const map = JSON.parse(localStorage.getItem('fc_target_species') || '{}');
+      if (typeof map[locationLabel] === 'string') saved = map[locationLabel];
+    } catch { saved = null; }
+    setTargetSpecies(saved && speciesKey.split('|').includes(saved) ? saved : null);
+  }, [locationLabel, speciesKey]);
+
+  const chooseTargetSpecies = (name: string) => {
+    const val = name === '' ? null : name;
+    setTargetSpecies(val);
+    try {
+      const map = JSON.parse(localStorage.getItem('fc_target_species') || '{}');
+      if (val) map[locationLabel] = val; else delete map[locationLabel];
+      localStorage.setItem('fc_target_species', JSON.stringify(map));
+    } catch { /* localStorage unavailable */ }
+  };
+
+  useEffect(() => {
+    const el = hourStripRef.current;
+    if (!el) return;
+    const target = el.querySelector('.hour-active') as HTMLElement | null;
+    if (target) el.scrollLeft = Math.max(0, target.offsetLeft - el.clientWidth / 2 + target.clientWidth / 2);
+  }, [hourly, selectedTime]);
+
   const scoreNarrative = buildScoreNarrative(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
     conditions.waveFt ?? 2, conditions.pressureMb ?? 1013, moon.phase, isInland, score
@@ -1043,6 +1072,25 @@ export default function App() {
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
 
+          {hourly && hourly.time.length > 0 && (
+            <div className="hour-strip" ref={hourStripRef} aria-label="Hourly weather forecast">
+              {hourly.time.slice(0, 24).map((t, hh) => {
+                const wc = weatherCodeToCondition(hourly.weather_code?.[hh] ?? 0);
+                const temp = hourly.temperature_2m && hourly.temperature_2m[hh] != null ? Math.round(convTemp(hourly.temperature_2m[hh], units)) : null;
+                const rain = hourly.precipitation_probability ? hourly.precipitation_probability[hh] : null;
+                const active = selectedTime === hh || (selectedTime === 'now' && selectedDate === todayStr && hh === new Date().getHours());
+                return (
+                  <button key={hh} type="button" className={`hour-cell${active ? ' hour-active' : ''}`} onClick={() => handleTimeChange(String(hh))} title={`${fmtHour(hh)} — ${wc.label}`}>
+                    <span className="hour-time">{fmtHour(hh)}</span>
+                    <span className="hour-icon" aria-hidden="true">{wc.icon}</span>
+                    <span className="hour-temp">{temp != null ? `${temp}°` : '--'}</span>
+                    <span className="hour-rain">{rain != null && rain >= 30 ? `${rain}%` : ' '}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           <button className="detail-toggle" onClick={() => setWindOpen(o => !o)} aria-expanded={windOpen}>
             <Wind size={15} />
             <span className="detail-title">Wind detail</span>
@@ -1375,9 +1423,18 @@ export default function App() {
 
         <section className="section">
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
+          {stationChecked && species.length > 0 && (
+            <div className="target-species-row">
+              <label className="target-species-label" htmlFor="target-species">Target species</label>
+              <select id="target-species" className="search-input target-species-select" value={targetSpecies ?? ''} onChange={e => chooseTargetSpecies(e.target.value)}>
+                <option value="">All species</option>
+                {species.map(sp => sp.name).sort().map(n => <option key={n} value={n}>{n}</option>)}
+              </select>
+            </div>
+          )}
           {!stationChecked && <p className="muted" style={{ padding: '4px 0' }}>Loading species for this location...</p>}
           <div className="species-grid" style={!stationChecked ? { display: 'none' } : undefined}>
-            {[...species].sort((a, b) => (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 6).map((sp, i) => {
+            {[...species].sort((a, b) => (Number(b.name === targetSpecies) - Number(a.name === targetSpecies)) || (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 6).map((sp, i) => {
               const color = sp.biteScore > 70 ? '#1D9E75' : sp.biteScore > 45 ? '#185FA5' : '#888780';
               const open = openSpecies.has(i);
               return (
@@ -1440,6 +1497,7 @@ export default function App() {
           dateStr={selectedDate}
           speciesOptions={species.map(sp => sp.name)}
           topSpecies={[...species].sort((a, b) => (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 3).map(sp => sp.name)}
+          defaultSpecies={targetSpecies}
           conditions={conditions}
           isInland={isInland}
           waterClarity={waterClarity.level}

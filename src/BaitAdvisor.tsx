@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Anchor, RefreshCw, ExternalLink } from 'lucide-react';
 import type { Conditions } from './types';
 import { UnitSystem, fmtWind, fmtTemp } from './utils/units';
@@ -32,19 +32,25 @@ interface Props {
   dateStr: string;
   speciesOptions: string[];
   topSpecies: string[];
+  defaultSpecies?: string | null;
   conditions: Partial<Conditions>;
   isInland: boolean;
   waterClarity?: string;
   units: UnitSystem;
 }
 
-export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, conditions, isInland, waterClarity, units }: Props) {
+export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, defaultSpecies, conditions, isInland, waterClarity, units }: Props) {
   const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
   const [sources, setSources] = useState<Source[]>([]);
   const [scanned, setScanned] = useState(false); // a scan has completed at least once this render
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setSelected(defaultSpecies && speciesOptions.includes(defaultSpecies) ? defaultSpecies : 'top');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSpecies]);
 
   const getAdvice = async () => {
     setLoading(true);
