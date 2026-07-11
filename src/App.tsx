@@ -22,6 +22,8 @@ import {
   Sunrise, Sunset, MapPin, Heart, Share2, RefreshCw, Trash2, Moon as MoonIcon, Bell, Eye, ChevronDown, ChevronLeft, ChevronRight, Menu, ShoppingBag,
 } from 'lucide-react';
 import CatchLog from './CatchLog';
+import StationMap from './StationMap';
+import WeightEstimator from './WeightEstimator';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
 import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment, openExternal } from './native';
@@ -126,6 +128,7 @@ export default function App() {
   const hourStripRef = useRef<HTMLDivElement | null>(null);
   const [targetSpecies, setTargetSpecies] = useState<string | null>(null);
   const [targetNonce, setTargetNonce] = useState(0);
+  const [mapOpen, setMapOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState('Analyzing conditions...');
   const [loading, setLoading] = useState(true);
   const [tideLoading, setTideLoading] = useState(true);
@@ -1423,6 +1426,28 @@ export default function App() {
           </div>
         </section>
 
+        {(nearbyStations.length > 0 || rivers.length > 0) && (
+          <section className="section">
+            <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
+              {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
+            </button>
+            {mapOpen && (
+              <StationMap
+                lat={lat}
+                lon={lon}
+                locationLabel={locationLabel}
+                tideStations={nearbyStations}
+                currentTideId={tideStation ? tideStation.id : null}
+                onSelectTide={changeStation}
+                rivers={rivers}
+                currentRiverId={riverStation ? riverStation.siteId : null}
+                onSelectRiver={changeRiverGauge}
+                units={units}
+              />
+            )}
+          </section>
+        )}
+
         <section className="section">
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
           {stationChecked && species.length > 0 && (
@@ -1552,6 +1577,8 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        <WeightEstimator speciesOptions={species.map(sp => sp.name)} units={units} />
 
         <CatchLog
           speciesOptions={species.map(sp => sp.name)}

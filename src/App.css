@@ -549,3 +549,22 @@ canvas { max-width: 100%; }
 .target-species-row { display: flex; align-items: center; gap: 8px; margin: 2px 0 10px; }
 .target-species-label { font-size: 12px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
 .target-species-select { height: 34px; max-width: 240px; font-size: 13px; }
+
+
+/* Station map */
+.station-map-wrap { margin-top: 10px; }
+.station-map { height: 320px; width: 100%; border-radius: var(--radius); z-index: 0; }
+.leaflet-container { font-family: inherit; }
+.map-select-btn { margin-top: 4px; padding: 4px 10px; border: 1px solid var(--ocean); border-radius: 6px; background: var(--ocean); color: #fff; font-size: 12px; cursor: pointer; }
+.map-legend { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--text-muted); margin: 8px 0 0; }
+.legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; }
+.map-legend .legend-dot:first-child { margin-left: 0; }
+[data-theme='dark'] .station-map .leaflet-tile { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.5); }
+[data-theme='dark'] .leaflet-popup-content-wrapper, [data-theme='dark'] .leaflet-popup-tip { background: var(--surface); color: var(--text); }
+
+/* Weight estimator */
+.estimator-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.estimator-species { flex: 1 1 160px; height: 38px; font-size: 13px; }
+.estimator-input { flex: 1 1 120px; height: 38px; font-size: 13px; }
+.estimator-result { margin: 10px 0 0; font-size: 15px; }
+.estimator-note { font-size: 11px; margin: 6px 0 0; }
