@@ -568,3 +568,5 @@ canvas { max-width: 100%; }
 .estimator-input { flex: 1 1 120px; height: 38px; font-size: 13px; }
 .estimator-result { margin: 10px 0 0; font-size: 15px; }
 .estimator-note { font-size: 11px; margin: 6px 0 0; }
+
+.station-map-block { margin-top: 10px; }

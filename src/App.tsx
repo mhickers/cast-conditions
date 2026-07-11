@@ -1272,6 +1272,25 @@ export default function App() {
                 </select>
               </div>
             )}
+            <div className="station-map-block">
+              <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
+                {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
+              </button>
+              {mapOpen && (
+                <StationMap
+                  lat={lat}
+                  lon={lon}
+                  locationLabel={locationLabel}
+                  tideStations={nearbyStations}
+                  currentTideId={tideStation ? tideStation.id : null}
+                  onSelectTide={changeStation}
+                  rivers={rivers}
+                  currentRiverId={riverStation ? riverStation.siteId : null}
+                  onSelectRiver={changeRiverGauge}
+                  units={units}
+                />
+              )}
+            </div>
           </section>
           <section className="section">
             <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
@@ -1342,6 +1361,25 @@ export default function App() {
                 {riverLoading ? 'Loading river data...' : 'No USGS stream gauge found near this spot.'}
               </div>
             )}
+            <div className="station-map-block">
+              <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
+                {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
+              </button>
+              {mapOpen && (
+                <StationMap
+                  lat={lat}
+                  lon={lon}
+                  locationLabel={locationLabel}
+                  tideStations={nearbyStations}
+                  currentTideId={tideStation ? tideStation.id : null}
+                  onSelectTide={changeStation}
+                  rivers={rivers}
+                  currentRiverId={riverStation ? riverStation.siteId : null}
+                  onSelectRiver={changeRiverGauge}
+                  units={units}
+                />
+              )}
+            </div>
           </section>
         )}
 
@@ -1425,28 +1463,6 @@ export default function App() {
             <p className="ai-text">{aiSummary}</p>
           </div>
         </section>
-
-        {(nearbyStations.length > 0 || rivers.length > 0) && (
-          <section className="section">
-            <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
-              {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
-            </button>
-            {mapOpen && (
-              <StationMap
-                lat={lat}
-                lon={lon}
-                locationLabel={locationLabel}
-                tideStations={nearbyStations}
-                currentTideId={tideStation ? tideStation.id : null}
-                onSelectTide={changeStation}
-                rivers={rivers}
-                currentRiverId={riverStation ? riverStation.siteId : null}
-                onSelectRiver={changeRiverGauge}
-                units={units}
-              />
-            )}
-          </section>
-        )}
 
         <section className="section">
           <h3 className="section-label">Species bite forecast — {locationLabel}{isInland ? ' (freshwater)' : ''}</h3>
