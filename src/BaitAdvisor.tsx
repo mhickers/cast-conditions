@@ -33,13 +33,14 @@ interface Props {
   speciesOptions: string[];
   topSpecies: string[];
   defaultSpecies?: string | null;
+  autoRunNonce?: number;
   conditions: Partial<Conditions>;
   isInland: boolean;
   waterClarity?: string;
   units: UnitSystem;
 }
 
-export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, defaultSpecies, conditions, isInland, waterClarity, units }: Props) {
+export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, topSpecies, defaultSpecies, autoRunNonce, conditions, isInland, waterClarity, units }: Props) {
   const [selected, setSelected] = useState('top');
   const [advice, setAdvice] = useState('');
   const [sources, setSources] = useState<Source[]>([]);
@@ -51,13 +52,20 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
     setSelected(defaultSpecies && speciesOptions.includes(defaultSpecies) ? defaultSpecies : 'top');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultSpecies]);
+  useEffect(() => {
+    if (!autoRunNonce) return;
+    if (defaultSpecies && speciesOptions.includes(defaultSpecies)) getAdvice(defaultSpecies);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRunNonce]);
 
-  const getAdvice = async () => {
+
+  const getAdvice = async (speciesOverride?: string) => {
     setLoading(true);
     setError('');
     setAdvice('');
     setSources([]);
-    const speciesStr = selected === 'top' ? topSpecies.join(', ') : selected;
+    const sel = speciesOverride ?? selected;
+    const speciesStr = sel === 'top' ? topSpecies.join(', ') : sel;
     const dateLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
     const condBits: string[] = [];
     if (conditions.conditionLabel) condBits.push(conditions.conditionLabel.toLowerCase());
@@ -76,7 +84,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
           dateLabel,
           conditionsSummary: condBits.join(', '),
           isInland,
-          detail: selected !== 'top',
+          detail: sel !== 'top',
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -108,7 +116,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
             <option value="top">Top species here ({topSpecies.slice(0, 2).join(', ')}...)</option>
             {speciesOptions.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-          <button className="btn" onClick={getAdvice} disabled={loading}>
+          <button className="btn" onClick={() => getAdvice()} disabled={loading}>
             {loading ? 'Scanning...' : 'Get report'}
           </button>
         </div>
@@ -154,7 +162,7 @@ export default function BaitAdvisor({ locationLabel, dateStr, speciesOptions, to
 
             <div className="bait-footer">
               <span className="bait-source-note"><Anchor size={11} style={{ verticalAlign: '-1px' }} /> Aggregated from recent public reports + seasonal patterns — verify with your local shop.</span>
-              <button className="btn btn-secondary btn-sm" onClick={getAdvice}><RefreshCw size={12} style={{ verticalAlign: '-1px' }} /> Refresh</button>
+              <button className="btn btn-secondary btn-sm" onClick={() => getAdvice()}><RefreshCw size={12} style={{ verticalAlign: '-1px' }} /> Refresh</button>
             </div>
           </>
         )}

@@ -125,6 +125,7 @@ export default function App() {
   const [hourly, setHourly] = useState<HourlyForecast | null>(null);
   const hourStripRef = useRef<HTMLDivElement | null>(null);
   const [targetSpecies, setTargetSpecies] = useState<string | null>(null);
+  const [targetNonce, setTargetNonce] = useState(0);
   const [aiSummary, setAiSummary] = useState('Analyzing conditions...');
   const [loading, setLoading] = useState(true);
   const [tideLoading, setTideLoading] = useState(true);
@@ -276,6 +277,7 @@ export default function App() {
   const chooseTargetSpecies = (name: string) => {
     const val = name === '' ? null : name;
     setTargetSpecies(val);
+    if (val) setTargetNonce(n => n + 1);
     try {
       const map = JSON.parse(localStorage.getItem('fc_target_species') || '{}');
       if (val) map[locationLabel] = val; else delete map[locationLabel];
@@ -1498,6 +1500,7 @@ export default function App() {
           speciesOptions={species.map(sp => sp.name)}
           topSpecies={[...species].sort((a, b) => (b.popularity - a.popularity) || (b.biteScore - a.biteScore)).slice(0, 3).map(sp => sp.name)}
           defaultSpecies={targetSpecies}
+          autoRunNonce={targetNonce}
           conditions={conditions}
           isInland={isInland}
           waterClarity={waterClarity.level}
