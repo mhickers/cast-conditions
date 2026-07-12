@@ -125,7 +125,6 @@ export default function App() {
   const [conditions, setConditions] = useState<Partial<Conditions>>({});
   const [tides, setTides] = useState<TideData>({ events: [], curve: [] });
   const [hourly, setHourly] = useState<HourlyForecast | null>(null);
-  const hourStripRef = useRef<HTMLDivElement | null>(null);
   const [targetSpecies, setTargetSpecies] = useState<string | null>(null);
   const [targetNonce, setTargetNonce] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
@@ -156,6 +155,7 @@ export default function App() {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [windOpen, setWindOpen] = useState(false);
   const [precipOpen, setPrecipOpen] = useState(false);
+  const [precipSel, setPrecipSel] = useState<number | null>(null);
   const [showWindModels, setShowWindModels] = useState(false);
   const [windCursor, setWindCursor] = useState<number | null>(null);
   const [navOpen, setNavOpen] = useState(false);
@@ -288,13 +288,6 @@ export default function App() {
     } catch { /* localStorage unavailable */ }
   };
 
-  useEffect(() => {
-    const el = hourStripRef.current;
-    if (!el) return;
-    const target = el.querySelector('.hour-active') as HTMLElement | null;
-    if (target) el.scrollLeft = Math.max(0, target.offsetLeft - el.clientWidth / 2 + target.clientWidth / 2);
-  }, [hourly, selectedTime]);
-
   const scoreNarrative = buildScoreNarrative(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
     conditions.waveFt ?? 2, conditions.pressureMb ?? 1013, moon.phase, isInland, score
@@ -346,7 +339,7 @@ export default function App() {
         const [waterTemp, tideData, riverList] = await Promise.all([
           tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
           tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
-          tideSt ? Promise.resolve([] as RiverData[]) : fetchRiverData(la, lo),
+          fetchRiverData(la, lo),
         ]);
         if (seq !== loadSeq.current) return null;
         setRivers(riverList);
@@ -829,7 +822,7 @@ export default function App() {
   // ---- Hourly forecast cards ----
   const forecastSlots = (() => {
     if (!hourly) return [];
-    const slots: { time: Date; wind: number; dir: string; temp: number | null; wave: number | null; cond: string; precip: number | null }[] = [];
+    const slots: { time: Date; wind: number; dir: string; temp: number | null; wave: number | null; cond: string; emoji: string; precip: number | null }[] = [];
     const startIdx = isToday
       ? hourly.time.findIndex(t => new Date(t) >= new Date())
       : 5;
@@ -844,6 +837,7 @@ export default function App() {
         temp: hourly.temperature_2m ? Math.round(hourly.temperature_2m[i]) : null,
         wave: hourly.wave_height ? hourly.wave_height[i] : null,
         cond: wc.label,
+        emoji: wc.icon,
         precip: hourly.precipitation_probability?.[i] ?? null,
       });
     }
@@ -1077,25 +1071,6 @@ export default function App() {
             <StatCard icon={<Gauge size={18} />} value={conditions.pressureMb?.toString() ?? '--'} unit={conditions.pressureTrend != null ? `mb ${conditions.pressureTrend <= -1 ? '▼' : conditions.pressureTrend >= 1 ? '▲' : '→'} ${conditions.pressureTrend > 0 ? '+' : ''}${conditions.pressureTrend.toFixed(1)}/6h` : 'mb'} label="Barometric" />
           </div>
 
-          {hourly && hourly.time.length > 0 && (
-            <div className="hour-strip" ref={hourStripRef} aria-label="Hourly weather forecast">
-              {hourly.time.slice(0, 24).map((t, hh) => {
-                const wc = weatherCodeToCondition(hourly.weather_code?.[hh] ?? 0);
-                const temp = hourly.temperature_2m && hourly.temperature_2m[hh] != null ? Math.round(convTemp(hourly.temperature_2m[hh], units)) : null;
-                const rain = hourly.precipitation_probability ? hourly.precipitation_probability[hh] : null;
-                const active = selectedTime === hh || (selectedTime === 'now' && selectedDate === todayStr && hh === new Date().getHours());
-                return (
-                  <button key={hh} type="button" className={`hour-cell${active ? ' hour-active' : ''}`} onClick={() => handleTimeChange(String(hh))} title={`${fmtHour(hh)} — ${wc.label}`}>
-                    <span className="hour-time">{fmtHour(hh)}</span>
-                    <span className="hour-icon" aria-hidden="true">{wc.icon}</span>
-                    <span className="hour-temp">{temp != null ? `${temp}°` : '--'}</span>
-                    <span className="hour-rain">{rain != null && rain >= 30 ? `${rain}%` : ' '}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
           <button className="detail-toggle" onClick={() => setWindOpen(o => !o)} aria-expanded={windOpen}>
             <Wind size={15} />
             <span className="detail-title">Wind detail</span>
@@ -1126,7 +1101,7 @@ export default function App() {
                       <strong>{confText}</strong> · {Math.round(convWind(windChart.overallMin, units))}–{Math.round(convWind(windChart.overallMax, units))} {windLabel(units)}{windChart.conf === 'low' ? ' · lower confidence' : ''}
                     </div>
                     <div className="chart-block">
-                      <div className="chart-yaxis"><span>{Math.round(convWind(windChart.yMax, units))} {windLabel(units)}</span><span>{Math.round(convWind(windChart.yMax / 2, units))}</span><span>0</span></div>
+                      <div className="chart-yaxis"><span>{Math.round(convWind(windChart.yMax, units))} {windLabel(units)}</span><span>{Math.round(convWind(windChart.yMax * 0.75, units))}</span><span>{Math.round(convWind(windChart.yMax / 2, units))}</span><span>{Math.round(convWind(windChart.yMax * 0.25, units))}</span><span>0</span></div>
                       <div
                         className="wind-chart-wrap"
                         onPointerDown={(e) => {
@@ -1141,6 +1116,8 @@ export default function App() {
                         onPointerLeave={() => setWindCursor(null)}
                       >
                         <svg className="wind-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Hourly wind speed by model">
+                          {[0, 0.25, 0.5, 0.75, 1].map(f => <line key={`h${f}`} x1="0" x2="100" y1={38 - f * 36} y2={38 - f * 36} className="chart-grid" vectorEffect="non-scaling-stroke" />)}
+                          {[0, 1, 2, 3, 4, 5, 6].map(i => <line key={`v${i}`} x1={i * (100 / 6)} x2={i * (100 / 6)} y1="2" y2="38" className="chart-grid" vectorEffect="non-scaling-stroke" />)}
                           {bandPath && <path d={bandPath} className="wind-band" />}
                           {showWindModels && windModels && windModels.models.map((m, mi) => (
                             <polyline key={m.id} className="wind-model-line" style={{ stroke: modelColors[mi % 3] }} vectorEffect="non-scaling-stroke"
@@ -1176,7 +1153,7 @@ export default function App() {
                             return <span key={i} className="wind-arrow" title={`${fmtHour(i)}: ${fmtWind(p.mean, units)}${p.dir != null ? ' ' + compass(p.dir) : ''}`} style={{ transform: p.dir != null ? `rotate(${(p.dir + 180) % 360}deg)` : undefined }}>↑</span>;
                           })}
                         </div>
-                        <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                        <div className="timeline-labels"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>11 PM</span></div>
                       </div>
                     </div>
                     <div className="wind-legend">
@@ -1204,16 +1181,35 @@ export default function App() {
                 {precipPeak.max >= 15 ? (
                   <>
                     <div className="chart-block">
-                      <div className="chart-yaxis"><span>100%</span><span>50%</span><span>0%</span></div>
-                      <div className="precip-row" role="img" aria-label="Hourly chance of rain">
-                        {precipHours.map((p, hh) => (
-                          <div key={hh} className="precip-seg" style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: 0.35 + (p / 100) * 0.65 }} title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`} />
-                        ))}
+                      <div className="chart-yaxis"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
+                      <div className="precip-wrap">
+                        <div className="precip-grid" aria-hidden="true">
+                          {[0, 1, 2, 3, 4].map(i => <div key={i} className="precip-gridline" />)}
+                        </div>
+                        <div className="precip-row" role="img" aria-label="Hourly chance of rain">
+                          {precipHours.map((p, hh) => {
+                            const sel = precipSel === hh;
+                            return (
+                              <button
+                                key={hh}
+                                type="button"
+                                className={`precip-seg${sel ? ' precip-seg-sel' : ''}`}
+                                style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: sel ? 1 : 0.35 + (p / 100) * 0.65 }}
+                                title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`}
+                                aria-label={`${fmtHour(hh)}: ${Math.round(p)} percent chance of rain`}
+                                onClick={() => setPrecipSel(s => (s === hh ? null : hh))}
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
                       <div className="chart-below">
-                        <div className="timeline-labels"><span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span></div>
+                        <div className="timeline-labels"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>11 PM</span></div>
                       </div>
                     </div>
+                    {precipSel != null && precipHours[precipSel] != null && (
+                      <p className="precip-readout"><strong>{fmtHour(precipSel)}</strong> · {Math.round(precipHours[precipSel])}% chance of rain</p>
+                    )}
                   </>
                 ) : (
                   <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
@@ -1229,7 +1225,7 @@ export default function App() {
             {forecastSlots.map((s, i) => (
               <div key={i} className="fc-card">
                 <div className="fc-time">{s.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                <div className="fc-icon">{condIcon(s.cond)}</div>
+                <div className="fc-icon" aria-label={s.cond}>{s.emoji}</div>
                 {s.precip != null && s.precip > 0 && <div className="fc-precip"><Droplet size={10} style={{ verticalAlign: '-1px' }} /> {s.precip}%</div>}
                 {s.temp != null && <div className="fc-val">{fmtTemp(s.temp, units)}</div>}
                 <div className="fc-sub">{fmtWind(s.wind, units)} {s.dir}</div>
@@ -1272,25 +1268,6 @@ export default function App() {
                 </select>
               </div>
             )}
-            <div className="station-map-block">
-              <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
-                {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
-              </button>
-              {mapOpen && (
-                <StationMap
-                  lat={lat}
-                  lon={lon}
-                  locationLabel={locationLabel}
-                  tideStations={nearbyStations}
-                  currentTideId={tideStation ? tideStation.id : null}
-                  onSelectTide={changeStation}
-                  rivers={rivers}
-                  currentRiverId={riverStation ? riverStation.siteId : null}
-                  onSelectRiver={changeRiverGauge}
-                  units={units}
-                />
-              )}
-            </div>
           </section>
           <section className="section">
             <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
@@ -1304,6 +1281,25 @@ export default function App() {
                   </div>}
             </div>
           </section>
+          <div className="station-map-block tide-map-full">
+            <button className="detail-toggle" onClick={() => setMapOpen(o => !o)} aria-expanded={mapOpen}>
+              {mapOpen ? 'Hide station map' : 'View tide + river stations on map'}
+            </button>
+            {mapOpen && (
+              <StationMap
+                lat={lat}
+                lon={lon}
+                locationLabel={locationLabel}
+                tideStations={nearbyStations}
+                currentTideId={tideStation ? tideStation.id : null}
+                onSelectTide={changeStation}
+                rivers={rivers}
+                currentRiverId={riverStation ? riverStation.siteId : null}
+                onSelectRiver={changeRiverGauge}
+                units={units}
+              />
+            )}
+          </div>
           </div>
         )}
 

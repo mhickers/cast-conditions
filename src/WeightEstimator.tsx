@@ -16,7 +16,7 @@ const SHAPES: { match: RegExp; params: ShapeParams }[] = [
   { match: /bluegill|crappie|sunfish|pumpkinseed|panfish|spadefish|porgy|scup/i, params: { k: 750, girthRatio: 0.78 } },
   { match: /catfish|bullhead|cod|burbot|grouper|sheepshead|drum|redfish|tautog/i, params: { k: 800, girthRatio: 0.60 } },
   { match: /tuna|jack|amberjack|mahi|dorado|wahoo|bonito|mackerel/i, params: { k: 800, girthRatio: 0.58 } },
-  { match: /flounder|halibut|fluke|sole|turbot|ray|skate/i, params: { k: 900, girthRatio: 0.75 } },
+  { match: /flounder|halibut|fluke|sole|turbot|ray|skate/i, params: { k: 1450, girthRatio: 0.75 } },
   { match: /striped bass|striper|rockfish|sea bass|tarpon|snapper|bluefish|cobia|bonefish|permit|pompano/i, params: { k: 800, girthRatio: 0.55 } },
   { match: /bass/i, params: { k: 800, girthRatio: 0.66 } },
 ];
