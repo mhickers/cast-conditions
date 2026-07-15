@@ -12,6 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 const tipLinks = require('./tip-links');
+const { enrichTowns, MONTHS: SEO_MONTHS, MONTHS_FULL: SEO_MONTHS_FULL } = require('./seo-data');
 
 const SITE = 'https://fishcondish.com';
 // Safari Smart App Banner (funnels search visitors to the App Store). Emitted
@@ -810,7 +811,7 @@ const US_STATES = {
 };
 const stateAbbrOf = (town) => (town.name.split(',').pop() || '').trim();
 
-function pageHtml(town, allTowns) {
+function pageHtml(town, allTowns, data) {
   const slug = slugify(town.name);
   const _ab = stateAbbrOf(town);
   const _stName = US_STATES[_ab] || null;
@@ -818,9 +819,6 @@ function pageHtml(town, allTowns) {
   const url = `${SITE}/fishing/${slug}/`;
   const appLink = `/?lat=${town.lat.toFixed(4)}&lon=${town.lon.toFixed(4)}&label=${encodeURIComponent(town.name)}`;
   const species = town.species || (town.type === 'coastal' ? COASTAL_SPECIES : INLAND_SPECIES);
-  const waterData = town.type === 'coastal'
-    ? 'live tides from the nearest NOAA station, water temperature, wave height, and wind'
-    : 'real-time flow and water level from the nearest USGS gauge, water temperature, and wind';
   const title = `${town.name} Fishing Report & Conditions — FishCondish`;
   const desc = `Live fishing conditions for ${town.name}: fishing score, best times to fish, ${town.type === 'coastal' ? 'tides, water temp' : 'river flow, water temp'}, weather, and a species bite forecast. Free, updated in real time.`;
 
@@ -835,6 +833,84 @@ function pageHtml(town, allTowns) {
   const reportSection = report && Array.isArray(report.paragraphs) && report.paragraphs.length
     ? `<section class="report"><h2>${esc(town.name)} fishing report</h2>${report.paragraphs.map(p => `<p>${esc(p)}</p>`).join('')}</section>`
     : '';
+
+  // --- Real, baked-in data (NOAA tide predictions / USGS gauge stats) --------
+  // This is the whole point of the page: it should BE the answer, not describe
+  // one. `data` is undefined when the fetch failed or SEO_DATA=off — the section
+  // simply disappears and the page still builds.
+  const fmtT = (t) => {
+    const [h, m] = t.split(':').map(Number);
+    const ap = h >= 12 ? 'PM' : 'AM';
+    const hr = h % 12 === 0 ? 12 : h % 12;
+    return `${hr}:${String(m).padStart(2, '0')} ${ap}`;
+  };
+  const fmtD = (iso) => {
+    const d = new Date(`${iso}T12:00:00`);
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+  const nf = (n) => n.toLocaleString('en-US');
+
+  let dataSection = '';
+  if (data && data.kind === 'coastal' && data.station) {
+    const st = data.station;
+    const range = data.meanRangeFt != null
+      ? ` The mean tide range at this station is <strong>${data.meanRangeFt} ft</strong>.`
+      : '';
+    let table = '';
+    if (data.tideDays) {
+      const days = Object.keys(data.tideDays).sort();
+      const rows = days.map(d => {
+        const evts = data.tideDays[d]
+          .slice()
+          .sort((a, b) => a.time.localeCompare(b.time))
+          .map(e => `<span class="tide-e"><span class="${e.type === 'H' ? 'tide-h' : 'tide-l'}">${e.type === 'H' ? '▲ High' : '▼ Low'}</span> ${fmtT(e.time)} <em>${e.ft} ft</em></span>`)
+          .join('');
+        return `<tr><th scope="row">${esc(fmtD(d))}</th><td>${evts}</td></tr>`;
+      }).join('\n');
+      table = `<div class="tbl-wrap"><table class="tides">
+<caption>High and low tide predictions for ${esc(town.name)} — NOAA station ${esc(st.id)}, ${esc(st.name)}</caption>
+<thead><tr><th scope="col">Date</th><th scope="col">Tides</th></tr></thead>
+<tbody>
+${rows}
+</tbody></table></div>`;
+    }
+    dataSection = `<section class="data">
+<h2>${esc(town.name)} tide times</h2>
+<p>The closest NOAA tide station to ${esc(town.name)} is <strong>${esc(st.name)}</strong> (station ${esc(st.id)}), about <strong>${st.distanceMi} miles</strong> away.${range} Predictions below are referenced to MLLW in local time.</p>
+${table}
+<p class="tbl-note">Tide predictions from NOAA CO-OPS, regenerated daily. For the live water level, wind, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
+</section>`;
+  } else if (data && data.kind === 'inland' && data.gauge) {
+    const g = data.gauge;
+    const drain = g.drainageSqMi != null
+      ? ` It drains roughly <strong>${nf(g.drainageSqMi)} square miles</strong>.`
+      : '';
+    let flow = '';
+    const mm = data.monthlyMedianCfs;
+    if (mm) {
+      const thisMonth = new Date().getMonth() + 1;
+      const now = mm[thisMonth];
+      const cells = [];
+      for (let m = 1; m <= 12; m++) {
+        cells.push(mm[m] != null
+          ? `<tr${m === thisMonth ? ' class="mo-now"' : ''}><th scope="row">${SEO_MONTHS[m - 1]}</th><td>${nf(mm[m])} cfs</td></tr>`
+          : `<tr${m === thisMonth ? ' class="mo-now"' : ''}><th scope="row">${SEO_MONTHS[m - 1]}</th><td>—</td></tr>`);
+      }
+      flow = `${now != null ? `<p>In ${SEO_MONTHS_FULL[thisMonth - 1]}, this gauge typically runs about <strong>${nf(now)} cfs</strong>.</p>` : ''}
+<div class="tbl-wrap"><table class="flow">
+<caption>Typical (median) discharge by month at USGS gauge ${esc(g.siteId)}, based on the full USGS daily-statistics record</caption>
+<thead><tr><th scope="col">Month</th><th scope="col">Median flow</th></tr></thead>
+<tbody>
+${cells.join('\n')}
+</tbody></table></div>`;
+    }
+    dataSection = `<section class="data">
+<h2>${esc(town.name)} river flow</h2>
+<p>The closest active USGS gauge to ${esc(town.name)} is <strong>${esc(g.name)}</strong> (site ${esc(g.siteId)}), about <strong>${g.distanceMi} miles</strong> away.${drain} Flow is the single best predictor of where fish sit in moving water, so it's worth knowing what "normal" looks like before you read today's number.</p>
+${flow}
+<p class="tbl-note">Median flow from the USGS daily-statistics record. For the live flow, gage height, water temperature, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
+</section>`;
+  }
 
   // --- FAQ: grounded, evergreen Q&A (no invented regs, dates, or access points) ---
   const coastal = town.type === 'coastal';
@@ -927,6 +1003,19 @@ li{margin:4px 0}
 .crumbs{font-size:13px;color:var(--muted);margin-bottom:6px}
 .crumbs a{color:var(--ocean);text-decoration:none}
 .faq{margin:8px 0 4px}
+.data{margin:24px 0}
+.tbl-wrap{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15px;background:#fff;border:1px solid #d9e4ef;border-radius:10px}
+caption{caption-side:top;text-align:left;font-size:13px;color:var(--muted);padding:0 0 8px}
+th,td{padding:9px 12px;text-align:left;border-top:1px solid #e2e8f0;vertical-align:top}
+thead th{border-top:none;background:var(--sky);color:var(--navy);font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+tbody th{font-weight:600;color:var(--navy);white-space:nowrap;font-family:'Space Grotesk',system-ui,sans-serif}
+.tides .tide-e{display:inline-block;margin:0 14px 2px 0;white-space:nowrap}
+.tides .tide-h{color:var(--ocean);font-weight:600}
+.tides .tide-l{color:var(--muted);font-weight:600}
+.tides em{font-style:normal;color:var(--muted)}
+.flow .mo-now{background:var(--sky)}
+.tbl-note{font-size:13px;color:var(--muted)}
 .faq-item{border-top:1px solid #e2e8f0;padding:12px 0}
 .faq-item h3{font-size:16px;color:var(--navy);font-family:'Inter',system-ui,sans-serif;margin-bottom:4px}
 .faq-item p{margin:0;font-size:15px}
@@ -939,23 +1028,11 @@ footer a{color:var(--ocean)}
 <main>
 <nav class="crumbs"><a href="/">Home</a> › ${_stName ? `<a href="${_stPath}">${esc(_stName)}</a> › ` : ''}<span>${esc(town.name)} Fishing</span></nav>
 <h1>${esc(town.name)} Fishing Report &amp; Live Conditions</h1>
-<p>Planning to fish ${esc(town.water)}? FishCondish gives you a live, data-driven read on whether it's worth the trip — a <strong>1–10 fishing score</strong> for ${esc(town.name)} right now, the <strong>best times to fish today</strong>, and a <strong>species-by-species bite forecast</strong>.</p>
-<a class="cta" href="${appLink}">See live ${esc(town.name)} conditions →</a>
 ${reportSection}
-<h2>What you'll get for ${esc(town.name)}</h2>
-<ul>
-<li><strong>Fishing score (1–10)</strong> — one number that weighs ${waterData} into a single read on the bite.</li>
-<li><strong>Best-time windows</strong> — an hour-by-hour timeline for today plus a 7-day outlook, graded by ${town.type === 'coastal' ? 'tide stage, pressure trend, and dawn/dusk' : 'pressure trend, dawn/dusk, and solunar periods'}.</li>
-<li><strong>Species bite forecast</strong> — what's likely feeding near ${esc(town.name)}: ${species}.</li>
-<li><strong>Bait &amp; lure advisor</strong> — AI suggestions grounded in recent local fishing reports.</li>
-<li><strong>Solunar feeding periods, moon phase, sunrise/sunset</strong> — the timing details anglers actually use.</li>
-</ul>
-<h2>Live ${town.type === 'coastal' ? 'tide and water' : 'water'} data</h2>
-<p>${town.type === 'coastal'
-  ? `Tides and water temperature for ${esc(town.name)} come straight from the nearest NOAA station, with a smooth tide curve, today's highs and lows, and a station picker if you fish a different part of ${esc(town.water)}.`
-  : `Water conditions for ${esc(town.name)} come straight from the nearest USGS gauge — flow, gage height, and water temperature where it's reported — with a picker to switch between nearby monitoring sites on ${esc(town.water)}.`}</p>
-<p>It's free, works on your phone, and installs like an app.</p>
-<a class="cta" href="${appLink}">Check the ${esc(town.name)} fishing score →</a>
+${dataSection}
+<a class="cta" href="${appLink}">See today's ${esc(town.name)} fishing score →</a>
+<h2>What's biting near ${esc(town.name)}</h2>
+<p>The species most likely to be feeding ${esc(town.water)}: ${species}. FishCondish grades every hour of the day for ${esc(town.name)} and gives each species its own bite forecast, so you can see which window is worth fishing before you load the truck.</p>
 ${faqSection}
 ${(() => {
   const { species: sp, conditions } = tipLinks.tipsForSpot({ state: stateAbbrOf(town), water: town.type }, { limit: 6 });
@@ -1135,14 +1212,19 @@ ${hubTipLinks ? `<h2>Fishing tips for ${esc(hub.name)}</h2>\n<div class="nearby"
 }
 
 if (require.main === module) {
+  (async () => {
   const outRoot = path.join(__dirname, '..', 'public', 'fishing');
   fs.rmSync(outRoot, { recursive: true, force: true });
   fs.mkdirSync(outRoot, { recursive: true });
 
+  // Real per-spot data (NOAA tides / USGS flow). Never throws: on any failure
+  // this is an empty Map and every page simply renders without its data block.
+  const seoData = await enrichTowns(TOWNS, slugify);
+
   for (const town of TOWNS) {
     const dir = path.join(outRoot, slugify(town.name));
     fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(path.join(dir, 'index.html'), pageHtml(town, TOWNS));
+    fs.writeFileSync(path.join(dir, 'index.html'), pageHtml(town, TOWNS, seoData.get(slugify(town.name))));
   }
 
   // State + region hub pages
@@ -1166,7 +1248,12 @@ ${urls.map(u => `  <url><loc>${u}</loc><lastmod>${today}</lastmod></url>`).join(
   fs.writeFileSync(path.join(__dirname, '..', 'public', 'sitemap.xml'), sitemap);
 
   const withReports = TOWNS.filter(t => AI_REPORTS[slugify(t.name)]).length;
-  console.log(`Generated ${TOWNS.length} spot pages + ${hubs.length} hub pages in public/fishing/ + sitemap.xml (${withReports} with AI reports)`);
+  const withData = TOWNS.filter(t => seoData.get(slugify(t.name))).length;
+  console.log(`Generated ${TOWNS.length} spot pages + ${hubs.length} hub pages in public/fishing/ + sitemap.xml (${withReports} with AI reports, ${withData} with baked NOAA/USGS data)`);
+  })().catch(e => {
+    console.error('[generate-seo-pages] fatal:', e);
+    process.exit(1);
+  });
 }
 
 module.exports = { TOWNS, slugify };

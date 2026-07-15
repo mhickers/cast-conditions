@@ -253,6 +253,13 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .precip-gridline { height: 1px; background: var(--border); opacity: 0.55; }
 .precip-readout { margin: 8px 0 0; font-size: 13px; color: var(--text); }
 .precip-readout strong { font-family: 'Space Grotesk', sans-serif; }
+.precip-seg-storm { background: var(--rope); }
+.hint-storm { color: var(--rope); font-weight: 600; }
+.storm-note { margin: 0 0 12px; padding: 10px 12px; background: rgba(186,117,23,0.10); border-left: 3px solid var(--rope); border-radius: 6px; font-size: 13px; line-height: 1.5; color: var(--text); }
+.storm-legend { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
+.legend-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.legend-dot.dot-rain { background: var(--ocean); }
+.legend-dot.dot-storm { background: var(--rope); margin-left: 8px; }
 .precip-clear { margin: 0; font-size: 14px; }
 
 /* Atmosphere detail dropdowns (wind, rain) */
@@ -568,3 +575,8 @@ canvas { max-width: 100%; }
 
 .station-map-block { margin-top: 10px; }
 .tide-map-full { grid-column: 1 / -1; margin-top: 0; }
+
+.water-toggle { display: inline-flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 1.25rem; }
+.water-toggle-btn { border: none; background: transparent; color: var(--text-muted); font-family: inherit; font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: calc(var(--radius) - 4px); cursor: pointer; transition: background 0.15s, color 0.15s; }
+.water-toggle-btn:hover { color: var(--text); }
+.water-toggle-btn.active { background: var(--navy); color: #fff; }

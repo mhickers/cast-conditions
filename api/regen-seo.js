@@ -1,13 +1,17 @@
-// Weekly Vercel cron — triggers a fresh production build so the SEO pages
-// (generated in the `prebuild` step) regenerate with updated lastmod/dateModified,
-// keeping the "fishing report" pages looking fresh to search engines.
+// Daily Vercel cron — triggers a fresh production build so the SEO pages
+// (generated in the `prebuild` step) regenerate with current NOAA tide tables,
+// updated lastmod/dateModified, and fresh data.
+//
+// WHY DAILY (was weekly): the spot pages now bake in a 10-day NOAA tide table.
+// Tide times shift ~50 min/day, so a stale build would show a table that mostly
+// covers dates already past. Daily regeneration keeps every table starting today.
 //
 // One-time setup:
 //   1) Vercel -> Project -> Settings -> Git -> Deploy Hooks: create a hook on the
 //      production branch and copy its URL.
 //   2) Settings -> Environment Variables: add DEPLOY_HOOK_URL = that URL.
 //   3) (optional) add CRON_SECRET; Vercel sends it to the cron as a Bearer token.
-// The schedule itself lives in vercel.json ("0 8 * * 1" = Mondays 08:00 UTC).
+// The schedule itself lives in vercel.json ("0 8 * * *" = daily 08:00 UTC).
 
 module.exports = async (req, res) => {
   // If CRON_SECRET is set, only allow requests that carry it (Vercel cron does).

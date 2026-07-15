@@ -26,7 +26,7 @@ import StationMap from './StationMap';
 import WeightEstimator from './WeightEstimator';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
-import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment, openExternal } from './native';
+import { isNative, getCurrentPositionNative, remindAtDawn, noteGoodMoment, openExternal, shareLink } from './native';
 import { QRCodeSVG } from 'qrcode.react';
 import { READING_CONDITIONS, FRESHWATER_SPECIES, SALTWATER_SPECIES } from './data/tipsMenu';
 import { crossCheckWeather } from './utils/crosscheck';
@@ -105,6 +105,11 @@ const APP_STORE_URL = (process.env.REACT_APP_APP_STORE_URL || '').trim();
 // Banner, which funnels mobile web visitors to the App Store / opens the app.
 const APP_STORE_ID = (APP_STORE_URL.match(/id(\d+)/) || [])[1] || '';
 
+// Shared links must point at the public site. In the native app,
+// window.location.origin is capacitor://localhost, which is useless to a
+// recipient, so we always build share links against the canonical domain.
+const SITE_ORIGIN = 'https://fishcondish.com';
+
 export default function App() {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(LAST_LOC_KEY) || 'null'); } catch { return null; } })();
   // Shared links: ?lat=..&lon=..&label=..&date=.. override the remembered location
@@ -149,6 +154,10 @@ export default function App() {
   const [nearbyStations, setNearbyStations] = useState<NearestStation[]>([]);
   const [rivers, setRivers] = useState<RiverData[]>([]);
   const [riverStation, setRiverStation] = useState<RiverData | null>(null);
+  // Tidal-inland spots (e.g. Philadelphia) have both NOAA tide stations and USGS
+  // gauges. 'auto' follows the inland/coastal classification; the user can pin
+  // 'tide' or 'river' to switch which dataset the page shows.
+  const [waterView, setWaterView] = useState<'auto' | 'tide' | 'river'>('auto');
   const [riverDetail, setRiverDetail] = useState<RiverDetail | null>(null);
   const [riverLoading, setRiverLoading] = useState(false);
   const [weekScores, setWeekScores] = useState<Array<{ date: string; score: number }>>([]);
@@ -223,6 +232,8 @@ export default function App() {
   const fmtHour = (hh: number) => new Date(2000, 0, 1, hh).toLocaleTimeString([], { hour: 'numeric' });
   const dateShort = new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   const timeContext = isNow ? '' : ` — ${isToday ? 'today' : dateShort}, ${fmtHour(selectedTime === 'now' ? 12 : selectedTime)}`;
+  // Copy that names the day: "today" only when the selected date really is today.
+  const dayWord = isToday ? 'today' : `on ${dateShort}`;
 
   // Coastal/saltwater now REQUIRES real marine data (Open-Meteo wave or SST),
   // not just a nearby NOAA tide station. Tidal rivers (e.g. the Delaware at
@@ -232,6 +243,15 @@ export default function App() {
   const hasMarine = conditions.waveFt != null || conditions.sstF != null;
   const stationNear = !!tideStation && tideStation.distanceMi <= 12;
   const isInland = stationChecked && !(stationNear && (hasMarine || loading));
+  // A tidal-inland spot has both nearby tide stations and USGS gauges, so we
+  // offer a toggle between the two. The default view stays inland (rivers/lakes);
+  // effectiveInland only diverges from isInland when the user picks a view.
+  const hasTideOption = nearbyStations.length > 0;
+  const hasRiverOption = rivers.length > 0;
+  const showWaterToggle = isInland && hasTideOption && hasRiverOption;
+  const effectiveInland = showWaterToggle
+    ? waterView !== 'tide'
+    : isInland;
   const isSaved = spots.some(s => s.label === locationLabel);
 
   const getStationOverride = (lbl: string): NearestStation | null => {
@@ -419,7 +439,13 @@ export default function App() {
     }
   }, [units]);
 
-  useEffect(() => { loadData(lon, lat, locationLabel, selectedDate, selectedTime); }, []); // eslint-disable-line
+  // Initial load. A deep link (?lat&lon&label — used by every SEO spot page and
+  // every shared link) is also remembered here, so the next direct visit reopens
+  // that spot instead of falling back to the Margate City default.
+  useEffect(() => {
+    if (hasShared) rememberLocation(lat, lon, locationLabel);
+    loadData(lon, lat, locationLabel, selectedDate, selectedTime);
+  }, []); // eslint-disable-line
 
   // Safari Smart App Banner: on iOS web (not the native app), advertise the app
   // at the top of the page so SEO/search visitors can install it in one tap.
@@ -507,6 +533,7 @@ export default function App() {
     const st = nearbyStations.find(s => s.id === id);
     if (!st) return;
     setTideStation(st);
+    setWaterView('tide');
     saveStationOverride(locationLabel, st);
     setTideLoading(true);
     const seq = ++loadSeq.current;
@@ -548,6 +575,7 @@ export default function App() {
     const r = rivers.find(x => x.siteId === siteId);
     if (!r) return;
     setRiverStation(r);
+    setWaterView('river');
     saveRiverOverride(locationLabel, r);
     const seq = ++loadSeq.current;
     const hour = selectedTime === 'now' ? null : selectedTime;
@@ -623,6 +651,7 @@ export default function App() {
   const goToLocation = (la: number, lo: number, lbl: string) => {
     setLat(la); setLon(lo); setLocationLabel(lbl); setSearchInput(lbl);
     setSuggestions([]);
+    setWaterView('auto');
     rememberLocation(la, lo, lbl);
     loadData(lo, la, lbl, selectedDate, selectedTime);
   };
@@ -639,11 +668,19 @@ export default function App() {
     const params = new URLSearchParams({
       lat: lat.toFixed(4), lon: lon.toFixed(4), label: locationLabel, date: selectedDate,
     });
-    const url = `${window.location.origin}/?${params.toString()}`;
+    const url = `${SITE_ORIGIN}/?${params.toString()}`;
     const text = `Fishing conditions for ${locationLabel}`;
+    // Native app: use the OS share sheet (Messages, Mail, etc.).
+    if (isNative()) {
+      const ok = await shareLink('FishCondish', text, url);
+      if (!ok) { setShareMsg(url); setTimeout(() => setShareMsg(''), 4000); }
+      return;
+    }
+    // Web: native browser share sheet where available.
     if (navigator.share) {
       try { await navigator.share({ title: 'FishCondish', text, url }); return; } catch {}
     }
+    // Web fallback: copy to clipboard.
     try {
       await navigator.clipboard.writeText(url);
       setShareMsg('Link copied!');
@@ -751,6 +788,34 @@ export default function App() {
     precipHours.forEach((p, h) => { if (p > max) { max = p; hour = h; } });
     return { max: Math.round(max), hour };
   }, [precipHours]);
+  // Thunderstorm hours come from WMO weather codes 95/96/99, which the hourly
+  // forecast already carries — no extra API call. Lightning matters more to an
+  // angler than rain does (open water, graphite rods), so it leads the summary.
+  const stormHours = useMemo(() => {
+    const codes = hourly?.weather_code;
+    if (!codes) return [] as number[];
+    const out: number[] = [];
+    codes.slice(0, 24).forEach((c, h) => { if (c != null && c >= 95) out.push(h); });
+    return out;
+  }, [hourly]);
+  const stormSet = useMemo(() => new Set(stormHours), [stormHours]);
+  // Group into contiguous runs so a 3 AM storm and a 3 PM storm never render as
+  // "3 AM-3 PM". Lightning timing is a safety call — it has to be precise.
+  const stormLabel = useMemo(() => {
+    if (!stormHours.length) return null;
+    const runs: number[][] = [];
+    stormHours.forEach(h => {
+      const last = runs[runs.length - 1];
+      if (last && h === last[last.length - 1] + 1) last.push(h);
+      else runs.push([h]);
+    });
+    const fmtRun = (r: number[]) => r.length === 1
+      ? fmtHour(r[0])
+      : `${fmtHour(r[0])}\u2013${fmtHour(r[r.length - 1])}`;
+    if (runs.length === 1) return runs[0].length === 1 ? `around ${fmtRun(runs[0])}` : fmtRun(runs[0]);
+    if (runs.length === 2) return `${fmtRun(runs[0])} and ${fmtRun(runs[1])}`;
+    return 'on and off through the day';
+  }, [stormHours]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Day's high/low from the hourly temps (indices 0-23 = the selected day).
   const dayTemps = useMemo(() => {
@@ -1172,13 +1237,18 @@ export default function App() {
           {precipHours.length > 0 && (<>
             <button className="detail-toggle" onClick={() => setPrecipOpen(o => !o)} aria-expanded={precipOpen}>
               <Droplet size={15} />
-              <span className="detail-title">Rain chance</span>
-              <span className="detail-hint">{precipPeak.max >= 15 ? `peaks ${precipPeak.max}% around ${fmtHour(precipPeak.hour)}` : precipPeak.max < 5 ? 'none expected' : `low, ~${precipPeak.max}%`}</span>
+              <span className="detail-title">Rain &amp; lightning</span>
+              <span className={`detail-hint${stormLabel ? ' hint-storm' : ''}`}>{stormLabel ? `\u26C8\uFE0F storms ${stormLabel}` : precipPeak.max >= 15 ? `peaks ${precipPeak.max}% around ${fmtHour(precipPeak.hour)}` : precipPeak.max < 5 ? 'none expected' : `low, ~${precipPeak.max}%`}</span>
               <ChevronDown size={16} className={`detail-chevron${precipOpen ? ' open' : ''}`} />
             </button>
             {precipOpen && (
               <div className="detail-body">
-                {precipPeak.max >= 15 ? (
+                {stormLabel && (
+                  <p className="storm-note">
+                    <span aria-hidden="true">&#9928;&#65039;</span> <strong>Thunderstorms in the forecast {stormLabel}{isToday ? '' : ` ${dayWord}`}.</strong> Lightning is a serious risk on open water — plan to be off before it moves in.
+                  </p>
+                )}
+                {precipPeak.max >= 15 || stormLabel ? (
                   <>
                     <div className="chart-block">
                       <div className="chart-yaxis"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
@@ -1186,17 +1256,18 @@ export default function App() {
                         <div className="precip-grid" aria-hidden="true">
                           {[0, 1, 2, 3, 4].map(i => <div key={i} className="precip-gridline" />)}
                         </div>
-                        <div className="precip-row" role="img" aria-label="Hourly chance of rain">
+                        <div className="precip-row" role="img" aria-label="Hourly chance of rain and thunderstorms">
                           {precipHours.map((p, hh) => {
                             const sel = precipSel === hh;
+                            const storm = stormSet.has(hh);
                             return (
                               <button
                                 key={hh}
                                 type="button"
-                                className={`precip-seg${sel ? ' precip-seg-sel' : ''}`}
+                                className={`precip-seg${sel ? ' precip-seg-sel' : ''}${storm ? ' precip-seg-storm' : ''}`}
                                 style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: sel ? 1 : 0.35 + (p / 100) * 0.65 }}
-                                title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain`}
-                                aria-label={`${fmtHour(hh)}: ${Math.round(p)} percent chance of rain`}
+                                title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain${storm ? ' \u00B7 thunderstorms' : ''}`}
+                                aria-label={`${fmtHour(hh)}: ${Math.round(p)} percent chance of rain${storm ? ', thunderstorms in the forecast' : ''}`}
                                 onClick={() => setPrecipSel(s => (s === hh ? null : hh))}
                               />
                             );
@@ -1207,12 +1278,13 @@ export default function App() {
                         <div className="timeline-labels"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>11 PM</span></div>
                       </div>
                     </div>
+                    {stormLabel && <p className="storm-legend"><span className="legend-dot dot-rain" /> rain chance <span className="legend-dot dot-storm" /> thunderstorms</p>}
                     {precipSel != null && precipHours[precipSel] != null && (
-                      <p className="precip-readout"><strong>{fmtHour(precipSel)}</strong> · {Math.round(precipHours[precipSel])}% chance of rain</p>
+                      <p className="precip-readout"><strong>{fmtHour(precipSel)}</strong> · {Math.round(precipHours[precipSel])}% chance of rain{stormSet.has(precipSel) ? ' · thunderstorms in the forecast' : ''}</p>
                     )}
                   </>
                 ) : (
-                  <p className="muted precip-clear">{precipPeak.max < 5 ? 'No rain expected today.' : `Rain unlikely today — peaks around ${precipPeak.max}%.`}</p>
+                  <p className="muted precip-clear">{precipPeak.max < 5 ? `No rain expected ${dayWord}.` : `Rain unlikely ${dayWord} — peaks around ${precipPeak.max}%.`}</p>
                 )}
               </div>
             )}
@@ -1236,7 +1308,26 @@ export default function App() {
           </div>
         </section>
 
-        {!isInland && (
+        {showWaterToggle && (
+          <div className="water-toggle" role="tablist" aria-label="Water data view">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={effectiveInland}
+              className={`water-toggle-btn${effectiveInland ? ' active' : ''}`}
+              onClick={() => setWaterView('river')}
+            >River &amp; lake</button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={!effectiveInland}
+              className={`water-toggle-btn${!effectiveInland ? ' active' : ''}`}
+              onClick={() => setWaterView('tide')}
+            >Tides</button>
+          </div>
+        )}
+
+        {!effectiveInland && (
           <div className="tide-cols">
           <section className="section">
             <h3 className="section-label">{isToday ? "Today's" : 'Forecasted'} tide events</h3>
@@ -1303,7 +1394,7 @@ export default function App() {
           </div>
         )}
 
-        {isInland && (
+        {effectiveInland && (
           <section className="section">
             <h3 className="section-label">River &amp; lake conditions{timeContext}</h3>
             {riverStation ? (

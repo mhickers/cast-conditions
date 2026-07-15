@@ -11,6 +11,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { InAppReview } from '@capacitor-community/in-app-review';
 import { Browser } from '@capacitor/browser';
+import { Share } from '@capacitor/share';
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
 
@@ -68,6 +69,20 @@ export async function remindAtDawn(label: string, sunriseISO: string | null | un
         schedule: { at: when },
       }],
     });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Open the native OS share sheet (Messages, Mail, AirDrop, etc.) for a link.
+// The web's navigator.share/clipboard is unreliable inside the Capacitor
+// webview, so native uses this plugin instead. Returns false on web (callers
+// fall back to navigator.share / clipboard) or if the sheet can't open.
+export async function shareLink(title: string, text: string, url: string): Promise<boolean> {
+  if (!isNative()) return false;
+  try {
+    await Share.share({ title, text, url, dialogTitle: title });
     return true;
   } catch {
     return false;
