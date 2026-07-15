@@ -875,10 +875,10 @@ ${rows}
 </tbody></table></div>`;
     }
     dataSection = `<section class="data">
-<h2>${esc(town.name)} tide times</h2>
-<p>The closest NOAA tide station to ${esc(town.name)} is <strong>${esc(st.name)}</strong> (station ${esc(st.id)}), about <strong>${st.distanceMi} miles</strong> away.${range} Predictions below are referenced to MLLW in local time.</p>
+<h2>${esc(town.name)} ${table ? 'tide times' : 'tide station'}</h2>
+<p>The closest NOAA tide station to ${esc(town.name)} is <strong>${esc(st.name)}</strong> (station ${esc(st.id)}), about <strong>${st.distanceMi} miles</strong> away.${range}${table ? ' Predictions below are referenced to MLLW in local time.' : ''}</p>
 ${table}
-<p class="tbl-note">Tide predictions from NOAA CO-OPS, regenerated daily. For the live water level, wind, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
+<p class="tbl-note">${table ? 'Tide predictions from NOAA CO-OPS, regenerated daily. For the live water level' : 'For live tide predictions, water level'}, wind, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
 </section>`;
   } else if (data && data.kind === 'inland' && data.gauge) {
     const g = data.gauge;
@@ -906,9 +906,9 @@ ${cells.join('\n')}
     }
     dataSection = `<section class="data">
 <h2>${esc(town.name)} river flow</h2>
-<p>The closest active USGS gauge to ${esc(town.name)} is <strong>${esc(g.name)}</strong> (site ${esc(g.siteId)}), about <strong>${g.distanceMi} miles</strong> away.${drain} Flow is the single best predictor of where fish sit in moving water, so it's worth knowing what "normal" looks like before you read today's number.</p>
+<p>The closest active USGS gauge to ${esc(town.name)} is <strong>${esc(g.name)}</strong> (site ${esc(g.siteId)}), about <strong>${g.distanceMi} miles</strong> away.${drain}${flow ? ' Flow is the single best predictor of where fish sit in moving water, so it is worth knowing what normal looks like before you read today\'s number.' : ''}</p>
 ${flow}
-<p class="tbl-note">Median flow from the USGS daily-statistics record. For the live flow, gage height, water temperature, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
+<p class="tbl-note">${flow ? 'Median flow from the USGS daily-statistics record. For the live flow' : 'For live flow'}, gage height, water temperature, and today's fishing score, open the ${esc(town.name)} dashboard.</p>
 </section>`;
   }
 
