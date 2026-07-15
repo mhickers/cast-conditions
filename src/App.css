@@ -245,15 +245,17 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .timeline-active { opacity: 1; outline: 2px solid var(--navy); outline-offset: -2px; }
 .timeline-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-top: 4px; }
 .precip-wrap { position: relative; height: 130px; }
-.precip-row { display: flex; gap: 2px; height: 100%; align-items: flex-end; position: relative; z-index: 1; }
-.precip-seg { flex: 1; background: var(--ocean); border: none; border-radius: 2px 2px 0 0; min-height: 2px; padding: 0; cursor: pointer; transition: opacity 0.15s; }
-.precip-seg:hover { opacity: 1 !important; }
-.precip-seg-sel { outline: 2px solid var(--navy); outline-offset: 1px; }
+.precip-row { display: flex; gap: 2px; height: 100%; align-items: stretch; position: relative; z-index: 1; }
+.precip-col { flex: 1; display: flex; align-items: flex-end; background: transparent; border: none; padding: 0; cursor: pointer; border-radius: 3px; transition: background 0.15s; }
+.precip-col:hover { background: rgba(12,35,64,0.05); }
+.precip-col-sel { background: rgba(12,35,64,0.09); }
+.precip-bar { width: 100%; background: var(--ocean); border-radius: 2px 2px 0 0; transition: opacity 0.15s, height 0.15s; }
+.precip-col:hover .precip-bar { opacity: 1 !important; }
+.precip-bar-storm { background: var(--rope); }
 .precip-grid { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; z-index: 0; }
 .precip-gridline { height: 1px; background: var(--border); opacity: 0.55; }
 .precip-readout { margin: 8px 0 0; font-size: 13px; color: var(--text); }
 .precip-readout strong { font-family: 'Space Grotesk', sans-serif; }
-.precip-seg-storm { background: var(--rope); }
 .hint-storm { color: var(--rope); font-weight: 600; }
 .storm-note { margin: 0 0 12px; padding: 10px 12px; background: rgba(186,117,23,0.10); border-left: 3px solid var(--rope); border-radius: 6px; font-size: 13px; line-height: 1.5; color: var(--text); }
 .storm-legend { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }

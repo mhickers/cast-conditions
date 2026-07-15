@@ -110,6 +110,11 @@ const APP_STORE_ID = (APP_STORE_URL.match(/id(\d+)/) || [])[1] || '';
 // recipient, so we always build share links against the canonical domain.
 const SITE_ORIGIN = 'https://fishcondish.com';
 
+// How close a NOAA tide station must be for its tides to describe the water the
+// user is actually fishing. Stations are searched out to 60 mi so tidal rivers
+// find one; this is the gate on treating those tides as real for this spot.
+const TIDE_NEAR_MI = 12;
+
 export default function App() {
   const saved = (() => { try { return JSON.parse(localStorage.getItem(LAST_LOC_KEY) || 'null'); } catch { return null; } })();
   // Shared links: ?lat=..&lon=..&label=..&date=.. override the remembered location
@@ -241,14 +246,22 @@ export default function App() {
   // correctly resolve to freshwater. During load we stay optimistic about a near
   // station to avoid a species flicker, then require marine once loaded.
   const hasMarine = conditions.waveFt != null || conditions.sstF != null;
-  const stationNear = !!tideStation && tideStation.distanceMi <= 12;
+  const stationNear = !!tideStation && tideStation.distanceMi <= TIDE_NEAR_MI;
   const isInland = stationChecked && !(stationNear && (hasMarine || loading));
+  // Tide only belongs in the score when the station is actually on this water.
+  // Stations are searched out to 60 mi so tidal rivers (Philadelphia) resolve,
+  // but a lake 30 mi inland must never inherit ocean tides. stationNear is the
+  // right discriminator: true for the ocean AND for a tidal river in town,
+  // false for a lake with the nearest station half a county away.
+  const tideAffectsScore = stationNear;
   // A tidal-inland spot has both nearby tide stations and USGS gauges, so we
   // offer a toggle between the two. The default view stays inland (rivers/lakes);
   // effectiveInland only diverges from isInland when the user picks a view.
-  const hasTideOption = nearbyStations.length > 0;
+  // The toggle is for genuinely tidal inland water (Philadelphia on the tidal
+  // Delaware), so it keys off stationNear — not merely "a station exists within
+  // the 60-mile search radius", which would offer ocean tides on a lake.
   const hasRiverOption = rivers.length > 0;
-  const showWaterToggle = isInland && hasTideOption && hasRiverOption;
+  const showWaterToggle = isInland && stationNear && hasRiverOption;
   const effectiveInland = showWaterToggle
     ? waterView !== 'tide'
     : isInland;
@@ -279,13 +292,16 @@ export default function App() {
   };
   const moon = getMoonPhase(new Date(selectedDate + 'T12:00:00'));
   const solunar = getSolunarPeriods(new Date(selectedDate + 'T12:00:00'));
-  const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(conditions, new Date(selectedDate + 'T12:00:00'));
+  // Everything downstream of the score reads tide through this, so an inland
+  // lake near the coast can't pick up an ocean tide factor.
+  const scoreConditions = tideAffectsScore ? conditions : { ...conditions, tideDirection: null };
+  const { score, label: scoreLabel, factors: scoreFactors } = calcFishingScore(scoreConditions, new Date(selectedDate + 'T12:00:00'));
   const { bg: scoreBg, text: scoreText } = scoreColor(score);
   const waterClarity = calcWaterClarity(conditions, isInland);
   const species = getSpeciesForLocation(
     lat, lon, conditions.waterTempF ?? null, conditions.windMph ?? 10,
     conditions.waveFt ?? 2, conditions.pressureMb ?? 1013,
-    conditions.tideDirection ?? null, moon.phase, isInland
+    scoreConditions.tideDirection ?? null, moon.phase, isInland
   );
   const speciesKey = species.map(sp => sp.name).join('|');
   useEffect(() => {
@@ -378,7 +394,7 @@ export default function App() {
         // Inland spots have no NOAA water-temp station, so fall back to the selected USGS gauge.
         const finalWaterTemp = waterTemp ?? selRiver?.waterTempF ?? null;
         setConditions(c => ({ ...c, waterTempF: finalWaterTemp, tideNow: tide?.v ?? null, tideDirection: tide?.dir ?? null }));
-        return { waterTemp: finalWaterTemp, tideData };
+        return { waterTemp: finalWaterTemp, tideData, tideNear: !!tideSt && tideSt.distanceMi <= TIDE_NEAR_MI };
       } catch {
         if (seq === loadSeq.current) { setStationChecked(true); setTideLoading(false); setRiverLoading(false); }
         return null;
@@ -407,7 +423,7 @@ export default function App() {
       const snapshot: Partial<Conditions> = {
         ...weather.conditions,
         waterTempF: extra?.waterTemp ?? null,
-        tideDirection: extra ? (tideAt(extra.tideData.curve, refTime)?.dir ?? null) : null,
+        tideDirection: extra && extra.tideNear ? (tideAt(extra.tideData.curve, refTime)?.dir ?? null) : null,
       };
       const { score: sc } = calcFishingScore(snapshot);
       fetchAISummary(snapshot, dayMoon.name, dayMoon.illum, sc, lbl, dateStr, units).then(s => {
@@ -756,7 +772,7 @@ export default function App() {
         pressureMb: hourly.surface_pressure?.[hh] ?? undefined,
         pressureTrend: trend,
         waterTempF: conditions.waterTempF ?? null,
-        tideDirection: tide?.dir ?? null,
+        tideDirection: tideAffectsScore ? (tide?.dir ?? null) : null,
       } as Partial<Conditions>, new Date(selectedDate + 'T12:00:00')).score;
       // Prime-time bonuses: dawn/dusk and solunar majors — this is also what
       // keeps the timeline visually consistent with the solunar table below
@@ -765,7 +781,7 @@ export default function App() {
       if (sol.majorHours.some(m => Math.abs(hh - m) <= 1 || Math.abs(hh - m) >= 23)) s += 0.5;
       return Math.min(10, Math.round(s * 10) / 10);
     });
-  }, [hourly, tides, conditions.waterTempF, conditions.sunrise, conditions.sunset, selectedDate]);
+  }, [hourly, tides, conditions.waterTempF, conditions.sunrise, conditions.sunset, selectedDate, tideAffectsScore]);
 
   const bestWindow = useMemo(() => {
     if (hourlyScores.length < 3) return null;
@@ -1248,43 +1264,44 @@ export default function App() {
                     <span aria-hidden="true">&#9928;&#65039;</span> <strong>Thunderstorms in the forecast {stormLabel}{isToday ? '' : ` ${dayWord}`}.</strong> Lightning is a serious risk on open water — plan to be off before it moves in.
                   </p>
                 )}
-                {precipPeak.max >= 15 || stormLabel ? (
-                  <>
-                    <div className="chart-block">
-                      <div className="chart-yaxis"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
-                      <div className="precip-wrap">
-                        <div className="precip-grid" aria-hidden="true">
-                          {[0, 1, 2, 3, 4].map(i => <div key={i} className="precip-gridline" />)}
-                        </div>
-                        <div className="precip-row" role="img" aria-label="Hourly chance of rain and thunderstorms">
-                          {precipHours.map((p, hh) => {
-                            const sel = precipSel === hh;
-                            const storm = stormSet.has(hh);
-                            return (
-                              <button
-                                key={hh}
-                                type="button"
-                                className={`precip-seg${sel ? ' precip-seg-sel' : ''}${storm ? ' precip-seg-storm' : ''}`}
-                                style={{ height: `${Math.max(4, Math.round(p))}%`, opacity: sel ? 1 : 0.35 + (p / 100) * 0.65 }}
-                                title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain${storm ? ' \u00B7 thunderstorms' : ''}`}
-                                aria-label={`${fmtHour(hh)}: ${Math.round(p)} percent chance of rain${storm ? ', thunderstorms in the forecast' : ''}`}
-                                onClick={() => setPrecipSel(s => (s === hh ? null : hh))}
-                              />
-                            );
-                          })}
-                        </div>
-                      </div>
-                      <div className="chart-below">
-                        <div className="timeline-labels"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>11 PM</span></div>
-                      </div>
+                <div className="chart-block">
+                  <div className="chart-yaxis"><span>100%</span><span>75%</span><span>50%</span><span>25%</span><span>0%</span></div>
+                  <div className="precip-wrap">
+                    <div className="precip-grid" aria-hidden="true">
+                      {[0, 1, 2, 3, 4].map(i => <div key={i} className="precip-gridline" />)}
                     </div>
-                    {stormLabel && <p className="storm-legend"><span className="legend-dot dot-rain" /> rain chance <span className="legend-dot dot-storm" /> thunderstorms</p>}
-                    {precipSel != null && precipHours[precipSel] != null && (
-                      <p className="precip-readout"><strong>{fmtHour(precipSel)}</strong> · {Math.round(precipHours[precipSel])}% chance of rain{stormSet.has(precipSel) ? ' · thunderstorms in the forecast' : ''}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="muted precip-clear">{precipPeak.max < 5 ? `No rain expected ${dayWord}.` : `Rain unlikely ${dayWord} — peaks around ${precipPeak.max}%.`}</p>
+                    <div className="precip-row" role="img" aria-label="Hourly chance of rain and thunderstorms">
+                      {precipHours.map((p, hh) => {
+                        const sel = precipSel === hh;
+                        const storm = stormSet.has(hh);
+                        return (
+                          <button
+                            key={hh}
+                            type="button"
+                            className={`precip-col${sel ? ' precip-col-sel' : ''}`}
+                            title={`${fmtHour(hh)}: ${Math.round(p)}% chance of rain${storm ? ' \u00B7 thunderstorms' : ''}`}
+                            aria-label={`${fmtHour(hh)}: ${Math.round(p)} percent chance of rain${storm ? ', thunderstorms in the forecast' : ''}`}
+                            onClick={() => setPrecipSel(s => (s === hh ? null : hh))}
+                          >
+                            <span
+                              className={`precip-bar${storm ? ' precip-bar-storm' : ''}`}
+                              style={{ height: `${Math.round(p)}%`, opacity: sel ? 1 : 0.35 + (p / 100) * 0.65 }}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="chart-below">
+                    <div className="timeline-labels"><span>12 AM</span><span>4 AM</span><span>8 AM</span><span>12 PM</span><span>4 PM</span><span>8 PM</span><span>11 PM</span></div>
+                  </div>
+                </div>
+                {stormLabel && <p className="storm-legend"><span className="legend-dot dot-rain" /> rain chance <span className="legend-dot dot-storm" /> thunderstorms</p>}
+                {precipSel != null && precipHours[precipSel] != null && (
+                  <p className="precip-readout"><strong>{fmtHour(precipSel)}</strong> · {Math.round(precipHours[precipSel])}% chance of rain{stormSet.has(precipSel) ? ' · thunderstorms in the forecast' : ''}</p>
+                )}
+                {precipPeak.max < 15 && (
+                  <p className="muted precip-clear">{precipPeak.max < 5 ? `No rain expected ${dayWord}.` : `Rain unlikely ${dayWord} — peaks around ${precipPeak.max}%.`} Tap any hour for its exact chance.</p>
                 )}
               </div>
             )}
@@ -1639,7 +1656,7 @@ export default function App() {
           <section className="section">
             <h3 className="section-label">7-Day Outlook — When Should I Go?</h3>
             <p className="muted" style={{ marginTop: -2, marginBottom: 10 }}>
-              Each day is a quick midday forecast for planning ahead. The big score up top is for your selected time and also folds in live water temp and tide, so the two can differ. Tap a day to see its full breakdown.
+              Each day is a quick midday forecast for planning ahead. The big score up top is for your selected time and also folds in live water temp{tideAffectsScore ? ' and tide' : ''}, so the two can differ. Tap a day to see its full breakdown.
             </p>
             <div className="week-strip">
               {weekScores.map(d => {
