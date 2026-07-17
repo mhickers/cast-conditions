@@ -27,8 +27,12 @@ const ALLOWED_HOSTS = new Set([
   'waterservices.usgs.gov',
 ]);
 
-const RETRIES = 3;            // total attempts against a flapping upstream
-const ATTEMPT_TIMEOUT_MS = 2800; // keeps worst case (~3 tries + backoff) inside Vercel's 10s
+// 2 attempts x 4s: a DEGRADED upstream (answering in 3-5s) must be given time
+// to answer — 3 short attempts against a slow server just manufactures failure
+// out of slowness. Worst case ~8.3s stays inside Vercel's 10s window, and the
+// client side allows 12s so it never hangs up while the proxy is still working.
+const RETRIES = 2;
+const ATTEMPT_TIMEOUT_MS = 4000;
 const BACKOFF_MS = 250;
 
 function cachePolicy(target) {
@@ -70,6 +74,13 @@ module.exports = async (req, res) => {
   }
   if (target.protocol !== 'https:' || !ALLOWED_HOSTS.has(target.hostname)) {
     return res.status(403).json({ error: 'Host not allowed' });
+  }
+
+  // NOAA asks API consumers to identify themselves via the application
+  // parameter, and applies per-customer throttling under load — an identified,
+  // consistent caller gets better treatment than anonymous traffic.
+  if (target.hostname === 'api.tidesandcurrents.noaa.gov' && !target.searchParams.has('application')) {
+    target.searchParams.set('application', 'FishCondish');
   }
 
   let last = null;

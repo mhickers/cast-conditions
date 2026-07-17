@@ -229,7 +229,7 @@ export async function fetchWindModels(lat: number, lon: number, dateStr: string)
 
 export async function fetchWaterTemp(stationId: string): Promise<number | null> {
   try {
-    const d = await fetchJson(gov(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`));
+    const d = await fetchJson(gov(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`), 2, 12000);
     if (d?.data?.[0]) return parseFloat(d.data[0].v);
   } catch {}
   return null;
@@ -248,9 +248,11 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
     // whole session. The two requests fail independently: events are the
     // critical half (the curve can be synthesized from them), so a dead curve
     // request must never take the events down with it.
+    // 12s timeout: the proxy may legitimately spend ~8s retrying a slow NOAA
+    // before answering — the client must not hang up while it's still working.
     const [eventsD, curveD] = await Promise.all([
-      fetchJson(gov(base + '&interval=hilo'), 3),
-      fetchJson(gov(base + '&interval=30')), // smooth 30-minute curve for the chart
+      fetchJson(gov(base + '&interval=hilo'), 3, 12000),
+      fetchJson(gov(base + '&interval=30'), 2, 12000), // smooth 30-minute curve for the chart
     ]);
     const events = eventsD?.predictions ?? [];
     let curve = curveD?.predictions ?? [];
