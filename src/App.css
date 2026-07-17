@@ -258,6 +258,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: var(--sand); col
 .precip-readout strong { font-family: 'Space Grotesk', sans-serif; }
 .hint-storm { color: var(--rope); font-weight: 600; }
 .storm-note { margin: 0 0 12px; padding: 10px 12px; background: rgba(186,117,23,0.10); border-left: 3px solid var(--rope); border-radius: 6px; font-size: 13px; line-height: 1.5; color: var(--text); }
+.estimate-note { margin: 10px 0 0; padding: 10px 12px; background: rgba(186,117,23,0.10); border-left: 3px solid var(--rope); border-radius: 6px; font-size: 13px; line-height: 1.5; color: var(--text); }
 .storm-legend { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; color: var(--text-muted); }
 .legend-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
 .legend-dot.dot-rain { background: var(--ocean); }

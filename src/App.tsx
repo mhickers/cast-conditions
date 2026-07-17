@@ -13,7 +13,7 @@ import {
 } from 'chart.js';
 import type { Conditions, TideData, HourlyForecast, SavedSpot, RiverData, RiverDetail } from './types';
 import { getMoonPhase, calcFishingScore, scoreColor, getSolunarPeriods, degToCompass, calcWaterClarity } from './utils/fishing';
-import { fetchWeather, fetchWaterTemp, fetchTides, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchRiverDetail, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
+import { fetchWeather, fetchWaterTemp, fetchTides, fetchTideEstimate, fetchAISummary, fetchWeekOutlook, fetchRiverData, fetchRiverDetail, fetchWindModels, weatherCodeToCondition, localToday } from './utils/api';
 import { UnitSystem, convTemp, convWind, convWave, tempLabel, windLabel, waveLabel, fmtTemp, fmtWind, fmtWave, defaultUnitsFromLabel } from './utils/units';
 import type { WindModelSeries } from './utils/api';
 import {
@@ -372,12 +372,19 @@ export default function App() {
         setNearbyStations(nearby);
         setTideStation(tideSt);
         setStationChecked(true);
-        const [waterTemp, tideData, riverList] = await Promise.all([
+        let [waterTemp, tideData, riverList] = await Promise.all([
           tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
           tideSt ? fetchTides(dateStr, tideSt.id) : Promise.resolve({ events: [], curve: [] } as TideData),
           fetchRiverData(la, lo),
         ]);
         if (seq !== loadSeq.current) return null;
+        // NOAA down but this is tide water? Fall back to a clearly-labeled
+        // model estimate rather than an empty section (July 2026 CO-OPS outage).
+        if (tideSt && !tideData.events.length && !tideData.curve.length) {
+          const est = await fetchTideEstimate(dateStr, la, lo);
+          if (est) tideData = est;
+          if (seq !== loadSeq.current) return null;
+        }
         setRivers(riverList);
         // Default to a remembered gauge, else the nearest one that reports
         // discharge (a real river), else simply the nearest.
@@ -568,11 +575,16 @@ export default function App() {
         findNearestStation(st.lat, st.lon, 'watertemp', 150),
       ]);
       if (seq !== loadSeq.current) return;
-      const [waterTemp, tideData] = await Promise.all([
+      let [waterTemp, tideData] = await Promise.all([
         tempSt ? fetchWaterTemp(tempSt.id) : Promise.resolve(null),
         fetchTides(selectedDate, st.id),
       ]);
       if (seq !== loadSeq.current) return;
+      if (!tideData.events.length && !tideData.curve.length) {
+        const est = await fetchTideEstimate(selectedDate, lat, lon);
+        if (est) tideData = est;
+        if (seq !== loadSeq.current) return;
+      }
       const tide = tideAt(tideData.curve, refTime);
       const trendIdx = hour ?? (selectedDate === localToday() ? new Date().getHours() : 12);
       setConditions(c => ({
@@ -894,6 +906,8 @@ export default function App() {
       borderColor: '#185FA5',
       backgroundColor: 'rgba(55,138,221,0.15)',
       fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2,
+      // Dashed = estimate: the reader should see at a glance this isn't station data.
+      borderDash: tides.estimated ? [6, 4] : undefined,
     }],
   };
   const tideChartOpts = {
@@ -1365,6 +1379,9 @@ export default function App() {
                   </div>
                 );
               }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : tideLoading ? 'Loading...' : 'Tide data unavailable — tap the refresh icon above to retry'}</span>}
+              {tides.estimated && (
+                <p className="estimate-note"><strong>Model estimate.</strong> The NOAA tide station isn't responding, so this is a model-based estimate: heights are relative to mean sea level (not MLLW) and times are approximate. It refreshes with official NOAA predictions automatically once the station is back.</p>
+              )}
             </div>
             {tideStation && (
               <div className="station-row">
@@ -1383,7 +1400,7 @@ export default function App() {
             )}
           </section>
           <section className="section">
-            <h3 className="section-label">Tide chart — {isToday ? 'today' : dateShort}</h3>
+            <h3 className="section-label">Tide {tides.estimated ? 'estimate' : 'chart'} — {isToday ? 'today' : dateShort}{tides.estimated ? ' · model-based' : ''}</h3>
             <div className="chart-wrap">
               {dayCurve.length > 0
                 ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart" />

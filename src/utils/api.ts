@@ -280,6 +280,66 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
   return { events: [], curve: [] };
 }
 
+// Model-based tide fallback for when NOAA CO-OPS is down (July 2026: their
+// cloud-migrated gateway had a multi-hour outage). Open-Meteo's marine model
+// publishes hourly sea level height; we derive a curve and high/low events
+// from it. This is an ESTIMATE — model output relative to mean sea level, not
+// station predictions relative to MLLW — so TideData.estimated is set and the
+// UI must label it. Returns null rather than a bad estimate when:
+//   - the marine model has no data here, or
+//   - the model's ocean cell is far from the spot (estuaries like the tidal
+//     Delaware at Philadelphia lag the coast by hours; a coast-cell estimate
+//     there would be confidently wrong, which is worse than unavailable).
+export async function fetchTideEstimate(dateStr: string, lat: number, lon: number): Promise<TideData | null> {
+  try {
+    const center = new Date(dateStr + 'T12:00:00');
+    const before = new Date(center); before.setDate(before.getDate() - 1);
+    const after = new Date(center); after.setDate(after.getDate() + 1);
+    const day = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const d = await fetchJson(wx(
+      `https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}` +
+      `&hourly=sea_level_height_msl&timezone=auto&cell_selection=sea` +
+      `&start_date=${day(before)}&end_date=${day(after)}`
+    ), 2, 12000);
+    const times: string[] | undefined = d?.hourly?.time;
+    const meters: Array<number | null> | undefined = d?.hourly?.sea_level_height_msl;
+    if (!times || !meters || times.length < 24) return null;
+
+    // Reject the estimate when the model cell is far from the spot — see above.
+    if (typeof d.latitude === 'number' && typeof d.longitude === 'number') {
+      const R = 3958.8;
+      const dLat = ((d.latitude - lat) * Math.PI) / 180;
+      const dLon = ((d.longitude - lon) * Math.PI) / 180;
+      const a = Math.sin(dLat / 2) ** 2 + Math.cos((lat * Math.PI) / 180) * Math.cos((d.latitude * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+      if (2 * R * Math.asin(Math.sqrt(a)) > 20) return null;
+    }
+
+    const curve: TideData['curve'] = [];
+    const ft: number[] = [];
+    for (let i = 0; i < times.length; i++) {
+      const m = meters[i];
+      if (m == null || !Number.isFinite(m)) return null; // gaps -> not trustworthy
+      const v = m * 3.28084;
+      ft.push(v);
+      curve.push({ t: times[i].replace('T', ' '), v: v.toFixed(2) });
+    }
+
+    // High/low events = local extrema of the hourly series (plateau-tolerant).
+    const events: TideData['events'] = [];
+    for (let i = 1; i < ft.length - 1; i++) {
+      if (ft[i] > ft[i - 1] && ft[i] >= ft[i + 1]) {
+        events.push({ t: curve[i].t, v: ft[i].toFixed(1), type: 'H' });
+      } else if (ft[i] < ft[i - 1] && ft[i] <= ft[i + 1]) {
+        events.push({ t: curve[i].t, v: ft[i].toFixed(1), type: 'L' });
+      }
+    }
+    if (events.length < 2) return null; // no tidal signal here (e.g. a lake cell)
+
+    return { events, curve, estimated: true };
+  } catch {}
+  return null;
+}
+
 export async function fetchAISummary(conditions: Partial<Conditions>, moonName: string, moonIllum: number, score: number, location: string, dateStr: string, units: UnitSystem = 'imperial'): Promise<string> {
   const isFuture = !isToday(dateStr);
   const dayLabel = isFuture

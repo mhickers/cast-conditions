@@ -77,6 +77,9 @@ export interface TideCurvePoint {
 export interface TideData {
   events: TidePrediction[];
   curve: TideCurvePoint[];
+  // True when this is a model-based estimate (Open-Meteo sea level) used as a
+  // fallback while NOAA is down — the UI must label it as an estimate.
+  estimated?: boolean;
 }
 
 export interface RiverData {
