@@ -1,6 +1,8 @@
 // Find the nearest NOAA station to any lat/lon.
 // Station directory is fetched once per session and cached.
 
+import { gov } from './api';
+
 export interface NearestStation {
   id: string;
   name: string;
@@ -30,7 +32,7 @@ async function loadDirectory(type: 'tidepredictions' | 'watertemp') {
       if (stored && Date.now() - stored.ts < 7 * 86400000) cache[type] = stored.stations;
     } catch {}
     if (!cache[type]) {
-      const res = await fetch(`https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=${type}`);
+      const res = await fetch(gov(`https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=${type}`));
       const d = await res.json();
       cache[type] = (d.stations ?? []).map((s: any) => ({ id: s.id, name: s.name, lat: s.lat, lng: s.lng }));
       try { localStorage.setItem(lsKey, JSON.stringify({ ts: Date.now(), stations: cache[type] })); } catch {}

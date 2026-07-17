@@ -488,6 +488,11 @@ export default function App() {
     try { localStorage.setItem('theme', theme); } catch {}
   }, [theme]);
 
+  // Prefill the custom-spot input with wherever the user currently is, so
+  // saving a spot is one tap — the field stays editable for a personal name
+  // ("Dock behind Lucy the Elephant") and refreshes on each new location.
+  useEffect(() => { setSpotName(locationLabel); }, [locationLabel]);
+
   // Whenever the selected gauge changes (default pick or manual), pull its
   // recent-flow series + historical-median read. Cancels if it changes again.
   useEffect(() => {

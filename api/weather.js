@@ -1,15 +1,62 @@
-// Same-origin proxy for Open-Meteo. The app calls /api/weather?u=<open-meteo url>
-// instead of hitting open-meteo.com directly, so ad blockers (which block the
-// open-meteo.com domains) can't break weather, marine, or geocoding data.
+// Same-origin proxy for the app's external data sources. The app calls
+// /api/weather?u=<url> instead of hitting the source directly, which buys:
 //
-// Locked down: only proxies the Open-Meteo hosts below — never an arbitrary URL.
+//   1. Ad-blocker immunity (the original reason — open-meteo is widely blocked)
+//   2. Outage absorption for NOAA/USGS. In July 2026 NOAA's cloud-migrated
+//      gateway began flapping (502/504) for browser traffic. This proxy
+//      retries flapped requests server-side and caches successes at Vercel's
+//      edge, so one good upstream response serves every user for hours.
+//
+// Locked down: only the hosts below — never an arbitrary URL.
+//
+// Cache policy (edge cache keys on the full URL, so each station/day caches
+// separately). Successes only — an error must NEVER be cached:
+//   - NOAA tide predictions (begin_date in URL): deterministic for a given
+//     station + window -> 6h, serve stale up to a day while revalidating
+//   - NOAA station directory / datums: near-static -> 24h
+//   - NOAA "latest" observations + USGS instantaneous values: live-ish -> 10m
+//   - USGS site/stat lookups: near-static -> 24h
+//   - Open-Meteo: 5m (as before)
 
 const ALLOWED_HOSTS = new Set([
   'api.open-meteo.com',
   'marine-api.open-meteo.com',
   'geocoding-api.open-meteo.com',
   'air-quality-api.open-meteo.com',
+  'api.tidesandcurrents.noaa.gov',
+  'waterservices.usgs.gov',
 ]);
+
+const RETRIES = 3;            // total attempts against a flapping upstream
+const ATTEMPT_TIMEOUT_MS = 2800; // keeps worst case (~3 tries + backoff) inside Vercel's 10s
+const BACKOFF_MS = 250;
+
+function cachePolicy(target) {
+  const host = target.hostname;
+  const u = target.href;
+  if (host === 'api.tidesandcurrents.noaa.gov') {
+    if (u.includes('begin_date=')) return 's-maxage=21600, stale-while-revalidate=86400';
+    if (u.includes('stations.json') || u.includes('datums.json')) return 's-maxage=86400, stale-while-revalidate=86400';
+    return 's-maxage=600, stale-while-revalidate=3600'; // date=latest observations
+  }
+  if (host === 'waterservices.usgs.gov') {
+    if (u.includes('/nwis/iv')) return 's-maxage=600, stale-while-revalidate=3600';
+    return 's-maxage=86400, stale-while-revalidate=86400'; // site + stat services
+  }
+  return 's-maxage=300, stale-while-revalidate=600'; // open-meteo
+}
+
+async function attempt(url) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ATTEMPT_TIMEOUT_MS);
+  try {
+    const upstream = await fetch(url, { signal: ctrl.signal, headers: { Accept: 'application/json' } });
+    const body = await upstream.text();
+    return { status: upstream.status, body, contentType: upstream.headers.get('content-type') || 'application/json' };
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 module.exports = async (req, res) => {
   const u = req.query && req.query.u;
@@ -25,15 +72,24 @@ module.exports = async (req, res) => {
     return res.status(403).json({ error: 'Host not allowed' });
   }
 
-  try {
-    const upstream = await fetch(target.toString(), { headers: { Accept: 'application/json' } });
-    const body = await upstream.text();
-    res.setHeader('Content-Type', 'application/json');
-    // Weather changes slowly — cache briefly at Vercel's edge to cut repeat calls.
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
-    return res.status(upstream.status).send(body);
-  } catch (e) {
-    console.error('weather proxy upstream fetch failed:', target.toString(), e && e.message, e && e.cause);
-    return res.status(502).json({ error: 'Upstream fetch failed', detail: e && e.message });
+  let last = null;
+  for (let i = 0; i < RETRIES; i++) {
+    try {
+      last = await attempt(target.toString());
+      if (last.status < 500) break; // success or a real 4xx — don't hammer on those
+    } catch (e) {
+      last = { status: 502, body: JSON.stringify({ error: 'Upstream fetch failed', detail: e && e.message }), contentType: 'application/json' };
+    }
+    if (i < RETRIES - 1) await new Promise(r => setTimeout(r, BACKOFF_MS));
   }
+
+  res.setHeader('Content-Type', last.contentType);
+  if (last.status >= 200 && last.status < 300) {
+    res.setHeader('Cache-Control', cachePolicy(target));
+  } else {
+    // Never let the edge cache an upstream failure.
+    res.setHeader('Cache-Control', 'no-store');
+    if (last.status >= 500) console.error('proxy upstream failing after retries:', target.hostname, last.status);
+  }
+  return res.status(last.status).send(last.body);
 };

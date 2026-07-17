@@ -32,6 +32,17 @@ function wx(url: string): string {
   return process.env.NODE_ENV === 'production' ? `/api/weather?u=${encodeURIComponent(url)}` : url;
 }
 
+// NOAA/USGS via the same proxy — but unlike wx(), NATIVE goes through it too
+// (absolute URL, since the webview has no same-origin server). NOAA's
+// cloud-migrated gateway flaps 502/504 for browser-profile traffic, which hits
+// the Capacitor webview exactly like Safari; Vercel's egress reads as server
+// traffic and the proxy retries + edge-caches successes for everyone.
+export function gov(url: string): string {
+  if (process.env.NODE_ENV !== 'production') return url;
+  const q = `/api/weather?u=${encodeURIComponent(url)}`;
+  return isNative() ? `https://fishcondish.com${q}` : q;
+}
+
 // Fetch JSON with retry; returns null instead of throwing so one flaky
 // source (or an ad blocker) can't take down the whole dashboard.
 async function fetchJson(url: string, tries = 2, timeoutMs = 8000): Promise<any | null> {
@@ -218,9 +229,8 @@ export async function fetchWindModels(lat: number, lon: number, dateStr: string)
 
 export async function fetchWaterTemp(stationId: string): Promise<number | null> {
   try {
-    const res = await fetch(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`);
-    const d = await res.json();
-    if (d.data?.[0]) return parseFloat(d.data[0].v);
+    const d = await fetchJson(gov(`https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=water_temperature&datum=MLLW&time_zone=lst_ldt&units=english&format=json&date=latest`));
+    if (d?.data?.[0]) return parseFloat(d.data[0].v);
   } catch {}
   return null;
 }
@@ -239,8 +249,8 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
     // critical half (the curve can be synthesized from them), so a dead curve
     // request must never take the events down with it.
     const [eventsD, curveD] = await Promise.all([
-      fetchJson(base + '&interval=hilo', 3),
-      fetchJson(base + '&interval=30'), // smooth 30-minute curve for the chart
+      fetchJson(gov(base + '&interval=hilo'), 3),
+      fetchJson(gov(base + '&interval=30')), // smooth 30-minute curve for the chart
     ]);
     const events = eventsD?.predictions ?? [];
     let curve = curveD?.predictions ?? [];
@@ -395,7 +405,7 @@ export async function fetchRiverData(lat: number, lon: number): Promise<RiverDat
   for (const d of [0.5, 1.0, 2.0]) {
     const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
     const json = await fetchJson(
-      `https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`
+      gov(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`)
     );
     const s = json?.value?.timeSeries;
     if (Array.isArray(s) && s.length) { series = s; break; }
@@ -451,7 +461,7 @@ export async function fetchRiverDetail(siteId: string): Promise<RiverDetail> {
   let flowSeries: number[] = [];
   try {
     const iv = await fetchJson(
-      `https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${siteId}&parameterCd=00060&period=P2D&siteStatus=active`
+      gov(`https://waterservices.usgs.gov/nwis/iv/?format=json&sites=${siteId}&parameterCd=00060&period=P2D&siteStatus=active`)
     );
     const vals = iv?.value?.timeSeries?.[0]?.values?.[0]?.value;
     if (Array.isArray(vals)) {
@@ -480,7 +490,7 @@ export async function fetchRiverDetail(siteId: string): Promise<RiverDetail> {
   let p80: number | null = null;
   try {
     const res = await fetch(
-      `https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=${siteId}&statReportType=daily&statTypeCd=p20,p50,p80&parameterCd=00060`
+      gov(`https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=${siteId}&statReportType=daily&statTypeCd=p20,p50,p80&parameterCd=00060`)
     );
     if (res.ok) {
       const text = await res.text();
