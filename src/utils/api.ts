@@ -233,13 +233,17 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
     const after = new Date(center); after.setDate(after.getDate() + 1);
     const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '');
     const base = `https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station=${stationId}&product=predictions&datum=MLLW&time_zone=lst_ldt&units=english&format=json&begin_date=${fmt(before)}&end_date=${fmt(after)}`;
-    const [eventsRes, curveRes] = await Promise.all([
-      fetch(base + '&interval=hilo'),
-      fetch(base + '&interval=30'), // smooth 30-minute curve for the chart
+    // fetchJson (retry + timeout) like every other source — a raw fetch here
+    // once meant a single dropped request on cell service blanked tides for the
+    // whole session. The two requests fail independently: events are the
+    // critical half (the curve can be synthesized from them), so a dead curve
+    // request must never take the events down with it.
+    const [eventsD, curveD] = await Promise.all([
+      fetchJson(base + '&interval=hilo', 3),
+      fetchJson(base + '&interval=30'), // smooth 30-minute curve for the chart
     ]);
-    const [eventsD, curveD] = await Promise.all([eventsRes.json(), curveRes.json()]);
-    const events = eventsD.predictions ?? [];
-    let curve = curveD.predictions ?? [];
+    const events = eventsD?.predictions ?? [];
+    let curve = curveD?.predictions ?? [];
     // Subordinate NOAA stations only publish high/low events — synthesize a
     // smooth curve between them (cosine interpolation, the standard approximation)
     if (!curve.length && events.length > 1) {

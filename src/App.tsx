@@ -1359,7 +1359,7 @@ export default function App() {
                     <span className="tide-ht">{parseFloat(p.v).toFixed(1)} ft</span>
                   </div>
                 );
-              }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : 'Loading...'}</span>}
+              }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : tideLoading ? 'Loading...' : 'Tide data unavailable — tap the refresh icon above to retry'}</span>}
             </div>
             {tideStation && (
               <div className="station-row">
