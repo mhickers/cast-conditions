@@ -35,6 +35,18 @@ const RETRIES = 2;
 const ATTEMPT_TIMEOUT_MS = 4000;
 const BACKOFF_MS = 250;
 
+// NOAA's datagetter reports application errors inside an HTTP 200 —
+// {"error":{"message":"..."}} — including transiently while their gateway is
+// recovering from an outage. A status check alone lets one of those get
+// stamped with a 6h cache policy and frozen at the edge for every user
+// (July 18, 2026: cached "No Predictions data was found" while NOAA was
+// healthy). Cheap sniff of the body head; real payloads from every allowed
+// host start with a data key ("predictions", "stations", "latitude", ...),
+// never a top-level "error".
+function bodyIsError(body) {
+  return /^\s*\{\s*"error"\s*:/.test((body || '').slice(0, 200));
+}
+
 function cachePolicy(target) {
   const host = target.hostname;
   const u = target.href;
@@ -87,7 +99,9 @@ module.exports = async (req, res) => {
   for (let i = 0; i < RETRIES; i++) {
     try {
       last = await attempt(target.toString());
-      if (last.status < 500) break; // success or a real 4xx — don't hammer on those
+      // Retry 5xx, and also 2xx whose body is an upstream error payload —
+      // during NOAA's recovery those clear up between attempts.
+      if (last.status < 500 && !(last.status < 300 && bodyIsError(last.body))) break;
     } catch (e) {
       last = { status: 502, body: JSON.stringify({ error: 'Upstream fetch failed', detail: e && e.message }), contentType: 'application/json' };
     }
@@ -95,7 +109,7 @@ module.exports = async (req, res) => {
   }
 
   res.setHeader('Content-Type', last.contentType);
-  if (last.status >= 200 && last.status < 300) {
+  if (last.status >= 200 && last.status < 300 && !bodyIsError(last.body)) {
     res.setHeader('Cache-Control', cachePolicy(target));
   } else {
     // Never let the edge cache an upstream failure.
