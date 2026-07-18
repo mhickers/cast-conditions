@@ -75,6 +75,16 @@ async function attempt(url) {
 }
 
 module.exports = async (req, res) => {
+  // CORS: the native app runs from capacitor://localhost and calls this
+  // endpoint by absolute URL — the WKWebView enforces CORS on those fetches.
+  // Without this header every gov() call silently failed in native only
+  // (web is same-origin), which cascaded: station directory blocked ->
+  // stationNear false -> beach towns misclassified as inland (v1.8 bug),
+  // and NOAA tide fetches blocked -> harmonic/computed fallback shown even
+  // with NOAA healthy. bait/notify/summary always had this header; weather
+  // was written during the July 2026 NOAA outage and its native failure was
+  // indistinguishable from the outage, so the omission went unnoticed.
+  res.setHeader('Access-Control-Allow-Origin', '*');
   const u = req.query && req.query.u;
   if (!u) return res.status(400).json({ error: 'Missing "u" parameter' });
 
