@@ -8,6 +8,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
     "@capacitor-community/in-app-review": "^7.1.0",
+    "@neaps/tide-database": "^0.8.20260701",
+    "@neaps/tide-predictor": "^0.10.0",
     "@capacitor/app": "^7.1.2",
     "@capacitor/browser": "^7.0.5",
     "@capacitor/core": "^7.6.6",

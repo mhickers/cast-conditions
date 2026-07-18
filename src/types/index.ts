@@ -80,6 +80,10 @@ export interface TideData {
   // True when this is a model-based estimate (Open-Meteo sea level) used as a
   // fallback while NOAA is down — the UI must label it as an estimate.
   estimated?: boolean;
+  // True when NOAA's live feed failed and these predictions were computed
+  // locally from NOAA's published harmonic constants (/api/tides-local).
+  // Prediction-grade, but the UI notes the source.
+  computed?: boolean;
 }
 
 export interface RiverData {

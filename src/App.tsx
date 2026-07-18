@@ -1379,6 +1379,9 @@ export default function App() {
                   </div>
                 );
               }) : <span className="muted">{stationChecked && !tideStation ? 'No nearby tide station' : tideLoading ? 'Loading...' : 'Tide data unavailable — tap the refresh icon above to retry'}</span>}
+              {tides.computed && !tides.estimated && (
+                <p className="computed-note"><strong>Computed prediction.</strong> NOAA's live feed is not responding, so these tides were computed directly from NOAA's official harmonic constants for this station — the same data behind the published tide tables. The official feed resumes automatically once NOAA recovers.</p>
+              )}
               {tides.estimated && (
                 <p className="estimate-note"><strong>Model estimate.</strong> The NOAA tide station isn't responding, so this is a model-based estimate: heights are relative to mean sea level (not MLLW) and times are approximate. It refreshes with official NOAA predictions automatically once the station is back.</p>
               )}
@@ -1400,7 +1403,7 @@ export default function App() {
             )}
           </section>
           <section className="section">
-            <h3 className="section-label">Tide {tides.estimated ? 'estimate' : 'chart'} — {isToday ? 'today' : dateShort}{tides.estimated ? ' · model-based' : ''}</h3>
+            <h3 className="section-label">Tide {tides.estimated ? 'estimate' : 'chart'} — {isToday ? 'today' : dateShort}{tides.estimated ? ' · model-based' : tides.computed ? ' · computed' : ''}</h3>
             <div className="chart-wrap">
               {dayCurve.length > 0
                 ? <Line data={tideChartData} options={tideChartOpts as any} aria-label="Tide height chart" />

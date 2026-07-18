@@ -254,8 +254,26 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
       fetchJson(gov(base + '&interval=hilo'), 3, 12000),
       fetchJson(gov(base + '&interval=30'), 2, 12000), // smooth 30-minute curve for the chart
     ]);
-    const events = eventsD?.predictions ?? [];
+    let events = eventsD?.predictions ?? [];
     let curve = curveD?.predictions ?? [];
+    let computed = false;
+    // NOAA predictions down (July 2026 taught us this can last days) — fall
+    // back to our own harmonic computation from NOAA's published constants
+    // (/api/tides-local). Same math and data as NOAA's tables; if the station
+    // is unknown to the local database this returns empty and the caller's
+    // model-estimate fallback takes over.
+    if (!events.length) {
+      const lbase = `${API_BASE}/api/tides-local?station=${stationId}&begin_date=${fmt(before)}&end_date=${fmt(after)}`;
+      const [localE, localC] = await Promise.all([
+        fetchJson(lbase + '&interval=hilo', 2, 12000),
+        fetchJson(lbase + '&interval=30', 2, 12000),
+      ]);
+      if (localE?.predictions?.length) {
+        events = localE.predictions;
+        curve = localC?.predictions ?? [];
+        computed = true;
+      }
+    }
     // Subordinate NOAA stations only publish high/low events — synthesize a
     // smooth curve between them (cosine interpolation, the standard approximation)
     if (!curve.length && events.length > 1) {
@@ -275,7 +293,7 @@ export async function fetchTides(dateStr: string, stationId: string): Promise<Ti
         }
       }
     }
-    return { events, curve };
+    return computed ? { events, curve, computed } : { events, curve };
   } catch {}
   return { events: [], curve: [] };
 }
