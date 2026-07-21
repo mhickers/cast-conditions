@@ -25,6 +25,13 @@ const TILE_SIZE = 256;
 const COLOR = 2;      // Universal Blue
 const OPTIONS = '1_1'; // smooth_snow
 const FRAME_MS = 500;
+// RainViewer's free tile pyramid stops at zoom 7 for this feed — z8+ returns a
+// fixed 1370-byte "Zoom Level Not Supported" placeholder (HTTP 200, so Leaflet
+// renders it unless we cap). maxNativeZoom=7 makes Leaflet upscale the z7 tile
+// for closer views instead of requesting nonexistent higher-zoom tiles.
+const RV_MAX_NATIVE_ZOOM = 7;
+// 1x1 transparent PNG — any stray error/placeholder tile renders invisibly.
+const BLANK_TILE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
 // Swaps the active radar tile layer as the animation advances. Keeps a small
 // cache of layers so scrubbing back and forth does not re-request tiles, and
@@ -42,7 +49,7 @@ function RadarLayers({ host, frames, index }: { host: string; frames: RadarFrame
     const url = `${host}${frame.path}/${TILE_SIZE}/{z}/{x}/{y}/${COLOR}/${OPTIONS}.png`;
     let layer = layerCache.current.get(frame.path);
     if (!layer) {
-      layer = L.tileLayer(url, { opacity: 0, tileSize: TILE_SIZE, zIndex: 400, maxNativeZoom: 12, maxZoom: 12 });
+      layer = L.tileLayer(url, { opacity: 0, tileSize: TILE_SIZE, zIndex: 400, maxNativeZoom: RV_MAX_NATIVE_ZOOM, errorTileUrl: BLANK_TILE });
       layer.addTo(map);
       layerCache.current.set(frame.path, layer);
     }
@@ -124,11 +131,11 @@ export default function RadarPanel({ lat, lon, locationLabel }: Props) {
   return (
     <div className="radar-wrap">
       <div className="radar-map-wrap">
-        <MapContainer center={[lat, lon]} zoom={8} minZoom={5} maxZoom={12} scrollWheelZoom={false} className="radar-map">
+        <MapContainer center={[lat, lon]} zoom={7} minZoom={5} maxZoom={11} scrollWheelZoom={false} className="radar-map">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maxZoom={12}
+            maxZoom={11}
           />
           {status === 'ready' && host && <RadarLayers host={host} frames={frames} index={index} />}
           <CircleMarker center={[lat, lon]} radius={7} pathOptions={{ color: '#BA7517', fillColor: '#BA7517', fillOpacity: 0.9, weight: 2 }} />
