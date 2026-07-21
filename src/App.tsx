@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import StationMap from './StationMap';
-import ReportsCard from './ReportsCard';
 import RadarPanel from './RadarPanel';
 import WeightEstimator from './WeightEstimator';
 import SpeciesIcon from './SpeciesIcon';
@@ -1675,13 +1674,6 @@ export default function App() {
             </p>
           )}
         </section>
-
-        <ReportsCard
-          locationLabel={locationLabel}
-          dateStr={selectedDate}
-          targetSpecies={targetSpecies}
-          isInland={isInland}
-        />
 
         <BaitAdvisor
           locationLabel={locationLabel}
