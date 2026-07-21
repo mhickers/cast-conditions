@@ -481,8 +481,18 @@ function distMi(lat1: number, lon1: number, lat2: number, lon2: number): number 
 export async function fetchRiverData(lat: number, lon: number): Promise<RiverData[]> {
   // Expand the search box until at least one active gauge appears, so inland
   // spots far from any gauge still get the nearest one (the picker never vanishes).
+  //
+  // Box widths are DEGREES and deliberately SMALL (~6/12/24 mi half-widths).
+  // A wide box over a gauge-dense metro (Philadelphia returns 101 sites in a
+  // 0.5deg box) builds a payload too large to stream through the proxy inside
+  // its retry window — it 502'd with "operation was aborted", so the app saw
+  // no gauges and showed "no stream gauge found" beside a live selected one
+  // (and dragged perceived tide load with it). A 0.09deg box returns ~7 sites
+  // in ~19 KB. Root cause was the box size, not the parameter list, so water
+  // temp (00010) stays in discovery — inland water temp falls back to the
+  // gauge reading when NOAA marine temp is absent (see finalWaterTemp).
   let series: any[] | null = null;
-  for (const d of [0.5, 1.0, 2.0]) {
+  for (const d of [0.09, 0.18, 0.35]) {
     const bbox = `${(lon - d).toFixed(4)},${(lat - d).toFixed(4)},${(lon + d).toFixed(4)},${(lat + d).toFixed(4)}`;
     const json = await fetchJson(
       gov(`https://waterservices.usgs.gov/nwis/iv/?format=json&bBox=${bbox}&parameterCd=00060,00065,00010&siteStatus=active`)
