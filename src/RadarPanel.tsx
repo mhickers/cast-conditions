@@ -42,7 +42,7 @@ function RadarLayers({ host, frames, index }: { host: string; frames: RadarFrame
     const url = `${host}${frame.path}/${TILE_SIZE}/{z}/{x}/{y}/${COLOR}/${OPTIONS}.png`;
     let layer = layerCache.current.get(frame.path);
     if (!layer) {
-      layer = L.tileLayer(url, { opacity: 0, tileSize: TILE_SIZE, zIndex: 400 });
+      layer = L.tileLayer(url, { opacity: 0, tileSize: TILE_SIZE, zIndex: 400, maxNativeZoom: 12, maxZoom: 12 });
       layer.addTo(map);
       layerCache.current.set(frame.path, layer);
     }
@@ -124,10 +124,11 @@ export default function RadarPanel({ lat, lon, locationLabel }: Props) {
   return (
     <div className="radar-wrap">
       <div className="radar-map-wrap">
-        <MapContainer center={[lat, lon]} zoom={8} scrollWheelZoom={false} className="radar-map">
+        <MapContainer center={[lat, lon]} zoom={8} minZoom={5} maxZoom={12} scrollWheelZoom={false} className="radar-map">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            maxZoom={12}
           />
           {status === 'ready' && host && <RadarLayers host={host} frames={frames} index={index} />}
           <CircleMarker center={[lat, lon]} radius={7} pathOptions={{ color: '#BA7517', fillColor: '#BA7517', fillOpacity: 0.9, weight: 2 }} />
