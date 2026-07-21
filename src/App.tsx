@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import CatchLog from './CatchLog';
 import StationMap from './StationMap';
+import RadarPanel from './RadarPanel';
 import WeightEstimator from './WeightEstimator';
 import SpeciesIcon from './SpeciesIcon';
 import { resolveLocation, suggestLocations, reverseGeocode, GeoResult } from './utils/geocode';
@@ -138,6 +139,7 @@ export default function App() {
   const [targetSpecies, setTargetSpecies] = useState<string | null>(null);
   const [targetNonce, setTargetNonce] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
+  const [radarOpen, setRadarOpen] = useState(false);
   const [aiSummary, setAiSummary] = useState('Analyzing conditions...');
   const [loading, setLoading] = useState(true);
   const [tideLoading, setTideLoading] = useState(true);
@@ -1342,6 +1344,15 @@ export default function App() {
             ))}
             {forecastSlots.length === 0 && <span className="muted">Loading forecast...</span>}
           </div>
+        </section>
+
+        <section className="section">
+          <button className="detail-toggle" onClick={() => setRadarOpen(o => !o)} aria-expanded={radarOpen}>
+            <span className="section-label" style={{ margin: 0 }}>Rain radar</span>
+            <span className="detail-hint">live precipitation near your spot</span>
+            <ChevronDown size={16} className={`detail-chevron${radarOpen ? ' open' : ''}`} />
+          </button>
+          {radarOpen && <RadarPanel lat={lat} lon={lon} locationLabel={locationLabel} />}
         </section>
 
         {showWaterToggle && (

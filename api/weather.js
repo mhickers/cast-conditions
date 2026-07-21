@@ -25,6 +25,7 @@ const ALLOWED_HOSTS = new Set([
   'air-quality-api.open-meteo.com',
   'api.tidesandcurrents.noaa.gov',
   'waterservices.usgs.gov',
+  'api.rainviewer.com',
 ]);
 
 // 2 attempts x 4s: a DEGRADED upstream (answering in 3-5s) must be given time
@@ -58,6 +59,9 @@ function cachePolicy(target) {
   if (host === 'waterservices.usgs.gov') {
     if (u.includes('/nwis/iv')) return 's-maxage=600, stale-while-revalidate=3600';
     return 's-maxage=86400, stale-while-revalidate=86400'; // site + stat services
+  }
+  if (host === 'api.rainviewer.com') {
+    return 's-maxage=300, stale-while-revalidate=300'; // radar refreshes ~every 5 min
   }
   return 's-maxage=300, stale-while-revalidate=600'; // open-meteo
 }

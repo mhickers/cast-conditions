@@ -584,3 +584,16 @@ canvas { max-width: 100%; }
 .water-toggle-btn { border: none; background: transparent; color: var(--text-muted); font-family: inherit; font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: calc(var(--radius) - 4px); cursor: pointer; transition: background 0.15s, color 0.15s; }
 .water-toggle-btn:hover { color: var(--text); }
 .water-toggle-btn.active { background: var(--navy); color: #fff; }
+
+.radar-wrap { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.radar-map-wrap { position: relative; }
+.radar-map { height: 320px; width: 100%; border-radius: var(--radius); z-index: 0; }
+.radar-controls { display: flex; align-items: center; gap: 10px; }
+.radar-play { flex-shrink: 0; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border); background: var(--surface); color: var(--ocean); border-radius: var(--radius); cursor: pointer; }
+.radar-play:hover { border-color: var(--ocean); }
+.radar-scrubber { flex: 1; accent-color: var(--ocean); cursor: pointer; }
+.radar-time { flex-shrink: 0; min-width: 108px; text-align: right; font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.radar-credit { font-size: 11px; color: var(--text-muted); margin: 0; }
+.radar-credit a { color: var(--ocean); text-decoration: none; }
+.radar-credit a:hover { text-decoration: underline; }
+[data-theme='dark'] .radar-map .leaflet-tile-container > .leaflet-tile[src*="tile.openstreetmap.org"] { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.5); }
