@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const { TOWNS, slugify } = require('./generate-seo-pages.js');
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = 'claude-sonnet-5';
 const CACHE = path.join(__dirname, 'ai-reports.json');
 
 // Pilot: the pages already getting Search Console impressions + the indexed NJ ones.

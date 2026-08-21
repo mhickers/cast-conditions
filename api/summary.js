@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-5',
         max_tokens: 300,
         messages: [{ role: 'user', content: prompt + '\n\nRespond in plain text only — no markdown formatting, no asterisks, no bullet points.' }],
       }),
