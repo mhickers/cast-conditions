@@ -1,27 +1,27 @@
 PODS:
-  - Capacitor (7.6.6):
+  - Capacitor (8.5.0):
     - CapacitorCordova
-  - CapacitorApp (7.1.2):
+  - CapacitorApp (8.1.1):
     - Capacitor
-  - CapacitorBrowser (7.0.5):
+  - CapacitorBrowser (8.0.4):
     - Capacitor
-  - CapacitorCommunityInAppReview (7.1.0):
+  - CapacitorCommunityInAppReview (8.0.0):
     - Capacitor
-  - CapacitorCordova (7.6.6)
-  - CapacitorGeolocation (7.1.8):
+  - CapacitorCordova (8.5.0)
+  - CapacitorGeolocation (8.2.2):
     - Capacitor
-    - IONGeolocationLib (= 1.0.1)
-  - CapacitorHaptics (7.0.5):
+    - IONGeolocationLib (= 2.1.0)
+  - CapacitorHaptics (8.0.2):
     - Capacitor
-  - CapacitorLocalNotifications (7.0.6):
+  - CapacitorLocalNotifications (8.3.1):
     - Capacitor
-  - CapacitorShare (7.0.4):
+  - CapacitorShare (8.0.1):
     - Capacitor
-  - CapacitorSplashScreen (7.0.5):
+  - CapacitorSplashScreen (8.0.2):
     - Capacitor
-  - CapacitorStatusBar (7.0.6):
+  - CapacitorStatusBar (8.0.3):
     - Capacitor
-  - IONGeolocationLib (1.0.1)
+  - IONGeolocationLib (2.1.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
@@ -65,19 +65,19 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/status-bar"
 
 SPEC CHECKSUMS:
-  Capacitor: 961efd309ab0e390a8081b63c561186f61a6714d
-  CapacitorApp: f01a913211780e0718dae9750442c3e23f96e106
-  CapacitorBrowser: 6d09f59655e89aede71654ef08b98de55cf032b6
-  CapacitorCommunityInAppReview: 3756d05524c5cf2eccbc8ed460f77f8f8db6c141
-  CapacitorCordova: 3a4e0027a89a59421c918d19aee9d6ba1c7a3556
-  CapacitorGeolocation: ab54d708e2fcf99a7bafe0219eaa6f7a932f001a
-  CapacitorHaptics: 1b145fa83c622e5383a3bac04ea81e2514f0b0f5
-  CapacitorLocalNotifications: 2e3f5b717ec9cd2bd64d93c99a9470941e1c80be
-  CapacitorShare: 25f7fc5dd0e4edbde5d6801c6de5d14a8b450a41
-  CapacitorSplashScreen: 409eeaaeac603d264f209c0fcb718aa22fe1f7bb
-  CapacitorStatusBar: 416e9e53fd6397e668d4a181cd2131617d949bd6
-  IONGeolocationLib: 20f9d0248a0b5264511fb57a37e25dd2badf797a
+  Capacitor: 00b87168591cc006ea6f5c0de681ec5c39a2c8eb
+  CapacitorApp: 305bd13c44f6f9d164e2ee66a4faa956ed8c0e06
+  CapacitorBrowser: 752e0208aa07c7aa63d1f7cde895a3e9519b2656
+  CapacitorCommunityInAppReview: 4492bdd34aad4d27ed87949376022cc93b294ea1
+  CapacitorCordova: 9d3acbb574048e7167d2af127a0af2123e619f2f
+  CapacitorGeolocation: 327f18983c8f8a55e191fcf7dee80b9294f1ab78
+  CapacitorHaptics: 296f771ecd89c7a1bd92a7b6826a7d268e2e70f5
+  CapacitorLocalNotifications: e0747a329ddde3074d52dc74a003688af90e42be
+  CapacitorShare: 0c58305114538568059bfc07111f22dcb9cb2a82
+  CapacitorSplashScreen: 7bf61c2001557ff9e195e601c6b87344480d3c65
+  CapacitorStatusBar: eca7bc2b58d9f886f1ef9edb66e57a9b29c121af
+  IONGeolocationLib: 6a7b6f76063fb1b01cfb14fae7d0f526e3c9b271
 
-PODFILE CHECKSUM: 0a4071489c2de0dd13746633e74d5b958752dc24
+PODFILE CHECKSUM: 61630f7cf26ea4a2e366c940e482e2fc6e06068f
 
 COCOAPODS: 1.16.2
